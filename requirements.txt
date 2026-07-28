@@ -1,0 +1,51 @@
+# torch CUDA 12.1 wheels — compatible with driver 535.309.01 (CUDA 12.2 max)
+--extra-index-url https://download.pytorch.org/whl/cu121
+
+# ── Agent framework ────────────────────────────────────────────────────────────
+deepagents
+
+# ── LangChain stack ────────────────────────────────────────────────────────────
+langchain>=0.3.0
+langchain-core>=0.3.0
+langchain-openai>=0.3.0
+langgraph>=0.2.0
+langsmith>=0.1.0
+kaggle
+
+# ── LLM clients ────────────────────────────────────────────────────────────────
+anthropic>=0.40.0          # Claude API backend (OPEN: may switch to vLLM)
+openai>=1.55.0             # vLLM exposes an OpenAI-compatible endpoint
+
+# ── Vector store ───────────────────────────────────────────────────────────────
+qdrant-client>=1.12.0
+
+# ── Embeddings ─────────────────────────────────────────────────────────────────
+sentence-transformers>=3.3.0   # BAAI/bge-small-en-v1.5 and similar models
+# pinned to cu121 — driver 535.309.01 supports CUDA 12.2 max; cu130 will NOT see the GPU
+torch==2.5.1+cu121
+
+# ── Data & processing ──────────────────────────────────────────────────────────
+pandas>=2.2.0
+numpy>=1.26.0
+tqdm>=4.67.0
+matplotlib
+seaborn
+
+# ── Validation & schemas ───────────────────────────────────────────────────────
+pydantic>=2.10.0
+
+# ── Frontend ───────────────────────────────────────────────────────────────────
+streamlit>=1.41.0
+
+# ── Config & environment ───────────────────────────────────────────────────────
+python-dotenv>=1.0.0
+
+# ── Dataset download ───────────────────────────────────────────────────────────
+kaggle>=1.7.0
+
+# ── Testing ────────────────────────────────────────────────────────────────────
+pytest>=8.3.0
+pytest-asyncio>=0.25.0
+
+dotenv
+

@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fitness Coach RAG — Full System Reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F5F1; --paper-raised:#FFFFFF; --ink:#1F1E1B; --muted:#6B6A63; --faint:#9A988E;
+    --line:#DAD8CE; --line-strong:#B8B6AA;
+    --teal:#0F6E56; --teal-fill:#E1F5EE; --teal-mid:#5DCAA5;
+    --coral:#993C1D; --coral-fill:#FAECE7; --coral-mid:#D85A30;
+    --purple:#3C3489; --purple-fill:#EEEDFE; --purple-mid:#7F77DD;
+    --amber:#854F0B; --amber-fill:#FAEEDA; --amber-mid:#EF9F27;
+    --blue:#0C447C; --blue-fill:#E6F1FB; --blue-mid:#378ADD;
+    --pink:#72243E; --pink-fill:#FBEAF0; --pink-mid:#D4537E;
+    --gray:#444441; --gray-fill:#F1EFE8; --gray-mid:#888780;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--paper); color:var(--ink); font-family:'Inter',sans-serif; font-size:16px; line-height:1.65;}
+  ::selection{background:var(--purple-mid); color:#fff;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif; font-weight:500; margin:0;}
+  .wrap{max-width:1080px; margin:0 auto; padding:0 32px;}
+
+  header.hero{border-bottom:1px solid var(--line); padding:56px 0 28px;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); margin-bottom:14px; display:flex; gap:10px; align-items:center;}
+  .eyebrow::before{content:""; width:22px; height:1px; background:var(--line-strong); display:inline-block;}
+  h1.title{font-size:32px; line-height:1.2; max-width:760px;}
+  .subtitle{margin-top:12px; color:var(--muted); max-width:640px; font-size:15px;}
+
+  /* tabs */
+  .tabbar{position:sticky; top:0; z-index:20; background:rgba(246,245,241,0.96); backdrop-filter:blur(6px); border-bottom:1px solid var(--line);}
+  .tabbar .wrap{display:flex; overflow-x:auto; padding:0 32px; gap:2px;}
+  .tabbtn{
+    font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:var(--muted);
+    background:none; border:none; cursor:pointer; padding:16px 16px; white-space:nowrap;
+    border-bottom:2px solid transparent; transition:color .15s;
+  }
+  .tabbtn:hover{color:var(--ink);}
+  .tabbtn.active{color:var(--ink); border-bottom-color:var(--ink); font-weight:500;}
+  .tabbtn .num{color:var(--faint); margin-right:6px;}
+  .tabbtn.active .num{color:inherit;}
+
+  .panel{display:none; padding:48px 0 72px; animation:fade .25s ease;}
+  .panel.active{display:block;}
+  @keyframes fade{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);}}
+
+  h2.panel-title{font-size:26px; margin-bottom:10px;}
+  .panel-intro{color:var(--muted); max-width:680px; margin-bottom:36px;}
+
+  /* generic subsection */
+  .sub{margin-bottom:44px;}
+  .sub h3{font-size:18px; margin-bottom:14px;}
+  .sub .sub-note{color:var(--muted); font-size:14px; margin-bottom:16px; max-width:640px;}
+
+  /* system diagram (overview) */
+  .sys-diagram{display:flex; flex-direction:column; align-items:center; gap:0; margin:24px 0 12px;}
+  .sys-row{display:flex; gap:16px; justify-content:center; flex-wrap:wrap;}
+  .sys-node{border:1px solid var(--line-strong); background:var(--paper-raised); border-radius:10px; padding:16px 22px; min-width:160px; text-align:center;}
+  .sys-node .n-title{font-family:'Space Grotesk',sans-serif; font-size:14px; font-weight:500;}
+  .sys-node .n-sub{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--muted); margin-top:4px;}
+  .sys-node.coach{border-color:var(--purple-mid); background:var(--purple-fill);} .sys-node.coach .n-title{color:var(--purple);}
+  .sys-node.retriever{border-color:var(--teal-mid); background:var(--teal-fill);} .sys-node.retriever .n-title{color:var(--teal);}
+  .sys-node.designer{border-color:var(--coral-mid); background:var(--coral-fill);} .sys-node.designer .n-title{color:var(--coral);}
+  .sys-node.db{border-color:var(--amber-mid); background:var(--amber-fill);} .sys-node.db .n-title{color:var(--amber);}
+  .sys-node.qdrant{border-color:var(--blue-mid); background:var(--blue-fill);} .sys-node.qdrant .n-title{color:var(--blue);}
+  .connector{width:1px; height:30px; background:var(--line-strong); margin:0 auto;}
+
+  /* principle chips */
+  .chip-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin-top:20px;}
+  .chip{border:1px solid var(--line); border-radius:10px; background:var(--paper-raised); padding:16px 18px;}
+  .chip .c-title{font-family:'Space Grotesk',sans-serif; font-weight:500; font-size:14px; margin-bottom:5px;}
+  .chip .c-desc{font-size:13px; color:var(--muted);}
+
+  /* agent hero header inside panel */
+  .agent-head{display:flex; align-items:center; gap:14px; margin-bottom:18px;}
+  .agent-head .tag{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.05em; text-transform:uppercase; padding:5px 12px; border-radius:20px;}
+  .tag.retriever{background:var(--teal-fill); color:var(--teal);}
+  .tag.designer{background:var(--coral-fill); color:var(--coral);}
+  .tag.coach{background:var(--purple-fill); color:var(--purple);}
+
+  /* step list */
+  .step-list{list-style:none; margin:0; padding:0; counter-reset:step; border:1px solid var(--line); border-radius:10px; overflow:hidden; background:var(--paper-raised);}
+  .step-list li{counter-increment:step; display:flex; gap:14px; padding:14px 18px; border-top:1px solid var(--line); font-size:14px;}
+  .step-list li:first-child{border-top:none;}
+  .step-list li::before{
+    content:counter(step); font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--muted);
+    background:var(--paper); border:1px solid var(--line-strong); border-radius:50%; width:22px; height:22px; flex:none;
+    display:flex; align-items:center; justify-content:center; margin-top:1px;
+  }
+  .step-list b{font-weight:600;}
+  .step-list .step-note{color:var(--muted); display:block; font-size:13px; margin-top:3px;}
+
+  .loop-caps{display:flex; gap:24px; flex-wrap:wrap; margin-top:16px; padding:16px 18px; border:1px dashed var(--line-strong); border-radius:10px;}
+  .loop-cap{font-size:13px;}
+  .loop-cap .k{font-family:'IBM Plex Mono',monospace; color:var(--muted); display:block; font-size:11px; text-transform:uppercase; letter-spacing:0.04em;}
+  .loop-cap .v{margin-top:2px;}
+
+  /* branch diagram (classify -> two paths -> converge) */
+  .branch-diagram{display:flex; flex-direction:column; align-items:center; margin:28px 0;}
+  .bd-node{border:1px solid var(--line-strong); background:var(--paper-raised); border-radius:10px; padding:14px 20px; text-align:center; min-width:180px;}
+  .bd-row{display:flex; gap:24px; justify-content:center; flex-wrap:wrap; margin:0;}
+  .bd-line{width:1px; height:26px; background:var(--line-strong);}
+  .bd-node .bd-t{font-family:'Space Grotesk',sans-serif; font-weight:500; font-size:13px;}
+  .bd-node .bd-s{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--muted); margin-top:3px;}
+  .bd-node.teal{border-color:var(--teal-mid); background:var(--teal-fill);} .bd-node.teal .bd-t{color:var(--teal);}
+  .bd-node.coral{border-color:var(--coral-mid); background:var(--coral-fill);} .bd-node.coral .bd-t{color:var(--coral);}
+  .bd-node.amber{border-color:var(--amber-mid); background:var(--amber-fill);} .bd-node.amber .bd-t{color:var(--amber);}
+  .bd-node.purple{border-color:var(--purple-mid); background:var(--purple-fill);} .bd-node.purple .bd-t{color:var(--purple);}
+  .bd-node.gray{border-color:var(--line-strong);}
+
+  /* mem flow */
+  .mem-flow{display:flex; align-items:stretch; gap:0; flex-wrap:wrap; margin-top:20px;}
+  .mem-step{border:1px solid var(--line-strong); border-radius:10px; background:var(--paper-raised); padding:14px 16px; min-width:150px; flex:1; font-size:13px;}
+  .mem-step .m-title{font-family:'Space Grotesk',sans-serif; font-weight:500; font-size:14px; margin-bottom:4px;}
+  .mem-step .m-sub{color:var(--muted); font-size:12px;}
+  .mem-arrow{color:var(--faint); padding:0 10px; font-size:16px; flex:none; display:flex; align-items:center;}
+
+  /* file cards */
+  .fgroup{margin-bottom:32px;}
+  .fgroup .fg-head{display:flex; align-items:center; gap:10px; margin-bottom:12px;}
+  .fgroup .fg-dot{width:9px; height:9px; border-radius:50%; flex:none;}
+  .fgroup h4{font-size:14px; font-family:'IBM Plex Mono',monospace; font-weight:500;}
+  .fcard{border:1px solid var(--line); border-left:3px solid var(--line-strong); border-radius:8px; background:var(--paper-raised); padding:13px 18px; margin-bottom:9px;}
+  .fcard .fpath{font-family:'IBM Plex Mono',monospace; font-size:13px; margin-bottom:4px;}
+  .fcard .fdesc{font-size:13.5px; color:var(--muted);}
+  .fgroup.c-teal .fcard{border-left-color:var(--teal-mid);} .fgroup.c-teal .fpath{color:var(--teal);} .fgroup.c-teal .fg-dot{background:var(--teal-mid);}
+  .fgroup.c-coral .fcard{border-left-color:var(--coral-mid);} .fgroup.c-coral .fpath{color:var(--coral);} .fgroup.c-coral .fg-dot{background:var(--coral-mid);}
+  .fgroup.c-purple .fcard{border-left-color:var(--purple-mid);} .fgroup.c-purple .fpath{color:var(--purple);} .fgroup.c-purple .fg-dot{background:var(--purple-mid);}
+  .fgroup.c-amber .fcard{border-left-color:var(--amber-mid);} .fgroup.c-amber .fpath{color:var(--amber);} .fgroup.c-amber .fg-dot{background:var(--amber-mid);}
+  .fgroup.c-blue .fcard{border-left-color:var(--blue-mid);} .fgroup.c-blue .fpath{color:var(--blue);} .fgroup.c-blue .fg-dot{background:var(--blue-mid);}
+  .fgroup.c-pink .fcard{border-left-color:var(--pink-mid);} .fgroup.c-pink .fpath{color:var(--pink);} .fgroup.c-pink .fg-dot{background:var(--pink-mid);}
+  .fgroup.c-gray .fcard{border-left-color:var(--gray-mid);} .fgroup.c-gray .fpath{color:var(--gray);} .fgroup.c-gray .fg-dot{background:var(--gray-mid);}
+
+  /* schema tables */
+  .schema-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(260px,1fr)); gap:20px; margin-top:20px;}
+  .table-card{border:1px solid var(--line); border-radius:10px; overflow:hidden; background:var(--paper-raised);}
+  .table-card .t-head{background:var(--amber-fill); color:var(--amber); font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:500; padding:10px 16px; border-bottom:1px solid var(--line);}
+  .table-card table{width:100%; border-collapse:collapse; font-size:13px;}
+  .table-card td{padding:7px 16px; border-top:1px solid var(--line);}
+  .table-card tr:first-child td{border-top:none;}
+  .table-card td.fname{font-family:'IBM Plex Mono',monospace;}
+  .table-card td.ftype{color:var(--faint); text-align:right; font-family:'IBM Plex Mono',monospace; font-size:12px;}
+  .pk{color:var(--coral); font-weight:600;} .fk{color:var(--blue); font-weight:600;}
+
+  .meta-table{width:100%; border-collapse:collapse; font-size:14px; margin-top:16px; border:1px solid var(--line); border-radius:10px; overflow:hidden;}
+  .meta-table th{background:var(--blue-fill); color:var(--blue); font-family:'IBM Plex Mono',monospace; font-size:12px; text-align:left; padding:10px 16px; font-weight:500;}
+  .meta-table td{padding:10px 16px; border-top:1px solid var(--line); background:var(--paper-raised);}
+  .meta-table td.mono{font-family:'IBM Plex Mono',monospace; font-size:13px;}
+
+  .wiring-grid{display:grid; grid-template-columns:1fr 1.4fr; border:1px solid var(--line); border-radius:10px; overflow:hidden; margin-top:8px;}
+  .wiring-row{display:contents;}
+  .wiring-row .w-key, .wiring-row .w-val{padding:15px 20px; border-top:1px solid var(--line);}
+  .wiring-row:first-child .w-key, .wiring-row:first-child .w-val{border-top:none;}
+  .w-key{font-family:'IBM Plex Mono',monospace; font-size:13px; color:var(--blue); background:var(--blue-fill); display:flex; align-items:center;}
+  .w-val{font-size:13.5px; background:var(--paper-raised);}
+  .w-val .w-sub{display:block; color:var(--muted); font-size:12.5px; margin-top:3px;}
+
+  .skill-list{display:grid; grid-template-columns:repeat(auto-fit, minmax(230px,1fr)); gap:12px; margin-top:16px;}
+  .skill-chip{border:1px solid var(--line); border-radius:10px; padding:14px 16px; background:var(--paper-raised);}
+  .skill-chip .s-file{font-family:'IBM Plex Mono',monospace; font-size:12.5px; margin-bottom:5px;}
+  .skill-chip .s-desc{font-size:12.5px; color:var(--muted);}
+  .skill-chip.retriever .s-file{color:var(--teal);}
+  .skill-chip.designer .s-file{color:var(--coral);}
+  .skill-chip.coach .s-file{color:var(--purple);}
+
+  /* pipeline */
+  .pipe{display:flex; flex-wrap:wrap; gap:0; margin:24px 0 8px; counter-reset:pipe;}
+  .pipe-step{counter-increment:pipe; flex:1; min-width:190px; border:1px solid var(--line); border-radius:10px; background:var(--paper-raised); padding:16px 18px; margin:0 8px 16px 0;}
+  .pipe-step::before{content:counter(pipe); font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--muted); background:var(--paper); border:1px solid var(--line-strong); border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; margin-bottom:10px;}
+  .pipe-step .p-title{font-family:'Space Grotesk',sans-serif; font-weight:500; font-size:14px; margin-bottom:6px;}
+  .pipe-step .p-file{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--faint); margin-bottom:6px;}
+  .pipe-step .p-desc{font-size:13px; color:var(--muted);}
+
+  /* tree */
+  .tree{font-family:'IBM Plex Mono',monospace; font-size:12.5px; line-height:1.85; background:var(--paper-raised); border:1px solid var(--line); border-radius:10px; padding:22px 26px; overflow-x:auto; white-space:pre;}
+  .tree .cmt{color:var(--faint);}
+
+  .note{margin-top:18px; padding:13px 18px; border-left:2px solid var(--line-strong); color:var(--muted); font-size:13.5px; background:var(--paper-raised); border-radius:0 8px 8px 0;}
+  .note b{color:var(--ink);}
+
+  .open-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(280px,1fr)); gap:18px; margin-top:8px;}
+  .open-card{border:1px solid var(--line); border-radius:10px; padding:18px; background:var(--paper-raised);}
+  .open-card .o-label{font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); margin-bottom:8px;}
+  .open-card.blocking{border-left:3px solid var(--coral-mid);}
+  .open-card.safety{border-left:3px solid var(--amber-mid);}
+  .open-card ul{margin:0; padding-left:18px; font-size:13.5px;}
+  .open-card li{margin-bottom:6px;}
+
+  footer{padding:32px 0 64px; color:var(--faint); font-size:12px; font-family:'IBM Plex Mono',monospace; text-align:center; border-top:1px solid var(--line);}
+  @media (max-width:640px){ h1.title{font-size:26px;} .wiring-grid{grid-template-columns:1fr;} .w-key{background:var(--paper); border-bottom:1px dashed var(--line);} }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">System reference · v1.0</div>
+    <h1 class="title">Fitness Coach RAG — full system reference</h1>
+    <p class="subtitle">Everything designed so far in one place: how each agent works, the database, deepagents wiring, the data/embedding pipeline, and the complete project tree with what every file contains.</p>
+  </div>
+</header>
+
+<div class="tabbar">
+  <div class="wrap" id="tabbar-inner"></div>
+</div>
+
+<div class="wrap">
+  <div id="panels"></div>
+</div>
+
+<footer>fitness-coach-rag · full system reference · generated in conversation</footer>
+
+<script>
+const TABS = [
+  {id:"overview", num:"00", label:"Overview"},
+  {id:"retriever", num:"01", label:"Retriever agent"},
+  {id:"designer", num:"02", label:"Program designer"},
+  {id:"coach", num:"03", label:"Coach agent"},
+  {id:"database", num:"04", label:"Database"},
+  {id:"wiring", num:"05", label:"deepagents wiring"},
+  {id:"data", num:"06", label:"Data & embedding"},
+  {id:"tree", num:"07", label:"Project tree"},
+  {id:"open", num:"08", label:"Open items"}
+];
+
+const tabbar = document.getElementById('tabbar-inner');
+TABS.forEach((t,i)=>{
+  const btn = document.createElement('button');
+  btn.className = 'tabbtn' + (i===0?' active':'');
+  btn.id = 'btn-'+t.id;
+  btn.innerHTML = '<span class="num">'+t.num+'</span>'+t.label;
+  btn.onclick = ()=>showTab(t.id);
+  tabbar.appendChild(btn);
+});
+
+function showTab(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tabbtn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  document.getElementById('btn-'+id).classList.add('active');
+  window.scrollTo({top:0, behavior:'instant'});
+}
+</script>
+
+<div id="panels-source" style="display:none"></div>
+
+<template id="tpl"></template>
+
+<!-- ================= PANEL CONTENT ================= -->
+<div style="display:none" id="panel-store">
+
+<div class="panel active" id="panel-overview">
+  <h2 class="panel-title">System overview</h2>
+  <p class="panel-intro">Coach is the trainee-facing deepagents main agent. It owns the conversation, identity resolution, and long-term memory, and delegates to Retriever and Program Designer as subagents. Both subagents can call Retriever directly against Qdrant; Designer is the only agent that writes plans, backed by the SQLite trainee database.</p>
+
+  <div class="sys-diagram">
+    <div class="sys-row"><div class="sys-node coach"><div class="n-title">Coach agent</div><div class="n-sub">main agent</div></div></div>
+    <div class="connector"></div>
+    <div class="sys-row">
+      <div class="sys-node retriever"><div class="n-title">Retriever agent</div><div class="n-sub">subagent</div></div>
+      <div class="sys-node designer"><div class="n-title">Program designer</div><div class="n-sub">subagent</div></div>
+    </div>
+    <div class="connector"></div>
+    <div class="sys-row">
+      <div class="sys-node qdrant"><div class="n-title">Qdrant</div><div class="n-sub">workout corpus</div></div>
+      <div class="sys-node db"><div class="n-title">SQLite</div><div class="n-sub">trainee database</div></div>
+    </div>
+  </div>
+
+  <div class="sub" style="margin-top:44px;">
+    <h3>Design principles established</h3>
+    <div class="chip-grid">
+      <div class="chip"><div class="c-title">Retriever doesn't reason about fitness</div><div class="c-desc">Only job is search quality — decomposition, adaptive chunk count, coverage validation, retry.</div></div>
+      <div class="chip"><div class="c-title">Designer synthesizes, doesn't just select</div><div class="c-desc">Combines multiple retrieved programs — trades flexibility for a coherence-guard requirement.</div></div>
+      <div class="chip"><div class="c-title">Coach routes by reasoning, not classifier</div><div class="c-desc">Designer is just an available tool; Coach's own judgment decides when to call it.</div></div>
+      <div class="chip"><div class="c-title">Persistent facts live in one place</div><div class="c-desc">Injuries/equipment/goals live in trainees, not duplicated per plan or per memory summary.</div></div>
+      <div class="chip"><div class="c-title">Memory is rolling, not accumulating</div><div class="c-desc">One row per trainee in coach_memory — summarized and salience-truncated, not appended forever.</div></div>
+      <div class="chip"><div class="c-title">Every revision is audited</div><div class="c-desc">plan_revisions keeps a full before/after snapshot of every patch, with what triggered it.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="panel" id="panel-retriever">
+  <div class="agent-head"><span class="tag retriever">subagent</span><h2 class="panel-title">Retriever agent</h2></div>
+  <p class="panel-intro">Callable by both Coach and Program Designer. Doesn't reason about fitness — its only job is accumulating enough grounded context to satisfy an information need, then handing back chunks with a confidence flag.</p>
+
+  <div class="sub">
+    <h3>Accumulate-and-expand retrieval loop</h3>
+    <p class="sub-note">Not a single retry loop — tracks coverage of the overall information need across sub-queries, expanding when gaps remain even after some sub-queries already succeeded.</p>
+    <ol class="step-list">
+      <li><b>Decompose the need</b><span class="step-note">Slot-based extraction first (goal, equipment, difficulty, duration) — falls back to free-form LLM coverage judgment when the query doesn't map to slots cleanly (e.g. "why am I sore for 3 days").</span></li>
+      <li><b>Pick next unaddressed need, query Qdrant</b><span class="step-note">Chunk count is adaptive to query specificity, not a fixed top-k.</span></li>
+      <li><b>Validate against that specific need</b><span class="step-note">Relevant and sufficient, or noise?</span></li>
+      <li><b>Sufficient → save to accumulated pool, mark need satisfied</b></li>
+      <li><b>Insufficient → rewrite query, retry same need</b><span class="step-note">Per-need retry, not a global retry counter.</span></li>
+      <li><b>Re-check overall coverage</b><span class="step-note">Given everything accumulated, is the original query now answerable? If not, formulate a new sub-query for the gap.</span></li>
+      <li><b>Self-assess or hit ceiling → return</b><span class="step-note">Model can surrender early if it believes coverage is sufficient; hard ceiling underneath as a safety net against runaway loops.</span></li>
+    </ol>
+    <div class="loop-caps">
+      <div class="loop-cap"><span class="k">Hard ceiling</span><span class="v">5–6 total retrieval steps per invocation</span></div>
+      <div class="loop-cap"><span class="k">Callers</span><span class="v">Coach (open-ended questions) + Designer (structured plan queries)</span></div>
+      <div class="loop-cap"><span class="k">Output</span><span class="v">Accumulated chunks + confidence flag</span></div>
+    </div>
+  </div>
+
+  <div class="sub">
+    <h3>Files</h3>
+    <div class="fgroup c-teal">
+      <div class="fg-head"><span class="fg-dot"></span><h4>agents/retriever/</h4></div>
+      <div class="fcard"><div class="fpath">agent.py</div><div class="fdesc">Defines the Retriever subagent, registers the Qdrant search tool, wires the coverage-check loop with its 5-6 step ceiling.</div></div>
+      <div class="fcard"><div class="fpath">coverage.py</div><div class="fdesc">Slot-based decomposition with free-form LLM fallback; tracks which needs are satisfied vs. still open.</div></div>
+      <div class="fcard"><div class="fpath">query_rewrite.py</div><div class="fdesc">Sub-query rewriting on validation failure, and new sub-query formulation when the overall coverage check finds a gap.</div></div>
+      <div class="fcard"><div class="fpath">prompts/system_prompt.md</div><div class="fdesc">Role definition — search quality only, no fitness reasoning.</div></div>
+      <div class="fcard"><div class="fpath">prompts/query_decomposition.md</div><div class="fdesc">Prompting for splitting a request into slots or sub-queries.</div></div>
+      <div class="fcard"><div class="fpath">prompts/coverage_check.md</div><div class="fdesc">Prompting for the free-form "can I answer this yet, what's missing" fallback judgment.</div></div>
+      <div class="fcard"><div class="fpath">skills/retrieval-coverage-loop.md</div><div class="fdesc">Formalized deepagents skill for the full accumulate-and-expand procedure, loaded on demand.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="panel" id="panel-designer">
+  <div class="agent-head"><span class="tag designer">subagent</span><h2 class="panel-title">Program designer agent</h2></div>
+  <p class="panel-intro">Turns a goal plus retrieved chunks into a strict JSON plan. Synthesizes across multiple retrieved programs rather than selecting one, which means it needs a coherence guard.</p>
+
+  <div class="sub">
+    <h3>New plan vs. revision</h3>
+    <div class="branch-diagram">
+      <div class="bd-node purple"><div class="bd-t">Classify request</div><div class="bd-s">new plan or revision</div></div>
+      <div class="bd-line"></div>
+      <div class="bd-row">
+        <div style="display:flex; flex-direction:column; align-items:center;">
+          <div class="bd-node teal"><div class="bd-t">New plan</div><div class="bd-s">retrieve → synthesize</div></div>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:center;">
+          <div class="bd-node coral"><div class="bd-t">Revision</div><div class="bd-s">check plan.md first</div></div>
+        </div>
+      </div>
+      <div class="bd-line"></div>
+      <div class="bd-node amber"><div class="bd-t">Validate</div><div class="bd-s">structural rules + self-critique</div></div>
+      <div class="bd-line"></div>
+      <div class="bd-node gray"><div class="bd-t">Write plan.json</div><div class="bd-s">structured output to Coach</div></div>
+    </div>
+
+    <ol class="step-list">
+      <li><b>Classify request</b><span class="step-note">New plan, or a revision to an existing one.</span></li>
+      <li><b>New plan →</b> call Retriever, then synthesize a draft by combining chunks across multiple retrieved programs.</li>
+      <li><b>Revision →</b> check plan.md/context first for what's needed (e.g. a knee-safe substitute); only call Retriever if that comes up empty.</li>
+      <li><b>Structural validation</b><span class="step-note">Rule-based, deterministic, always runs: equipment matches trainee's available equipment, rest days present, difficulty progression makes sense.</span></li>
+      <li><b>Self-critique pass</b><span class="step-note">LLM check for coherence, goal fit, and injury constraints — only triggered when synthesizing from multiple sources, since that's where conflicting programs get mixed incoherently.</span></li>
+      <li><b>Write plan.json</b><span class="step-note">Structured output + short change summary back to Coach.</span></li>
+    </ol>
+    <div class="loop-caps">
+      <div class="loop-cap"><span class="k">Output schema</span><span class="v">goal, difficulty, duration_weeks, equipment_available, weeks[days[exercises[name, sets, reps, rest_seconds, equipment, muscle_group, notes]]]</span></div>
+      <div class="loop-cap"><span class="k">Injury guard</span><span class="v">Read from trainees table, not duplicated per plan</span></div>
+    </div>
+  </div>
+
+  <div class="sub">
+    <h3>Files</h3>
+    <div class="fgroup c-coral">
+      <div class="fg-head"><span class="fg-dot"></span><h4>agents/designer/</h4></div>
+      <div class="fcard"><div class="fpath">agent.py</div><div class="fdesc">Defines the Designer subagent, registers Retriever as a callable tool, registers DB read/write for plans and plan_revisions.</div></div>
+      <div class="fcard"><div class="fpath">synthesis.py</div><div class="fdesc">Combines chunks from multiple retrieved programs into a single draft plan matching the strict JSON schema.</div></div>
+      <div class="fcard"><div class="fpath">validation.py</div><div class="fdesc">Deterministic structural rule checks — equipment, rest days, difficulty progression. Always runs, cheap.</div></div>
+      <div class="fcard"><div class="fpath">self_critique.py</div><div class="fdesc">LLM self-critique pass, conditional on multi-source synthesis.</div></div>
+      <div class="fcard"><div class="fpath">prompts/system_prompt.md</div><div class="fdesc">Role, output schema contract, coherence-guard instructions.</div></div>
+      <div class="fcard"><div class="fpath">prompts/synthesis_prompts.md</div><div class="fdesc">Prompting for combining multiple retrieved programs into one coherent plan.</div></div>
+      <div class="fcard"><div class="fpath">prompts/self_critique_prompts.md</div><div class="fdesc">Prompting for the conditional self-critique pass.</div></div>
+      <div class="fcard"><div class="fpath">prompts/revision_prompts.md</div><div class="fdesc">Prompting for check-first, patch-vs-rebuild revision logic.</div></div>
+      <div class="fcard"><div class="fpath">skills/plan-structural-validation.md</div><div class="fdesc">Formalized skill for the deterministic rule checks.</div></div>
+      <div class="fcard"><div class="fpath">skills/plan-revision.md</div><div class="fdesc">Formalized skill for revision handling — when to patch vs. re-retrieve.</div></div>
+    </div>
+    <div class="fgroup c-gray">
+      <div class="fg-head"><span class="fg-dot"></span><h4>schemas/ (shared with Coach)</h4></div>
+      <div class="fcard"><div class="fpath">plan_schema.py</div><div class="fdesc">Pydantic models mirroring plan.json (WeekPlan, DayPlan, Exercise) — Designer validates its own output against this before writing to the DB.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="panel" id="panel-coach">
+  <div class="agent-head"><span class="tag coach">main agent</span><h2 class="panel-title">Coach agent</h2></div>
+  <p class="panel-intro">Owns the conversation, identity, routing, and long-term memory. Uses Designer as a tool rather than a hardcoded classifier — Coach reasons out whether a message needs Designer or can be handled directly.</p>
+
+  <div class="sub">
+    <h3>Session start — identity resolution</h3>
+    <ol class="step-list">
+      <li><b>Check identity</b><span class="step-note">Name + secondary ID (phone / email / trainee_id).</span></li>
+      <li><b>Match → returning trainee</b><span class="step-note">Load trainees profile, latest coach_memory summary, active plan. Name match without secondary ID match is a confirmation prompt, not a silent load.</span></li>
+      <li><b>No match → new trainee</b><span class="step-note">Run intake flow: name, contact, goals, equipment, injuries/limitations → write first trainees row.</span></li>
+      <li><b>Check progress_logs for missed-session patterns</b><span class="step-note">If flagged, Coach opens proactively instead of waiting to be asked.</span></li>
+    </ol>
+  </div>
+
+  <div class="sub">
+    <h3>Per-message loop</h3>
+    <ol class="step-list">
+      <li><b>Load context</b><span class="step-note">Profile, memory, active plan.</span></li>
+      <li><b>Reason: handle directly or route to Designer</b><span class="step-note">Direct: general coaching / knowledge questions, Coach may call Retriever itself. Routed: anything touching the plan.</span></li>
+      <li><b>Interim acknowledgment before delegating</b><span class="step-note">Sent before a multi-step Retriever/Designer chain runs, so the trainee isn't staring at silence for 15–20s — the "keep them engaged" requirement.</span></li>
+      <li><b>Respond</b><span class="step-note">Relays Designer's structured output in trainee-facing language, or answers directly.</span></li>
+      <li><b>Update memory</b><span class="step-note">Full pipeline below. Also writes progress_logs if the message contained loggable info.</span></li>
+    </ol>
+  </div>
+
+  <div class="sub">
+    <h3>Long-term memory pipeline</h3>
+    <p class="sub-note">Rolling, summarized, salience-truncated — one row per trainee, not one per session. Persistent facts (injuries, goals, equipment) live in trainees separately; this is conversational/relational context only.</p>
+    <div class="mem-flow">
+      <div class="mem-step"><div class="m-title">Summarize session</div><div class="m-sub">Condense this session's turns</div></div>
+      <div class="mem-arrow">→</div>
+      <div class="mem-step"><div class="m-title">Merge</div><div class="m-sub">Combine with existing rolling summary</div></div>
+      <div class="mem-arrow">→</div>
+      <div class="mem-step"><div class="m-title">Check trigger</div><div class="m-sub">Length threshold OR N sessions since last truncation</div></div>
+      <div class="mem-arrow">→</div>
+      <div class="mem-step"><div class="m-title">Salience pass</div><div class="m-sub">LLM judges what's still relevant, drops the rest</div></div>
+      <div class="mem-arrow">→</div>
+      <div class="mem-step"><div class="m-title">Write back</div><div class="m-sub">Overwrite the single coach_memory row</div></div>
+    </div>
+  </div>
+
+  <div class="sub">
+    <h3>Files</h3>
+    <div class="fgroup c-purple">
+      <div class="fg-head"><span class="fg-dot"></span><h4>agents/coach/</h4></div>
+      <div class="fcard"><div class="fpath">agent.py</div><div class="fdesc">Instantiates Coach: loads system prompt, registers Retriever + Designer as subagent tools, registers DB tools, wires the planning/todo tool.</div></div>
+      <div class="fcard"><div class="fpath">identity.py</div><div class="fdesc">Name + secondary ID lookup, mismatch handling, intake flow trigger.</div></div>
+      <div class="fcard"><div class="fpath">memory.py</div><div class="fdesc">Implements the summarize → merge → trigger-check → salience-truncate → write-back pipeline above.</div></div>
+      <div class="fcard"><div class="fpath">routing.py</div><div class="fdesc">Tool descriptions and reasoning scaffolding for handle-directly vs. route-to-Designer — no hardcoded classifier.</div></div>
+      <div class="fcard"><div class="fpath">prompts/system_prompt.md</div><div class="fdesc">Persona, tone, behavioral rules: proactive check-ins, interim acknowledgments, injury/medical escalation boundary.</div></div>
+      <div class="fcard"><div class="fpath">prompts/intake_prompts.md</div><div class="fdesc">Onboarding conversation script for a new trainee.</div></div>
+      <div class="fcard"><div class="fpath">prompts/routing_prompts.md</div><div class="fdesc">Guidance embedded in Designer's tool description so Coach's reasoning routes correctly.</div></div>
+      <div class="fcard"><div class="fpath">skills/trainee-intake.md</div><div class="fdesc">Formalized skill version of the intake procedure, loaded on demand.</div></div>
+    </div>
+    <div class="fgroup c-gray">
+      <div class="fg-head"><span class="fg-dot"></span><h4>memory/</h4></div>
+      <div class="fcard"><div class="fpath">sqlite_memory_backend.py</div><div class="fdesc">Implements deepagents' long-term memory store interface, backed by coach_memory — get/set/merge called at session start/end.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="panel" id="panel-database">
+  <h2 class="panel-title">Trainee database</h2>
+  <p class="panel-intro">SQLite. Five tables — profile, plans, a full revision audit trail, progress tracking, and rolling coach memory.</p>
+
+  <div class="schema-grid">
+    <div class="table-card">
+      <div class="t-head">trainees</div>
+      <table>
+        <tr><td class="fname"><span class="pk">id</span></td><td class="ftype">PK</td></tr>
+        <tr><td class="fname">name</td><td class="ftype">text</td></tr>
+        <tr><td class="fname">secondary_id</td><td class="ftype">text</td></tr>
+        <tr><td class="fname">age, gender</td><td class="ftype">int, text</td></tr>
+        <tr><td class="fname">fitness_level</td><td class="ftype">text</td></tr>
+        <tr><td class="fname">equipment_available</td><td class="ftype">text/json</td></tr>
+        <tr><td class="fname">injuries_limitations</td><td class="ftype">text</td></tr>
+        <tr><td class="fname">goal</td><td class="ftype">text</td></tr>
+        <tr><td class="fname">created_at</td><td class="ftype">datetime</td></tr>
+      </table>
+    </div>
+    <div class="table-card">
+      <div class="t-head">plans</div>
+      <table>
+        <tr><td class="fname"><span class="pk">id</span></td><td class="ftype">PK</td></tr>
+        <tr><td class="fname"><span class="fk">trainee_id</span></td><td class="ftype">FK → trainees</td></tr>
+        <tr><td class="fname">difficulty</td><td class="ftype">text</td></tr>
+        <tr><td class="fname">duration_weeks</td><td class="ftype">int</td></tr>
+        <tr><td class="fname">plan_json</td><td class="ftype">json</td></tr>
+        <tr><td class="fname">status</td><td class="ftype">active/completed/archived</td></tr>
+        <tr><td class="fname">created_at, updated_at</td><td class="ftype">datetime</td></tr>
+      </table>
+    </div>
+    <div class="table-card">
+      <div class="t-head">plan_revisions</div>
+      <table>
+        <tr><td class="fname"><span class="pk">id</span></td><td class="ftype">PK</td></tr>
+        <tr><td class="fname"><span class="fk">plan_id</span></td><td class="ftype">FK → plans</td></tr>
+        <tr><td class="fname">revision_number</td><td class="ftype">int</td></tr>
+        <tr><td class="fname">change_description</td><td class="ftype">text</td></tr>
+        <tr><td class="fname">previous_plan_json</td><td class="ftype">json</td></tr>
+        <tr><td class="fname">new_plan_json</td><td class="ftype">json</td></tr>
+        <tr><td class="fname">triggered_by</td><td class="ftype">user_request/self_critique/validation_fix</td></tr>
+        <tr><td class="fname">created_at</td><td class="ftype">datetime</td></tr>
+      </table>
+    </div>
+    <div class="table-card">
+      <div class="t-head">progress_logs</div>
+      <table>
+        <tr><td class="fname"><span class="pk">id</span></td><td class="ftype">PK</td></tr>
+        <tr><td class="fname"><span class="fk">trainee_id</span></td><td class="ftype">FK → trainees</td></tr>
+        <tr><td class="fname"><span class="fk">plan_id</span></td><td class="ftype">FK → plans</td></tr>
+        <tr><td class="fname">log_date</td><td class="ftype">date</td></tr>
+        <tr><td class="fname">weight_kg</td><td class="ftype">float</td></tr>
+        <tr><td class="fname">completed_workouts</td><td class="ftype">json</td></tr>
+        <tr><td class="fname">notes</td><td class="ftype">text</td></tr>
+      </table>
+    </div>
+    <div class="table-card">
+      <div class="t-head">coach_memory</div>
+      <table>
+        <tr><td class="fname"><span class="pk">id</span></td><td class="ftype">PK</td></tr>
+        <tr><td class="fname"><span class="fk">trainee_id</span></td><td class="ftype">FK → trainees, unique</td></tr>
+        <tr><td class="fname">summary_text</td><td class="ftype">text — rolling</td></tr>
+        <tr><td class="fname">session_count_since_truncation</td><td class="ftype">int</td></tr>
+        <tr><td class="fname">last_updated</td><td class="ftype">datetime</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="note">One <b>trainees</b> row → many <b>plans</b> → many <b>plan_revisions</b> per plan. <b>progress_logs</b> and <b>coach_memory</b> both key off trainee, not plan — memory persists across plans, not just within one.</div>
+
+  <div class="sub" style="margin-top:36px;">
+    <h3>Files</h3>
+    <div class="fgroup c-amber">
+      <div class="fg-head"><span class="fg-dot"></span><h4>db/</h4></div>
+      <div class="fcard"><div class="fpath">models.py</div><div class="fdesc">Model classes mirroring the five tables.</div></div>
+      <div class="fcard"><div class="fpath">schema.sql</div><div class="fdesc">Raw CREATE TABLE statements, run by scripts/init_db.py.</div></div>
+      <div class="fcard"><div class="fpath">crud.py</div><div class="fdesc">Read/write functions used by agents: get_trainee, save_plan, log_revision, update_memory, log_progress.</div></div>
+      <div class="fcard"><div class="fpath">connection.py</div><div class="fdesc">SQLite connection/session management, path from config/settings.py.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="panel" id="panel-wiring">
+  <h2 class="panel-title">deepagents wiring</h2>
+  <p class="panel-intro">Using the framework's primitives beyond plain tool-calling — planning, shared filesystem, subagents, custom long-term memory, and skills.</p>
+
+  <div class="wiring-grid">
+    <div class="wiring-row">
+      <div class="w-key">planning / todo</div>
+      <div class="w-val">Coach tracks multi-step turns explicitly (check identity → load profile → call Retriever → call Designer → validate → respond → update memory). Also powers the interim status updates to the trainee.</div>
+    </div>
+    <div class="wiring-row">
+      <div class="w-key">virtual filesystem</div>
+      <div class="w-val">Session-scoped state passing. Retriever writes chunks to file, Designer reads it and writes plan.md/plan.json, Coach reads plan.md to reply.<span class="w-sub">This is short-term memory — resets each session.</span></div>
+    </div>
+    <div class="wiring-row">
+      <div class="w-key">subagents</div>
+      <div class="w-val">Retriever and Program Designer are callable subagent tools from Coach. Retriever is also callable from Designer.</div>
+    </div>
+    <div class="wiring-row">
+      <div class="w-key">long-term memory store</div>
+      <div class="w-val">Custom SQLite-backed store, replacing deepagents' default in-memory backend — reads/writes coach_memory and trainees at session start/end.</div>
+    </div>
+  </div>
+
+  <div class="sub" style="margin-top:36px;">
+    <h3>Skill files, by owning agent</h3>
+    <div class="skill-list">
+      <div class="skill-chip coach"><div class="s-file">coach / trainee-intake.md</div><div class="s-desc">New trainee onboarding script.</div></div>
+      <div class="skill-chip retriever"><div class="s-file">retriever / retrieval-coverage-loop.md</div><div class="s-desc">Accumulate-and-expand retrieval procedure.</div></div>
+      <div class="skill-chip designer"><div class="s-file">designer / plan-structural-validation.md</div><div class="s-desc">Deterministic rule checks.</div></div>
+      <div class="skill-chip designer"><div class="s-file">designer / plan-revision.md</div><div class="s-desc">Patch-vs-rebuild revision logic.</div></div>
+    </div>
+    <div class="note">Each skill lives inside the agent folder that owns it — no flat top-level skills directory — mirroring how deepagents subagents actually declare their own skill sets.</div>
+  </div>
+
+  <div class="sub" style="margin-top:36px;">
+    <h3>Files</h3>
+    <div class="fgroup c-blue">
+      <div class="fg-head"><span class="fg-dot"></span><h4>orchestration/</h4></div>
+      <div class="fcard"><div class="fpath">deepagent_setup.py</div><div class="fdesc">The composition root — instantiates Coach as the main deepagents agent, registers Retriever and Designer as subagents with their own prompts/skills, wires the SQLite long-term memory backend and Qdrant client, exposes build_agent() used by the Streamlit app.</div></div>
+      <div class="fcard"><div class="fpath">llm/client.py</div><div class="fdesc">Abstraction over the LLM backend (vLLM-served open model vs. Claude API) shared by all three agents.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="panel" id="panel-data">
+  <h2 class="panel-title">Data &amp; embedding pipeline</h2>
+  <p class="panel-intro">The 600K+ Fitness Exercise &amp; Workout Program dataset (Kaggle): 605,033 exercise entries plus 2,598 program summaries with goal/nutrition/difficulty narrative text. Not pre-chunked or pre-embedded — chunking and embedding both happen in this pipeline.</p>
+
+  <div class="pipe">
+    <div class="pipe-step">
+      <div class="p-file">scripts/download_dataset.py</div>
+      <div class="p-title">Download</div>
+      <div class="p-desc">kaggle CLI wrapper, unzips into data/raw/, verifies both CSVs present.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="p-file">scripts/inspect_schema.py</div>
+      <div class="p-title">Inspect</div>
+      <div class="p-desc">Columns, dtypes, null counts, sample rows → data/schema/data_dictionary.md.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="p-file">scripts/chunk_data.py</div>
+      <div class="p-title">Chunk</div>
+      <div class="p-desc">Row-level chunks for exercises, field-grouped narrative chunks for program summaries → JSONL.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="p-file">scripts/embed_and_index.py</div>
+      <div class="p-title">Embed &amp; index</div>
+      <div class="p-desc">Embeddings computed, upserted into Qdrant with metadata as payload.</div>
+    </div>
+    <div class="pipe-step">
+      <div class="p-file">scripts/init_db.py</div>
+      <div class="p-title">Init trainee DB</div>
+      <div class="p-desc">Creates the five SQLite tables.</div>
+    </div>
+  </div>
+
+  <div class="sub" style="margin-top:36px;">
+    <h3>Qdrant payload schema</h3>
+    <p class="sub-note">Metadata comes straight from the CSV columns, attached as payload rather than embedded into the vector — this is what the Retriever's slot-based filtering runs against.</p>
+    <table class="meta-table">
+      <tr><th>Payload field</th><th>Source</th><th>Used by</th></tr>
+      <tr><td class="mono">source_table</td><td>exercises vs. program_summary</td><td>Retriever routes queries to the right sub-corpus</td></tr>
+      <tr><td class="mono">goal</td><td>program_summary text, extracted</td><td>Slot filter — fat loss, hypertrophy, strength, etc.</td></tr>
+      <tr><td class="mono">difficulty</td><td>program_summary column</td><td>Slot filter + Designer's structural validation</td></tr>
+      <tr><td class="mono">equipment</td><td>exercise-level column</td><td>Slot filter + Designer's equipment-match check</td></tr>
+      <tr><td class="mono">muscle_group</td><td>exercise-level column</td><td>Slot filter for exercise substitutions</td></tr>
+      <tr><td class="mono">duration_weeks</td><td>program_summary column</td><td>Slot filter for program length</td></tr>
+      <tr><td class="mono">chunk_id / text</td><td>generated at chunk time</td><td>Retrieved content itself</td></tr>
+    </table>
+  </div>
+
+  <div class="sub" style="margin-top:36px;">
+    <h3>Files</h3>
+    <div class="fgroup c-blue">
+      <div class="fg-head"><span class="fg-dot"></span><h4>vectorstore/</h4></div>
+      <div class="fcard"><div class="fpath">qdrant_client.py</div><div class="fdesc">Thin wrapper — connect, search with payload filters, upsert. Used by both indexing and Retriever at query time.</div></div>
+      <div class="fcard"><div class="fpath">schema.py</div><div class="fdesc">Collection config: vector size/distance metric, payload schema above.</div></div>
+      <div class="fcard"><div class="fpath">embeddings.py</div><div class="fdesc">Embedding model wrapper, shared by offline indexing and online query path so both embed identically.</div></div>
+    </div>
+    <div class="fgroup c-gray">
+      <div class="fg-head"><span class="fg-dot"></span><h4>data/</h4></div>
+      <div class="fcard"><div class="fpath">raw/</div><div class="fdesc">Downloaded CSVs — fitness_exercises.csv, program_summary.csv. Gitignored.</div></div>
+      <div class="fcard"><div class="fpath">processed/</div><div class="fdesc">Chunked JSONL, ready for embedding. Gitignored.</div></div>
+      <div class="fcard"><div class="fpath">schema/data_dictionary.md</div><div class="fdesc">Generated documentation of real columns — output of inspect_schema.py, not hand-written.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="panel" id="panel-tree">
+  <h2 class="panel-title">Project tree</h2>
+  <p class="panel-intro">Full repo structure — every branch here is documented in its own tab above.</p>
+
+<div class="tree">fitness-coach-rag/
+├── README.md
+├── pyproject.toml
+├── .env.example
+├── .gitignore
+├── Makefile
+├── docker/
+│   ├── Dockerfile
+│   └── docker-compose.yml
+├── .github/workflows/
+│   └── tests.yml
+│
+├── config/
+│   └── settings.py
+│
+├── data/
+│   ├── raw/                        <span class="cmt"># gitignored</span>
+│   ├── processed/                  <span class="cmt"># gitignored</span>
+│   └── schema/
+│       └── data_dictionary.md
+│
+├── scripts/
+│   ├── download_dataset.py
+│   ├── inspect_schema.py
+│   ├── chunk_data.py
+│   ├── embed_and_index.py
+│   └── init_db.py
+│
+├── src/fitness_coach/
+│   ├── __init__.py
+│   │
+│   ├── agents/
+│   │   ├── coach/
+│   │   │   ├── agent.py
+│   │   │   ├── identity.py
+│   │   │   ├── memory.py
+│   │   │   ├── routing.py
+│   │   │   ├── prompts/
+│   │   │   │   ├── system_prompt.md
+│   │   │   │   ├── intake_prompts.md
+│   │   │   │   └── routing_prompts.md
+│   │   │   └── skills/
+│   │   │       └── trainee-intake.md
+│   │   │
+│   │   ├── retriever/
+│   │   │   ├── agent.py
+│   │   │   ├── coverage.py
+│   │   │   ├── query_rewrite.py
+│   │   │   ├── prompts/
+│   │   │   │   ├── system_prompt.md
+│   │   │   │   ├── query_decomposition.md
+│   │   │   │   └── coverage_check.md
+│   │   │   └── skills/
+│   │   │       └── retrieval-coverage-loop.md
+│   │   │
+│   │   └── designer/
+│   │       ├── agent.py
+│   │       ├── synthesis.py
+│   │       ├── validation.py
+│   │       ├── self_critique.py
+│   │       ├── prompts/
+│   │       │   ├── system_prompt.md
+│   │       │   ├── synthesis_prompts.md
+│   │       │   ├── self_critique_prompts.md
+│   │       │   └── revision_prompts.md
+│   │       └── skills/
+│   │           ├── plan-structural-validation.md
+│   │           └── plan-revision.md
+│   │
+│   ├── orchestration/
+│   │   └── deepagent_setup.py
+│   │
+│   ├── schemas/
+│   │   ├── plan_schema.py
+│   │   └── trainee_schema.py
+│   │
+│   ├── db/
+│   │   ├── models.py
+│   │   ├── schema.sql
+│   │   ├── crud.py
+│   │   └── connection.py
+│   │
+│   ├── vectorstore/
+│   │   ├── qdrant_client.py
+│   │   ├── schema.py
+│   │   └── embeddings.py
+│   │
+│   ├── memory/
+│   │   └── sqlite_memory_backend.py
+│   │
+│   ├── llm/
+│   │   └── client.py
+│   │
+│   └── utils/
+│       ├── logging.py
+│       └── prompt_loader.py
+│
+├── app/
+│   ├── streamlit_app.py
+│   └── components/
+│       └── chat_ui.py
+│
+├── notebooks/
+│   ├── 01_dataset_exploration.ipynb
+│   ├── 02_chunking_experiments.ipynb
+│   └── 03_retrieval_eval.ipynb
+│
+├── tests/
+│   ├── test_retriever.py
+│   ├── test_designer.py
+│   ├── test_coach.py
+│   └── test_memory_pipeline.py
+│
+└── docs/
+    └── system_reference.html       <span class="cmt"># this document</span>
+</div>
+
+  <div class="sub" style="margin-top:36px;">
+    <h3>Streamlit app</h3>
+    <div class="fgroup c-pink">
+      <div class="fg-head"><span class="fg-dot"></span><h4>app/</h4></div>
+      <div class="fcard"><div class="fpath">streamlit_app.py</div><div class="fdesc">Entrypoint — session state, calls orchestration.deepagent_setup.build_agent(), renders chat history, streams responses, handles identity/intake as the first interaction of a session.</div></div>
+      <div class="fcard"><div class="fpath">components/chat_ui.py</div><div class="fdesc">Reusable components: message bubbles, plan.json rendered as a formatted weekly table, progress charts from progress_logs.</div></div>
+    </div>
+  </div>
+
+  <div class="sub" style="margin-top:36px;">
+    <h3>Config, tests &amp; infra</h3>
+    <div class="fgroup c-gray">
+      <div class="fg-head"><span class="fg-dot"></span><h4>root-level</h4></div>
+      <div class="fcard"><div class="fpath">config/settings.py</div><div class="fdesc">Hardcoded config: paths via Path(__file__).parent, Qdrant collection name, chunk size defaults, Retriever's step ceiling, memory truncation thresholds, LLM model name.</div></div>
+      <div class="fcard"><div class="fpath">tests/*.py</div><div class="fdesc">Unit tests per agent, plus test_memory_pipeline.py for the summarize/merge/truncate logic in isolation.</div></div>
+      <div class="fcard"><div class="fpath">Makefile</div><div class="fdesc">make download-data, make chunk, make embed, make init-db, make run-app, make test.</div></div>
+      <div class="fcard"><div class="fpath">docker/docker-compose.yml</div><div class="fdesc">App service + Qdrant service.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="panel" id="panel-open">
+  <h2 class="panel-title">Open items</h2>
+  <p class="panel-intro">Decisions still deferred to build time.</p>
+  <div class="open-grid">
+    <div class="open-card blocking">
+      <div class="o-label">Blocks building</div>
+      <ul>
+        <li>Exact column names/dtypes — confirmed once inspect_schema.py runs against the real CSVs</li>
+        <li>Embedding model choice</li>
+        <li>LLM backend for the three agents — vLLM-served open model vs. Claude API</li>
+      </ul>
+    </div>
+    <div class="open-card safety">
+      <div class="o-label">Safety / judgment</div>
+      <ul>
+        <li>Injury/medical boundary — when Coach should say "see a doctor" instead of letting Designer quietly work around a symptom</li>
+        <li>Who can update injuries_limitations mid-conversation, and whether that needs a confirmation step</li>
+      </ul>
+    </div>
+    <div class="open-card">
+      <div class="o-label">Deferred</div>
+      <ul>
+        <li>Low-confidence Retriever result: best-effort plan with a flag, or Coach asks a clarifying question</li>
+        <li>Eval strategy before trusting the loop with real trainees</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+</div>
+<script>
+  document.getElementById('panels').innerHTML = document.getElementById('panel-store').innerHTML;
+</script>
+
+</body>
+</html>

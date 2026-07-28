@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fitness Coach — Multi-Agent RAG Architecture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F5F1;
+    --paper-raised:#FFFFFF;
+    --ink:#1F1E1B;
+    --muted:#6B6A63;
+    --faint:#9A988E;
+    --line:#DAD8CE;
+    --line-strong:#B8B6AA;
+
+    --teal:#0F6E56;      --teal-fill:#E1F5EE;   --teal-mid:#5DCAA5;
+    --coral:#993C1D;     --coral-fill:#FAECE7;  --coral-mid:#D85A30;
+    --purple:#3C3489;    --purple-fill:#EEEDFE; --purple-mid:#7F77DD;
+    --amber:#854F0B;     --amber-fill:#FAEEDA;  --amber-mid:#EF9F27;
+    --blue:#0C447C;      --blue-fill:#E6F1FB;   --blue-mid:#378ADD;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    font-size:16px;
+    line-height:1.65;
+  }
+  ::selection{background:var(--purple-mid); color:#fff;}
+
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  h1,h2,h3{font-family:'Space Grotesk',sans-serif; font-weight:500; margin:0;}
+
+  /* ---------- shell ---------- */
+  .wrap{max-width:980px; margin:0 auto; padding:0 32px;}
+
+  header.hero{
+    border-bottom:1px solid var(--line);
+    padding:72px 0 40px;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:18px;
+    display:flex; gap:10px; align-items:center;
+  }
+  .eyebrow::before{content:""; width:22px; height:1px; background:var(--line-strong); display:inline-block;}
+  h1.title{font-size:40px; line-height:1.15; max-width:680px;}
+  .subtitle{margin-top:16px; color:var(--muted); max-width:560px; font-size:16px;}
+
+  .meta-row{
+    display:flex; gap:28px; margin-top:36px; flex-wrap:wrap;
+  }
+  .meta-item{font-size:13px; color:var(--muted);}
+  .meta-item b{display:block; font-family:'IBM Plex Mono',monospace; color:var(--ink); font-size:14px; margin-top:2px;}
+
+  /* ---------- nav ---------- */
+  nav.toc{
+    position:sticky; top:0; z-index:10;
+    background:rgba(246,245,241,0.92);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+  }
+  nav.toc .wrap{display:flex; gap:0; overflow-x:auto; padding:0 32px;}
+  nav.toc a{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    color:var(--muted);
+    text-decoration:none;
+    padding:14px 16px;
+    white-space:nowrap;
+    border-bottom:2px solid transparent;
+  }
+  nav.toc a:hover{color:var(--ink); border-bottom-color:var(--line-strong);}
+
+  /* ---------- sections ---------- */
+  section{padding:64px 0; border-bottom:1px solid var(--line);}
+  section:last-of-type{border-bottom:none;}
+
+  .section-num{
+    font-family:'IBM Plex Mono',monospace; font-size:13px; color:var(--faint); margin-bottom:10px;
+  }
+  h2.section-title{font-size:26px; margin-bottom:14px;}
+  .section-intro{color:var(--muted); max-width:620px; margin-bottom:40px;}
+
+  /* ---------- system overview diagram ---------- */
+  .sys-diagram{
+    display:flex; flex-direction:column; align-items:center; gap:0;
+    margin:20px 0 8px;
+  }
+  .sys-row{display:flex; gap:16px; justify-content:center; flex-wrap:wrap;}
+  .sys-node{
+    border:1px solid var(--line-strong);
+    background:var(--paper-raised);
+    border-radius:10px;
+    padding:16px 20px;
+    min-width:150px;
+    text-align:center;
+  }
+  .sys-node .n-title{font-family:'Space Grotesk',sans-serif; font-size:14px; font-weight:500;}
+  .sys-node .n-sub{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--muted); margin-top:4px;}
+  .sys-node.coach{border-color:var(--purple-mid); background:var(--purple-fill);}
+  .sys-node.coach .n-title{color:var(--purple);}
+  .sys-node.retriever{border-color:var(--teal-mid); background:var(--teal-fill);}
+  .sys-node.retriever .n-title{color:var(--teal);}
+  .sys-node.designer{border-color:var(--coral-mid); background:var(--coral-fill);}
+  .sys-node.designer .n-title{color:var(--coral);}
+  .sys-node.db{border-color:var(--amber-mid); background:var(--amber-fill);}
+  .sys-node.db .n-title{color:var(--amber);}
+  .sys-node.qdrant{border-color:var(--blue-mid); background:var(--blue-fill);}
+  .sys-node.qdrant .n-title{color:var(--blue);}
+
+  .connector{width:1px; height:32px; background:var(--line-strong); margin:0 auto;}
+  .connector-h{height:1px; background:var(--line-strong); flex:1; margin-top:0;}
+
+  /* ---------- agent cards ---------- */
+  .agent-card{
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:var(--paper-raised);
+    padding:32px;
+    margin-bottom:24px;
+  }
+  .agent-card .tag{
+    display:inline-block;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    padding:4px 10px;
+    border-radius:20px;
+    margin-bottom:14px;
+  }
+  .tag.retriever{background:var(--teal-fill); color:var(--teal);}
+  .tag.designer{background:var(--coral-fill); color:var(--coral);}
+  .tag.coach{background:var(--purple-fill); color:var(--purple);}
+
+  .agent-card h3{font-size:20px; margin-bottom:10px;}
+  .agent-card p.desc{color:var(--muted); margin-bottom:20px; max-width:620px;}
+
+  .step-list{list-style:none; margin:0; padding:0; counter-reset:step;}
+  .step-list li{
+    counter-increment:step;
+    display:flex; gap:14px;
+    padding:10px 0;
+    border-top:1px solid var(--line);
+    font-size:14px;
+  }
+  .step-list li:first-child{border-top:none;}
+  .step-list li::before{
+    content:counter(step);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--muted);
+    background:var(--paper);
+    border:1px solid var(--line-strong);
+    border-radius:50%;
+    width:20px; height:20px;
+    flex:none;
+    display:flex; align-items:center; justify-content:center;
+    margin-top:1px;
+  }
+  .step-list b{font-weight:600;}
+  .step-list .step-note{color:var(--muted); display:block; font-size:13px; margin-top:2px;}
+
+  .loop-caps{
+    display:flex; gap:24px; flex-wrap:wrap;
+    margin-top:20px; padding-top:20px; border-top:1px dashed var(--line-strong);
+  }
+  .loop-cap{font-size:13px;}
+  .loop-cap .k{font-family:'IBM Plex Mono',monospace; color:var(--muted); display:block; font-size:11px; text-transform:uppercase; letter-spacing:0.04em;}
+  .loop-cap .v{margin-top:2px;}
+
+  /* ---------- schema tables ---------- */
+  .schema-grid{
+    display:grid; grid-template-columns:repeat(auto-fit, minmax(260px,1fr));
+    gap:20px;
+  }
+  .table-card{
+    border:1px solid var(--line);
+    border-radius:10px;
+    overflow:hidden;
+    background:var(--paper-raised);
+  }
+  .table-card .t-head{
+    background:var(--amber-fill);
+    color:var(--amber);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px;
+    font-weight:500;
+    padding:10px 16px;
+    border-bottom:1px solid var(--line);
+  }
+  .table-card table{width:100%; border-collapse:collapse; font-size:13px;}
+  .table-card td{padding:7px 16px; border-top:1px solid var(--line);}
+  .table-card tr:first-child td{border-top:none;}
+  .table-card td.fname{font-family:'IBM Plex Mono',monospace; color:var(--ink);}
+  .table-card td.ftype{color:var(--faint); text-align:right; font-family:'IBM Plex Mono',monospace; font-size:12px;}
+  .pk{color:var(--coral); font-weight:600;}
+  .fk{color:var(--blue); font-weight:600;}
+
+  .rel-note{
+    margin-top:24px; padding:16px 20px;
+    border-left:2px solid var(--line-strong);
+    color:var(--muted); font-size:14px;
+  }
+  .rel-note b{color:var(--ink);}
+
+  /* ---------- deepagents wiring ---------- */
+  .wiring-grid{display:grid; grid-template-columns:1fr 1.4fr; gap:0; border:1px solid var(--line); border-radius:10px; overflow:hidden;}
+  .wiring-row{display:contents;}
+  .wiring-row .w-key, .wiring-row .w-val{padding:16px 20px; border-top:1px solid var(--line);}
+  .wiring-row:first-child .w-key, .wiring-row:first-child .w-val{border-top:none;}
+  .w-key{font-family:'IBM Plex Mono',monospace; font-size:13px; color:var(--blue); background:var(--blue-fill); display:flex; align-items:center;}
+  .w-val{font-size:14px; background:var(--paper-raised); color:var(--ink);}
+  .w-val .w-sub{display:block; color:var(--muted); font-size:13px; margin-top:3px;}
+
+  .skill-list{display:grid; grid-template-columns:repeat(auto-fit, minmax(240px,1fr)); gap:14px; margin-top:20px;}
+  .skill-chip{
+    border:1px solid var(--line); border-radius:10px; padding:16px;
+    background:var(--paper-raised);
+  }
+  .skill-chip .s-file{font-family:'IBM Plex Mono',monospace; font-size:13px; color:var(--purple); margin-bottom:6px;}
+  .skill-chip .s-desc{font-size:13px; color:var(--muted);}
+
+  /* ---------- memory pipeline ---------- */
+  .mem-flow{display:flex; align-items:center; gap:0; flex-wrap:wrap; margin-top:24px;}
+  .mem-step{
+    border:1px solid var(--line-strong); border-radius:10px;
+    background:var(--paper-raised);
+    padding:14px 16px; min-width:150px; flex:1;
+    font-size:13px;
+  }
+  .mem-step .m-title{font-family:'Space Grotesk',sans-serif; font-weight:500; font-size:14px; margin-bottom:4px;}
+  .mem-step .m-sub{color:var(--muted); font-size:12px;}
+  .mem-arrow{color:var(--faint); padding:0 10px; font-size:16px; flex:none;}
+
+  /* ---------- open items ---------- */
+  .open-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(280px,1fr)); gap:20px;}
+  .open-card{border:1px solid var(--line); border-radius:10px; padding:20px; background:var(--paper-raised);}
+  .open-card .o-label{font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); margin-bottom:8px;}
+  .open-card.blocking{border-left:3px solid var(--coral-mid);}
+  .open-card.safety{border-left:3px solid var(--amber-mid);}
+  .open-card.deferred{border-left:3px solid var(--blue-mid);}
+  .open-card ul{margin:0; padding-left:18px; font-size:14px; color:var(--ink);}
+  .open-card li{margin-bottom:6px;}
+
+  footer{padding:40px 0 80px; color:var(--faint); font-size:12px; font-family:'IBM Plex Mono',monospace;}
+
+  @media (max-width:640px){
+    h1.title{font-size:30px;}
+    .wiring-grid{grid-template-columns:1fr;}
+    .w-key{background:var(--paper); border-bottom:1px dashed var(--line);}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">System spec · v0.1 draft</div>
+    <h1 class="title">Fitness Coach<br>Multi-agent RAG architecture</h1>
+    <p class="subtitle">Three deepagents-native agents — Retriever, Program Designer, Coach — backed by Qdrant and a SQLite trainee database, built for structured plan design and ongoing coaching conversation.</p>
+    <div class="meta-row">
+      <div class="meta-item">Agents<b>3</b></div>
+      <div class="meta-item">Vector store<b>Qdrant</b></div>
+      <div class="meta-item">Database<b>SQLite · 5 tables</b></div>
+      <div class="meta-item">Framework<b>deepagents</b></div>
+      <div class="meta-item">Skill files<b>4</b></div>
+    </div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap">
+    <a href="#overview">00 · Overview</a>
+    <a href="#retriever">01 · Retriever</a>
+    <a href="#designer">02 · Program designer</a>
+    <a href="#coach">03 · Coach</a>
+    <a href="#database">04 · Database</a>
+    <a href="#wiring">05 · deepagents wiring</a>
+    <a href="#memory">06 · Long-term memory</a>
+    <a href="#open">07 · Open items</a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <!-- 00 OVERVIEW -->
+  <section id="overview">
+    <div class="section-num">00</div>
+    <h2 class="section-title">System overview</h2>
+    <p class="section-intro">Coach is the trainee-facing main agent. It owns the conversation, identity resolution, and memory, and delegates to Retriever and Program Designer as subagents. Both subagents can call Retriever directly against Qdrant; Program Designer is the only agent that writes plans, backed by the SQLite trainee database.</p>
+
+    <div class="sys-diagram">
+      <div class="sys-row">
+        <div class="sys-node coach">
+          <div class="n-title">Coach agent</div>
+          <div class="n-sub">main agent</div>
+        </div>
+      </div>
+      <div class="connector"></div>
+      <div class="sys-row">
+        <div class="sys-node retriever">
+          <div class="n-title">Retriever agent</div>
+          <div class="n-sub">subagent</div>
+        </div>
+        <div class="sys-node designer">
+          <div class="n-title">Program designer</div>
+          <div class="n-sub">subagent</div>
+        </div>
+      </div>
+      <div class="connector"></div>
+      <div class="sys-row">
+        <div class="sys-node qdrant">
+          <div class="n-title">Qdrant</div>
+          <div class="n-sub">workout corpus</div>
+        </div>
+        <div class="sys-node db">
+          <div class="n-title">SQLite</div>
+          <div class="n-sub">trainee database</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 01 RETRIEVER -->
+  <section id="retriever">
+    <div class="section-num">01</div>
+    <span class="tag retriever">subagent</span>
+    <h2 class="section-title">Retriever agent</h2>
+    <p class="section-intro">Callable by both Coach and Program Designer. Doesn't reason about fitness — its only job is accumulating enough grounded context to satisfy an information need, then handing back chunks with a confidence flag.</p>
+
+    <div class="agent-card">
+      <h3>Accumulate-and-expand retrieval loop</h3>
+      <p class="desc">Not a single retry loop — it tracks coverage of the overall information need across multiple sub-queries, expanding when gaps remain even after some sub-queries succeed.</p>
+      <ol class="step-list">
+        <li><b>Decompose the need</b><span class="step-note">Slot-based extraction first (goal, equipment, difficulty, duration) — falls back to free-form LLM coverage judgment when the query doesn't map to slots cleanly.</span></li>
+        <li><b>Pick next unaddressed need, query Qdrant</b><span class="step-note">Chunk count is adaptive to query specificity, not a fixed top-k.</span></li>
+        <li><b>Validate against that specific need</b><span class="step-note">Relevant and sufficient, or noise?</span></li>
+        <li><b>Sufficient → save to accumulated pool, mark need satisfied</b></li>
+        <li><b>Insufficient → rewrite query, retry same need</b></li>
+        <li><b>Re-check overall coverage</b><span class="step-note">Given everything accumulated, is the original query now answerable? If not, formulate a new sub-query for the gap.</span></li>
+        <li><b>Self-assess or hit ceiling → return</b><span class="step-note">Model can surrender early if it believes coverage is sufficient; hard ceiling underneath as a safety net.</span></li>
+      </ol>
+      <div class="loop-caps">
+        <div class="loop-cap"><span class="k">Hard ceiling</span><span class="v">5–6 total retrieval steps per invocation</span></div>
+        <div class="loop-cap"><span class="k">Callers</span><span class="v">Coach (open-ended questions) + Program Designer (structured plan queries)</span></div>
+        <div class="loop-cap"><span class="k">Output</span><span class="v">Accumulated chunks + confidence flag</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 DESIGNER -->
+  <section id="designer">
+    <div class="section-num">02</div>
+    <span class="tag designer">subagent</span>
+    <h2 class="section-title">Program designer agent</h2>
+    <p class="section-intro">Turns a goal plus retrieved chunks into a strict JSON plan. Synthesizes across multiple retrieved programs rather than selecting one — which means it needs a coherence guard.</p>
+
+    <div class="agent-card">
+      <h3>New plan vs. revision</h3>
+      <ol class="step-list">
+        <li><b>Classify request</b><span class="step-note">New plan or revision to an existing one.</span></li>
+        <li><b>New plan →</b> call Retriever, then synthesize a draft by combining chunks across multiple retrieved programs.</li>
+        <li><b>Revision →</b> check plan.md / context first for what's needed (e.g. a knee-safe substitute); only call Retriever if that comes up empty.</li>
+        <li><b>Structural validation</b><span class="step-note">Rule-based, deterministic: equipment matches trainee's available equipment, rest days present, difficulty progression makes sense.</span></li>
+        <li><b>Self-critique pass</b><span class="step-note">LLM check for coherence, goal fit, and injury constraints — only triggered when synthesizing from multiple sources, since that's where conflicting programs can get mixed incoherently.</span></li>
+        <li><b>Write plan.json</b><span class="step-note">Structured output + short change summary back to Coach.</span></li>
+      </ol>
+      <div class="loop-caps">
+        <div class="loop-cap"><span class="k">Output schema</span><span class="v">goal, difficulty, duration_weeks, equipment_available, weeks[days[exercises[name, sets, reps, rest_seconds, equipment, muscle_group, notes]]]</span></div>
+        <div class="loop-cap"><span class="k">Revision guard</span><span class="v">Injury/limitation flags read from trainees table, not duplicated per plan</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 COACH -->
+  <section id="coach">
+    <div class="section-num">03</div>
+    <span class="tag coach">main agent</span>
+    <h2 class="section-title">Coach agent</h2>
+    <p class="section-intro">Owns the conversation, identity, routing, and long-term memory. Uses Designer as a tool rather than a hardcoded classifier — Coach reasons out whether a message needs Designer or can be handled directly.</p>
+
+    <div class="agent-card">
+      <h3>Session start — identity resolution</h3>
+      <ol class="step-list">
+        <li><b>Check identity</b><span class="step-note">Name + secondary ID (phone / email / trainee_id).</span></li>
+        <li><b>Match → returning trainee</b><span class="step-note">Load trainees profile, latest coach_memory summary, active plan. Name match without secondary ID match is treated as a mismatch worth confirming, not silently loaded.</span></li>
+        <li><b>No match → new trainee</b><span class="step-note">Run intake flow: name, contact, goals, equipment, injuries/limitations → write first trainees row.</span></li>
+        <li><b>Check progress_logs for missed-session patterns</b><span class="step-note">If flagged, Coach opens the conversation proactively instead of waiting to be asked.</span></li>
+      </ol>
+    </div>
+
+    <div class="agent-card">
+      <h3>Per-message loop</h3>
+      <ol class="step-list">
+        <li><b>Load context</b><span class="step-note">Profile, memory, active plan.</span></li>
+        <li><b>Reason: handle directly or route to Designer</b><span class="step-note">Direct: general coaching / knowledge questions, Coach may call Retriever itself. Routed: anything touching the plan itself.</span></li>
+        <li><b>Interim acknowledgment before delegating</b><span class="step-note">Sent before a multi-step Retriever/Designer chain runs, so the trainee isn't staring at silence for 15–20s.</span></li>
+        <li><b>Respond</b><span class="step-note">Relays Designer's structured output in trainee-facing language, or answers directly.</span></li>
+        <li><b>Update memory</b><span class="step-note">See long-term memory pipeline below. Also writes to progress_logs if the message contained loggable info.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 04 DATABASE -->
+  <section id="database">
+    <div class="section-num">04</div>
+    <h2 class="section-title">Trainee database</h2>
+    <p class="section-intro">SQLite. Five tables — profile, plans, a full revision audit trail, progress tracking, and rolling coach memory.</p>
+
+    <div class="schema-grid">
+      <div class="table-card">
+        <div class="t-head">trainees</div>
+        <table>
+          <tr><td class="fname"><span class="pk">id</span></td><td class="ftype">PK</td></tr>
+          <tr><td class="fname">name</td><td class="ftype">text</td></tr>
+          <tr><td class="fname">secondary_id</td><td class="ftype">text</td></tr>
+          <tr><td class="fname">age, gender</td><td class="ftype">int, text</td></tr>
+          <tr><td class="fname">fitness_level</td><td class="ftype">text</td></tr>
+          <tr><td class="fname">equipment_available</td><td class="ftype">text/json</td></tr>
+          <tr><td class="fname">injuries_limitations</td><td class="ftype">text</td></tr>
+          <tr><td class="fname">goal</td><td class="ftype">text</td></tr>
+          <tr><td class="fname">created_at</td><td class="ftype">datetime</td></tr>
+        </table>
+      </div>
+
+      <div class="table-card">
+        <div class="t-head">plans</div>
+        <table>
+          <tr><td class="fname"><span class="pk">id</span></td><td class="ftype">PK</td></tr>
+          <tr><td class="fname"><span class="fk">trainee_id</span></td><td class="ftype">FK → trainees</td></tr>
+          <tr><td class="fname">difficulty</td><td class="ftype">text</td></tr>
+          <tr><td class="fname">duration_weeks</td><td class="ftype">int</td></tr>
+          <tr><td class="fname">plan_json</td><td class="ftype">json</td></tr>
+          <tr><td class="fname">status</td><td class="ftype">active / completed / archived</td></tr>
+          <tr><td class="fname">created_at, updated_at</td><td class="ftype">datetime</td></tr>
+        </table>
+      </div>
+
+      <div class="table-card">
+        <div class="t-head">plan_revisions</div>
+        <table>
+          <tr><td class="fname"><span class="pk">id</span></td><td class="ftype">PK</td></tr>
+          <tr><td class="fname"><span class="fk">plan_id</span></td><td class="ftype">FK → plans</td></tr>
+          <tr><td class="fname">revision_number</td><td class="ftype">int</td></tr>
+          <tr><td class="fname">change_description</td><td class="ftype">text</td></tr>
+          <tr><td class="fname">previous_plan_json</td><td class="ftype">json</td></tr>
+          <tr><td class="fname">new_plan_json</td><td class="ftype">json</td></tr>
+          <tr><td class="fname">triggered_by</td><td class="ftype">user_request / self_critique / validation_fix</td></tr>
+          <tr><td class="fname">created_at</td><td class="ftype">datetime</td></tr>
+        </table>
+      </div>
+
+      <div class="table-card">
+        <div class="t-head">progress_logs</div>
+        <table>
+          <tr><td class="fname"><span class="pk">id</span></td><td class="ftype">PK</td></tr>
+          <tr><td class="fname"><span class="fk">trainee_id</span></td><td class="ftype">FK → trainees</td></tr>
+          <tr><td class="fname"><span class="fk">plan_id</span></td><td class="ftype">FK → plans</td></tr>
+          <tr><td class="fname">log_date</td><td class="ftype">date</td></tr>
+          <tr><td class="fname">weight_kg</td><td class="ftype">float</td></tr>
+          <tr><td class="fname">completed_workouts</td><td class="ftype">json</td></tr>
+          <tr><td class="fname">notes</td><td class="ftype">text</td></tr>
+        </table>
+      </div>
+
+      <div class="table-card">
+        <div class="t-head">coach_memory</div>
+        <table>
+          <tr><td class="fname"><span class="pk">id</span></td><td class="ftype">PK</td></tr>
+          <tr><td class="fname"><span class="fk">trainee_id</span></td><td class="ftype">FK → trainees, unique</td></tr>
+          <tr><td class="fname">summary_text</td><td class="ftype">text — rolling, salience-truncated</td></tr>
+          <tr><td class="fname">session_count_since_truncation</td><td class="ftype">int</td></tr>
+          <tr><td class="fname">last_updated</td><td class="ftype">datetime</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="rel-note">One <b>trainees</b> row → many <b>plans</b> → many <b>plan_revisions</b> per plan. <b>progress_logs</b> and <b>coach_memory</b> both key off trainee, not plan — memory persists across plans, not just within one.</div>
+  </section>
+
+  <!-- 05 WIRING -->
+  <section id="wiring">
+    <div class="section-num">05</div>
+    <h2 class="section-title">deepagents wiring</h2>
+    <p class="section-intro">Using the framework's primitives beyond plain tool-calling — planning, shared filesystem, subagents, and skills.</p>
+
+    <div class="wiring-grid">
+      <div class="wiring-row">
+        <div class="w-key">planning / todo</div>
+        <div class="w-val">Coach tracks multi-step turns explicitly (check identity → load profile → call Retriever → call Designer → validate → respond → update memory). This is also what powers interim status updates to the trainee.</div>
+      </div>
+      <div class="wiring-row">
+        <div class="w-key">virtual filesystem</div>
+        <div class="w-val">Session-scoped state passing. Retriever writes chunks to file, Designer reads it and writes plan.md / plan.json, Coach reads plan.md to reply.<span class="w-sub">Short-term memory lives here — resets each session.</span></div>
+      </div>
+      <div class="wiring-row">
+        <div class="w-key">subagents</div>
+        <div class="w-val">Retriever and Program Designer are callable subagent tools from Coach (the main agent). Retriever is also callable from Designer.</div>
+      </div>
+      <div class="wiring-row">
+        <div class="w-key">long-term memory store</div>
+        <div class="w-val">Custom SQLite-backed store, replacing deepagents' default in-memory backend — reads/writes coach_memory and trainees at session start/end.</div>
+      </div>
+    </div>
+
+    <div class="skill-list">
+      <div class="skill-chip">
+        <div class="s-file">skills/retrieval-coverage-loop.md</div>
+        <div class="s-desc">Slot-based + free-form fallback coverage checking, accumulate-and-expand retry logic.</div>
+      </div>
+      <div class="skill-chip">
+        <div class="s-file">skills/plan-structural-validation.md</div>
+        <div class="s-desc">Deterministic rule checks: equipment match, rest days, difficulty progression.</div>
+      </div>
+      <div class="skill-chip">
+        <div class="s-file">skills/trainee-intake.md</div>
+        <div class="s-desc">New trainee onboarding script — what to collect, in what order, before Designer can build a first plan.</div>
+      </div>
+      <div class="skill-chip">
+        <div class="s-file">skills/plan-revision.md</div>
+        <div class="s-desc">Check-existing-first logic, when to patch vs. rebuild, when self-critique re-triggers.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 MEMORY -->
+  <section id="memory">
+    <div class="section-num">06</div>
+    <h2 class="section-title">Long-term memory pipeline</h2>
+    <p class="section-intro">Rolling, summarized, salience-truncated — one row per trainee in coach_memory, not one row per session. Persistent facts (injuries, goals, equipment) live in trainees separately; this is conversational and relational context only.</p>
+
+    <div class="mem-flow">
+      <div class="mem-step">
+        <div class="m-title">Summarize session</div>
+        <div class="m-sub">Condense this session's turns</div>
+      </div>
+      <div class="mem-arrow">→</div>
+      <div class="mem-step">
+        <div class="m-title">Merge</div>
+        <div class="m-sub">Combine with existing rolling summary</div>
+      </div>
+      <div class="mem-arrow">→</div>
+      <div class="mem-step">
+        <div class="m-title">Check trigger</div>
+        <div class="m-sub">Length threshold OR N sessions since last truncation</div>
+      </div>
+      <div class="mem-arrow">→</div>
+      <div class="mem-step">
+        <div class="m-title">Salience pass</div>
+        <div class="m-sub">LLM judges what's still relevant, drops the rest</div>
+      </div>
+      <div class="mem-arrow">→</div>
+      <div class="mem-step">
+        <div class="m-title">Write back</div>
+        <div class="m-sub">Overwrite the single coach_memory row</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 OPEN ITEMS -->
+  <section id="open">
+    <div class="section-num">07</div>
+    <h2 class="section-title">Open items</h2>
+    <p class="section-intro">Decisions deferred until the dataset is pulled and the build starts.</p>
+
+    <div class="open-grid">
+      <div class="open-card blocking">
+        <div class="o-label">Blocks building</div>
+        <ul>
+          <li>Qdrant payload schema — metadata fields the Retriever's slots need to filter on (goal, difficulty, equipment, muscle_group, duration)</li>
+          <li>Chunking strategy — depends on real dataset schema (program-level vs. exercise-level text)</li>
+          <li>LLM backend for the three agents — vLLM-served open model vs. Claude API</li>
+        </ul>
+      </div>
+      <div class="open-card safety">
+        <div class="o-label">Safety / judgment</div>
+        <ul>
+          <li>Injury/medical boundary — when Coach should say "see a doctor" instead of letting Designer quietly work around a symptom</li>
+          <li>Who can update injuries_limitations mid-conversation, and whether that needs a confirmation step</li>
+        </ul>
+      </div>
+      <div class="open-card deferred">
+        <div class="o-label">Deferred</div>
+        <ul>
+          <li>Low-confidence Retriever result: best-effort plan with a flag, or Coach asks a clarifying question instead</li>
+          <li>Interface — FastAPI + chat UI, matching other NTA pipelines</li>
+          <li>Eval strategy before trusting the loop with real trainees</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="wrap">fitness-coach-rag · architecture draft · generated in conversation, not yet implemented</div>
+</footer>
+
+</body>
+</html>

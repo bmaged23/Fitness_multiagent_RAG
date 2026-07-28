@@ -1,0 +1,28 @@
+# Secrets
+.env
+
+# Dataset (large files, downloaded via script)
+data/raw/
+data/processed/
+
+# Virtual environment
+Fitness_env/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Test artifacts
+plan_structure.json
+plan_week1.json
+conversation_history/
+
+# OS
+.DS_Store
