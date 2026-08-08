@@ -10,11 +10,40 @@ SCHEMA_PATH = Path(__file__).parent.parent / "db" / "schema.sql"
 
 EXPECTED_TABLES = {
     "trainees",
+    "trainee_auth",
     "plans",
     "plan_revisions",
     "progress_logs",
     "coach_memory",
 }
+
+
+_TRAINEE_NEW_COLS = [
+    ("email",        "TEXT"),
+    ("phone",        "TEXT"),
+    ("height_cm",    "REAL"),
+    ("weight_kg",    "REAL"),
+    ("body_fat_pct", "REAL"),
+    ("muscle_pct",   "REAL"),
+    ("images_dir",   "TEXT"),
+]
+
+_TRAINEE_DROP_COLS = {"username", "password_hash"}  # moved to trainee_auth
+
+
+def _migrate(conn: sqlite3.Connection) -> None:
+    """Migrate trainees table: add new profile columns, create trainee_auth if missing."""
+    existing = {
+        row[1]
+        for row in conn.execute("PRAGMA table_info(trainees)").fetchall()
+    }
+    for col_name, col_def in _TRAINEE_NEW_COLS:
+        if col_name not in existing:
+            conn.execute(f"ALTER TABLE trainees ADD COLUMN {col_name} {col_def}")
+            print(f"  migrated: added column trainees.{col_name}")
+    # Note: SQLite does not support DROP COLUMN in older versions.
+    # username/password_hash columns left in place if they exist from a prior schema
+    # version — they are ignored by all code (trainee_auth is authoritative).
 
 
 def init_db() -> None:
@@ -25,6 +54,7 @@ def init_db() -> None:
     with sqlite3.connect(SQLITE_DB_PATH) as conn:
         conn.execute("PRAGMA foreign_keys = ON")
         conn.executescript(sql)
+        _migrate(conn)
 
     print(f"Database initialised: {SQLITE_DB_PATH}")
 

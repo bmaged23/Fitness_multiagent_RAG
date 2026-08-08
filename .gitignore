@@ -24,5 +24,8 @@ plan_structure.json
 plan_week1.json
 conversation_history/
 
+# Claude Code internal files
+.claude/
+
 # OS
 .DS_Store

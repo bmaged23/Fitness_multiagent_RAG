@@ -26,7 +26,7 @@ Choose the best fit from the references and the trainee's profile:
 - "Hypertrophy (8–12 reps)" — for Bodybuilding, Muscle & Sculpting goals
 - "Endurance (15+ reps)" — for Athletics, general fitness goals
 
-**duration_weeks** — from the request, or default: Beginner 8 / Intermediate 12 / Advanced 16
+**duration_weeks** — from the request (minimum 6 weeks), or default: Beginner 8 / Intermediate 12 / Advanced 16
 
 **day_schedule** — exactly 7 strings (Mon–Sun), e.g.:
   ["Full Body A", "REST", "Full Body B", "REST", "Full Body C", "REST", "REST"]

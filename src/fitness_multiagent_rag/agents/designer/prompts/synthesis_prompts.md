@@ -37,7 +37,7 @@ Select from the retrieved exercise options above. Each exercise must:
 
 - `goal`: use the exact value from the dataset goal list that best matches the request
 - `difficulty`: match the trainee's fitness_level (Beginner / Novice / Intermediate / Advanced)
-- `duration_weeks`: from the request, or default — Beginner 8, Intermediate 12, Advanced 16
+- `duration_weeks`: from the request (minimum 6 weeks), or default — Beginner 8, Intermediate 12, Advanced 16
 - `equipment_available`: list the trainee's equipment categories
 
 ## Step 4 — Output Week 1 and Week 2 ONLY

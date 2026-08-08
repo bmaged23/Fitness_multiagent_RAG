@@ -1,23 +1,45 @@
 PRAGMA foreign_keys = ON;
 
 -- ---------------------------------------------------------------------------
--- trainees
--- Identity: name + secondary_id together are unique.
--- Name alone is never sufficient for identity resolution.
+-- trainees — profile data only, NO credentials.
+-- The LLM only ever reads/writes this table.
+-- Mandatory: name, email, phone, age, gender.
+-- Fitness profile (onboarding): goal, fitness_level, equipment_available.
+-- Optional body stats: height_cm, weight_kg, body_fat_pct, muscle_pct, images_dir.
 -- injuries_limitations lives here — never duplicated into plan_json.
+-- secondary_id kept for backward compatibility (set = email on new signups).
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS trainees (
     id                   INTEGER PRIMARY KEY AUTOINCREMENT,
-    name                 TEXT    NOT NULL,
-    secondary_id         TEXT    NOT NULL,          -- phone, email, or external trainee_id
+    name                 TEXT    NOT NULL,                 -- display name
+    secondary_id         TEXT    NOT NULL DEFAULT '',      -- legacy compat, set = email
+    email                TEXT,
+    phone                TEXT,
     age                  INTEGER,
-    gender               TEXT,
-    fitness_level        TEXT,                      -- beginner / intermediate / advanced
-    equipment_available  TEXT    NOT NULL DEFAULT '[]',  -- JSON array
+    gender               TEXT    CHECK (gender IN ('male', 'female') OR gender IS NULL),
+    fitness_level        TEXT,                             -- Beginner / Novice / Intermediate / Advanced
+    equipment_available  TEXT    NOT NULL DEFAULT '[]',    -- JSON array
     injuries_limitations TEXT,
     goal                 TEXT,
-    created_at           TEXT    NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now')),
-    UNIQUE (name, secondary_id)
+    height_cm            REAL,
+    weight_kg            REAL,
+    body_fat_pct         REAL,
+    muscle_pct           REAL,
+    images_dir           TEXT,                             -- path to physique images folder
+    created_at           TEXT    NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))
+);
+
+-- ---------------------------------------------------------------------------
+-- trainee_auth — credentials ONLY, isolated from all LLM-accessible tables.
+-- Only Python auth code (agents/coach/auth.py) reads this table.
+-- password_hash: scrypt — 'salt_hex:dk_hex', N=2^17, r=8, p=1.
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS trainee_auth (
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    trainee_id    INTEGER NOT NULL UNIQUE REFERENCES trainees(id) ON DELETE CASCADE,
+    username      TEXT    NOT NULL UNIQUE,
+    password_hash TEXT    NOT NULL,
+    created_at    TEXT    NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))
 );
 
 -- ---------------------------------------------------------------------------

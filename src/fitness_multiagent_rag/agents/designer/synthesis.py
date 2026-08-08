@@ -10,7 +10,7 @@ from pydantic import BaseModel
 from langchain_core.messages import SystemMessage, HumanMessage
 
 from fitness_multiagent_rag.llm.client import structured_chat
-from fitness_multiagent_rag.schemas.plan_schema import PlanSchema, Week, Day, Exercise
+from fitness_multiagent_rag.schemas.plan_schema import PlanSchema, ProgressionScheme, Week, Day, Exercise
 from fitness_multiagent_rag.schemas.program_structure import ProgramStructure
 from fitness_multiagent_rag.db.models import Trainee
 from fitness_multiagent_rag.utils.prompt_loader import load_agent_prompt
@@ -69,53 +69,111 @@ def _fmt_exercises(chunks: list[dict]) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Week expansion — programmatic progressive overload after 2-week LLM output
+# Progression helpers — computed deterministically, never from LLM output
+# ---------------------------------------------------------------------------
+
+def _default_deload_weeks(duration_weeks: int) -> list[int]:
+    """Every 4th week is a deload, plus the final week if it isn't already one."""
+    deloads = list(range(4, duration_weeks + 1, 4))
+    if duration_weeks not in deloads:
+        deloads.append(duration_weeks)
+    return sorted(deloads)
+
+
+def _default_weight_increment(difficulty: str) -> float:
+    return {"Beginner": 2.5, "Novice": 2.5, "Intermediate": 1.25, "Advanced": 0.5}.get(difficulty, 2.0)
+
+
+# ---------------------------------------------------------------------------
+# Week expansion — programmatic progressive overload with deload weeks
 # ---------------------------------------------------------------------------
 
 def _expand_to_duration(plan: PlanSchema) -> PlanSchema:
-    """Expand a 2-week template to plan.duration_weeks with linear progressive overload.
+    """Expand Week 1 to plan.duration_weeks applying progressive overload and deload weeks.
 
-    Every 2 weeks beyond the template: +1 rep per exercise.
-    After 4 weeks beyond the template: +1 set per exercise (capped at 5).
-    Rest days are preserved as-is.
+    Non-deload weeks:
+      - Reps: +1 every 2 training weeks within a block (max +4 per block)
+      - Sets: +1 after 5 training weeks in a block (capped at 5)
+      - Notes: cumulative weight target vs Week 1
+
+    Deload weeks (every 4th week + final week):
+      - Sets: 60% of Week 1 (min 1)
+      - Reps: Week 1 reps − 2 (min 1)
+      - Notes: "Deload — use ~60% of usual weight, prioritise form and recovery."
+      - Resets the block position counter for the next block
     """
-    template = plan.weeks[-1]  # use last generated week as rolling baseline
-    all_weeks: list[Week] = list(plan.weeks)
+    week1 = plan.weeks[0]
+    deload_week_set = set(plan.progression.deload_weeks)
+    weight_inc = plan.progression.weight_increment_kg_per_week
 
-    for w in range(len(all_weeks) + 1, plan.duration_weeks + 1):
-        delta = w - len(plan.weeks)          # weeks past the template
-        extra_reps = min(delta // 2, 4)      # +1 rep every 2 weeks, max +4
-        extra_sets = 1 if delta >= 4 else 0  # +1 set after 4 extra weeks
+    all_weeks: list[Week] = [week1]
+    block_pos = 1          # week 1 is position 1 in the first block
+    training_weeks = 1     # total non-deload weeks so far
 
-        new_days: list[Day] = []
-        for day in template.days:
-            if day.rest_day:
-                new_days.append(Day(day=day.day, focus=day.focus, rest_day=True, exercises=[]))
-            else:
-                new_days.append(Day(
-                    day=day.day,
-                    focus=day.focus,
-                    rest_day=False,
-                    exercises=[
-                        Exercise(
-                            name=ex.name,
-                            sets=min(ex.sets + extra_sets, 5),
-                            reps=ex.reps + extra_reps,
-                            rest_seconds=ex.rest_seconds,
-                            equipment=ex.equipment,
-                            muscle_group=ex.muscle_group,
-                            notes=ex.notes,
-                        )
-                        for ex in day.exercises
-                    ],
-                ))
-        all_weeks.append(Week(week=w, days=new_days))
+    for w in range(2, plan.duration_weeks + 1):
+        if w in deload_week_set:
+            new_days: list[Day] = []
+            for day in week1.days:
+                if day.rest_day:
+                    new_days.append(Day(day=day.day, focus=day.focus, rest_day=True, exercises=[]))
+                else:
+                    new_days.append(Day(
+                        day=day.day,
+                        focus=day.focus,
+                        rest_day=False,
+                        exercises=[
+                            Exercise(
+                                name=ex.name,
+                                sets=max(1, round(ex.sets * 0.6)),
+                                reps=max(1, ex.reps - 2),
+                                rest_seconds=ex.rest_seconds,
+                                equipment=ex.equipment,
+                                muscle_group=ex.muscle_group,
+                                notes="Deload — use ~60% of usual weight, prioritise form and recovery.",
+                            )
+                            for ex in day.exercises
+                        ],
+                    ))
+            all_weeks.append(Week(week=w, days=new_days))
+            block_pos = 0   # reset; will be incremented to 1 on the next normal week
+        else:
+            block_pos += 1
+            training_weeks += 1
+            extra_reps = min((block_pos - 1) // 2, 4)   # +1 rep every 2 weeks in block
+            extra_sets = 1 if block_pos > 5 else 0       # +1 set after 5 weeks in block
+            cumulative_kg = weight_inc * (training_weeks - 1)
+            weight_note = f"+{cumulative_kg:.1f}kg vs Week 1 target weight."
+
+            new_days = []
+            for day in week1.days:
+                if day.rest_day:
+                    new_days.append(Day(day=day.day, focus=day.focus, rest_day=True, exercises=[]))
+                else:
+                    new_days.append(Day(
+                        day=day.day,
+                        focus=day.focus,
+                        rest_day=False,
+                        exercises=[
+                            Exercise(
+                                name=ex.name,
+                                sets=min(ex.sets + extra_sets, 5),
+                                reps=ex.reps + extra_reps,
+                                rest_seconds=ex.rest_seconds,
+                                equipment=ex.equipment,
+                                muscle_group=ex.muscle_group,
+                                notes=weight_note,
+                            )
+                            for ex in day.exercises
+                        ],
+                    ))
+            all_weeks.append(Week(week=w, days=new_days))
 
     return PlanSchema(
         goal=plan.goal,
         difficulty=plan.difficulty,
         duration_weeks=plan.duration_weeks,
         equipment_available=plan.equipment_available,
+        progression=plan.progression,
         weeks=all_weeks,
     )
 
@@ -148,6 +206,7 @@ def propose_structure(
 ) -> ProgramStructure:
     """Stage 1 — Generate only the training skeleton (no exercises).
     Compact output: split type, schedule, duration, rep style, rationale.
+    Deload weeks and weight increment are set programmatically after the LLM call.
     """
     prompt = (
         _STRUCT_TMPL
@@ -155,10 +214,14 @@ def propose_structure(
         .replace("{request_text}", request_text)
         .replace("{program_chunks}", _fmt_programs(chunks))
     )
-    return structured_chat(
+    structure = structured_chat(
         [SystemMessage(content=_SYS_PROMPT), HumanMessage(content=prompt)],
         ProgramStructure,
     )
+    # Override progression fields — never trust LLM for these
+    structure.deload_weeks = _default_deload_weeks(structure.duration_weeks)
+    structure.weight_increment_kg_per_week = _default_weight_increment(structure.difficulty)
+    return structure
 
 
 def build_week_one(
@@ -169,6 +232,7 @@ def build_week_one(
 ) -> PlanSchema:
     """Stage 2 — Fill Week 1 exercises guided by the approved structure.
     Returns a PlanSchema with weeks=[Week 1 only]. save_plan expands to full duration.
+    Progression scheme is set programmatically from the structure after the LLM call.
     """
     schedule_lines = "\n".join(
         f"  Day {i + 1}: {label}"
@@ -189,10 +253,16 @@ def build_week_one(
         .replace("{exercise_chunks}", _fmt_exercises(chunks))
         .replace("{user_feedback}", user_feedback or "none")
     )
-    return structured_chat(
+    plan = structured_chat(
         [SystemMessage(content=_SYS_PROMPT), HumanMessage(content=prompt)],
         PlanSchema,
     )
+    # Copy progression parameters from the approved structure (computed in Stage 1)
+    plan.progression = ProgressionScheme(
+        weight_increment_kg_per_week=structure.weight_increment_kg_per_week,
+        deload_weeks=structure.deload_weeks,
+    )
+    return plan
 
 
 def patch_plan(

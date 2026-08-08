@@ -122,6 +122,17 @@ VLLM_API_KEY    : str   = os.getenv("VLLM_API_KEY", "EMPTY")
 VLLM_TIMEOUT    : int   = int(os.getenv("VLLM_TIMEOUT", "180"))
 VLLM_MAX_TOKENS : int   = int(os.getenv("VLLM_MAX_TOKENS", "2048"))
 VLLM_TEMPERATURE: float = float(os.getenv("VLLM_TEMPERATURE", "0.3"))
+# Max simultaneous HTTP connections to the vLLM endpoint (1–3).
+# vLLM can process multiple requests in parallel — increase when running
+# concurrent agent invocations (e.g. Coach + Designer + Retriever at once).
+VLLM_MAX_CONCURRENT_REQUESTS: int = min(
+    max(int(os.getenv("VLLM_MAX_CONCURRENT_REQUESTS", "1")), 1), 3
+)
+
+# ---------------------------------------------------------------------------
+# Tavily web search
+# ---------------------------------------------------------------------------
+TAVILY_API_KEY: str = os.getenv("TAVILY_API_KEY", "")
 
 # ---------------------------------------------------------------------------
 # Chunking

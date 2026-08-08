@@ -35,11 +35,6 @@ from fitness_multiagent_rag.agents.designer.agent import build_designer_agent
 
 _PROJECT_ROOT = Path(__file__).parent.parent.parent.parent.parent
 
-DEFAULT_REQUEST = (
-    "Create a 3-day beginner full-body workout plan for muscle building "
-    "using dumbbell-only equipment, 8 weeks."
-)
-
 TEST_TRAINEE = Trainee(
     name="Test User",
     secondary_id="test@example.com",
@@ -213,9 +208,14 @@ def run_interactive(request: str, trainee_id: int = 1) -> None:
     print(f"  Request  : {request}")
     print(f"{_CYAN}{'═' * 70}{_RST}\n")
 
-    # Shared VFS backend — plan_structure.json and plan_week1.json persist
-    # across all 3 stages so Stage 2/3 can read_file what Stage 1/2 wrote.
+    # Shared VFS backend — used for any file ops the agent needs within a session.
     backend = FilesystemBackend(root_dir=str(_PROJECT_ROOT), virtual_mode=True)
+
+    # Clear any stale inter-stage files from previous runs so write_file doesn't collide.
+    for _stale in ("plan_structure.json", "plan_week1.json", "plan_structure_v1.json"):
+        _p = Path(backend.cwd) / _stale
+        if _p.exists():
+            _p.unlink()
 
     # ── Phase 1: Stage 0 pre-flight + Stage 1 structure proposal ──────────
     # Multi-turn: the agent may pause at Stage 0 to ask profile questions,
@@ -235,18 +235,16 @@ def run_interactive(request: str, trainee_id: int = 1) -> None:
 
         # Agent is waiting for user input (Stage 0 questions or clarification)
         user_input = _prompt_user("your answer")
-        if user_input.lower() in ("quit", "exit", "done", "q"):
-            return
         messages.append(HumanMessage(content=user_input))
 
     if not structure_json:
         print("  [No structure proposed — check the output above.]\n")
         return
 
+    _SAVE_TRIGGERS = {"save", "done", "finalize", "save it", "save plan", "go ahead", "proceed"}
+
     # User approves or modifies the structure
     user_input1 = _prompt_user("approve the structure or describe changes")
-    if user_input1.lower() in ("quit", "exit", "done", "q"):
-        return
 
     # ── Phase 2: Stage 2 — Week 1 exercises ───────────────────────────────
     _stage_banner("Stage 2  —  Generating Week 1 exercises")
@@ -254,24 +252,33 @@ def run_interactive(request: str, trainee_id: int = 1) -> None:
     msg2 = (
         f"STAGE 2\n"
         f"trainee_id: {trainee.id}\n"
+        f"Approved structure_json:\n{structure_json}\n\n"
         f"The user reviewed the structure and said: "
         f"\"{user_input1 or 'Looks good, proceed to exercises.'}\"\n"
         f"Apply any requested changes, then call synthesize_week_one."
     )
-    _, _, tool_results2 = _stream_turn(
-        build_designer_agent(backend),
-        [HumanMessage(content=msg2)],
-    )
+    s2_messages: list = [HumanMessage(content=msg2)]
+    _, new_msgs2, tool_results2 = _stream_turn(build_designer_agent(backend), s2_messages)
+    s2_messages.extend(new_msgs2)
     week1_plan_json = _extract_week1_plan_json(tool_results2)
 
     if not week1_plan_json:
         print("  [No Week 1 plan generated — check the output above.]\n")
         return
 
-    # User approves or requests final changes
-    user_input2 = _prompt_user("approve Week 1 or request final changes")
-    if user_input2.lower() in ("quit", "exit", "done", "q"):
-        return
+    # Multi-turn Stage 2 conversation — stay until user explicitly types 'save'
+    print(f"\n  {_DIM}(Ask questions or request changes — type 'save' when ready to finalize){_RST}")
+    while True:
+        user_input2 = _prompt_user("question / change — or 'save' to finalize")
+        if any(kw in user_input2.lower() for kw in _SAVE_TRIGGERS):
+            break
+
+        s2_messages.append(HumanMessage(content=user_input2))
+        _, new_msgs, tr = _stream_turn(build_designer_agent(backend), s2_messages)
+        s2_messages.extend(new_msgs)
+        new_w1 = _extract_week1_plan_json(tr)
+        if new_w1:
+            week1_plan_json = new_w1
 
     # ── Phase 3: Stage 3 — Validate and save ──────────────────────────────
     _stage_banner("Stage 3  —  Validating and saving")
@@ -279,20 +286,35 @@ def run_interactive(request: str, trainee_id: int = 1) -> None:
     msg3 = (
         f"STAGE 3\n"
         f"trainee_id: {trainee.id}\n"
-        f"The user confirmed: \"{user_input2 or 'Looks good, save the plan.'}\"\n"
-        f"Apply any final changes, then validate and save."
+        f"Approved week1_plan_json:\n{week1_plan_json}\n\n"
+        f"The user has confirmed the plan. Validate and save it."
     )
-    _stream_turn(
+    _, _, tool_results3 = _stream_turn(
         build_designer_agent(backend),
         [HumanMessage(content=msg3)],
     )
 
+    save_result = tool_results3.get("save_plan", "")
+    try:
+        save_data = json.loads(save_result) if save_result else {}
+    except Exception:
+        save_data = {}
+
     print(f"\n{_CYAN}{'═' * 70}{_RST}")
-    print(f"  {_BOLD}Plan saved successfully!{_RST}")
+    if save_data.get("plan_id"):
+        print(f"  {_BOLD}Plan saved successfully! (plan_id={save_data['plan_id']}){_RST}")
+    elif save_data.get("error"):
+        print(f"  {_BOLD}Save failed:{_RST} {save_data['error']}")
+    else:
+        print(f"  {_BOLD}Stage 3 complete — check output above for save status.{_RST}")
     print(f"{_CYAN}{'═' * 70}{_RST}\n")
 
 
 if __name__ == "__main__":
+    DEFAULT_REQUEST = (
+    "Create a 3-day beginner full-body workout plan for muscle building "
+    "using dumbbell-only equipment, 8 weeks."
+    )
     request    = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_REQUEST
     trainee_id = int(sys.argv[2]) if len(sys.argv) > 2 else 1
     run_interactive(request, trainee_id)

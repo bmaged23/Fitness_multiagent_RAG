@@ -14,6 +14,8 @@ from langgraph.graph.state import CompiledStateGraph
 from deepagents import CompiledSubAgent, create_deep_agent
 from deepagents.backends import FilesystemBackend
 
+from tavily import TavilyClient
+
 from fitness_multiagent_rag.llm.model import get_model
 from fitness_multiagent_rag.utils.prompt_loader import load_agent_prompt
 from fitness_multiagent_rag.schemas.plan_schema import PlanSchema
@@ -289,7 +291,7 @@ def validate_and_critique(
     if not trainee:
         return json.dumps({"error": f"Trainee {trainee_id} not found"})
 
-    plan   = json.loads(plan_json)
+    plan, _ = json.JSONDecoder().raw_decode(plan_json.strip())
     chunks = _flatten_retriever_chunks(source_chunks_json) if source_chunks_json and source_chunks_json != "[]" else []
 
     val          = validate_structure(plan, trainee)
@@ -330,7 +332,8 @@ def save_plan(
         triggered_by = "user_request"
 
     try:
-        validated = PlanSchema.model_validate(json.loads(plan_json))
+        plan_obj, _ = json.JSONDecoder().raw_decode(plan_json.strip())
+        validated = PlanSchema.model_validate(plan_obj)
         if not is_revision:
             validated = _expand_to_duration(validated)
     except Exception as e:
@@ -410,8 +413,7 @@ def patch_existing_plan(
 def propose_plan_structure(chunks_json: str, trainee_id: int, request_text: str) -> str:
     """Stage 1 of the interactive plan flow — generate a compact training skeleton for user approval.
     Produces ONLY the split type, weekly schedule, rep style, and duration — NO exercises yet.
-    Write the returned structure_json to plan_structure.json in the VFS, then surface the
-    summary to Coach so the user can approve or request changes.
+    Return the summary to Coach so the user can approve or request changes.
     Do NOT proceed to synthesize_week_one until the user has confirmed the structure.
     Returns JSON: {structure_json: str, summary: str}"""
     trainee = crud.get_trainee_by_id(trainee_id)
@@ -425,10 +427,13 @@ def propose_plan_structure(chunks_json: str, trainee_id: int, request_text: str)
         f"  Day {i + 1}: {label}"
         for i, label in enumerate(structure.day_schedule)
     )
+    deload_str = ", ".join(str(w) for w in structure.deload_weeks) or "none"
     summary = (
         f"{structure.split_type} split — {structure.days_per_week} days/week, "
         f"{structure.duration_weeks} weeks, {structure.rep_style}.\n"
         f"Weekly schedule:\n{day_lines}\n"
+        f"Progression: +{structure.weight_increment_kg_per_week}kg/week | "
+        f"Deload weeks: {deload_str} (reduced volume, active recovery)\n"
         f"Rationale: {structure.rationale}"
     )
 
@@ -448,8 +453,7 @@ def synthesize_week_one(
     """Stage 2 of the interactive plan flow — fill in Week 1 exercises for the approved structure.
     structure_json: the ProgramStructure JSON from propose_plan_structure (or user-modified version).
     user_feedback: any changes the user requested to the structure before filling exercises.
-    Write the returned week1_plan_json to plan_week1.json in the VFS, then surface the
-    week1_summary to Coach so the user can approve or request changes.
+    Return the week1_summary to Coach so the user can approve or request changes.
     Do NOT call save_plan until the user has confirmed Week 1.
     Returns JSON: {week1_plan_json: str, week1_summary: str}"""
     trainee = crud.get_trainee_by_id(trainee_id)
@@ -471,10 +475,64 @@ def synthesize_week_one(
                 reps_str = f"{abs(ex.reps)}s" if ex.reps < 0 else f"{ex.reps} reps"
                 lines.append(f"    • {ex.name}: {ex.sets}×{reps_str}, rest {ex.rest_seconds}s ({ex.equipment})")
 
+    prog = week1_plan.progression
+    deload_str = ", ".join(str(w) for w in prog.deload_weeks) or "none"
+    lines.append("")
+    lines.append(
+        f"This rotation applies to all {structure.duration_weeks} weeks. "
+        f"Progression: add +{prog.weight_increment_kg_per_week}kg each non-deload week. "
+        f"Deload weeks {deload_str}: sets drop to ~60%, reps drop by 2 — focus on form and recovery."
+    )
+
     return json.dumps({
         "week1_plan_json": week1_plan.model_dump_json(),
         "week1_summary":   "\n".join(lines),
     })
+
+
+@tool
+def web_search(query: str, max_results: int = 5) -> str:
+    """Search the internet for fitness, nutrition, health, or exercise information
+    that is not available in the local knowledge base.
+
+    Use this tool when:
+    - The trainee asks about a specific food, supplement, or macro breakdown
+    - You need current research on an exercise, injury, or recovery method
+    - A topic is too specific or niche for the local corpus to cover
+
+    Keep queries concise and fitness/health-focused. Do NOT use this for plan
+    generation — use the local retriever for that.
+
+    Returns: formatted search results with titles, URLs, and content snippets.
+    """
+    from config.settings import TAVILY_API_KEY
+    if not TAVILY_API_KEY:
+        return json.dumps({"error": "TAVILY_API_KEY is not set — web search unavailable."})
+    try:
+        client = TavilyClient(api_key=TAVILY_API_KEY)
+        response = client.search(query, max_results=max_results, search_depth="basic")
+        results = response.get("results", [])
+        if not results:
+            return json.dumps({"results": [], "message": "No results found."})
+        formatted = "\n\n".join(
+            f"[{i + 1}] {r.get('title', 'No title')}\n"
+            f"URL: {r.get('url', '')}\n"
+            f"{r.get('content', '')[:400]}"
+            for i, r in enumerate(results)
+        )
+        return json.dumps({"results_count": len(results), "results": formatted})
+    except Exception as e:
+        return json.dumps({"error": f"Web search failed: {e}"})
+
+
+@tool
+def end_conversation() -> str:
+    """Signal that the user has ended the conversation (said goodbye, thanks, etc.).
+    Call this when the user's message is clearly a farewell and they are not asking for
+    any further changes or information. Do NOT call save_plan before this — the plan has
+    NOT been confirmed for saving.
+    Returns JSON: {ended: true}"""
+    return json.dumps({"ended": True})
 
 
 DESIGNER_TOOLS = [
@@ -487,6 +545,8 @@ DESIGNER_TOOLS = [
     validate_and_critique,
     save_plan,
     patch_existing_plan,
+    web_search,
+    end_conversation,
 ]
 
 

@@ -4,14 +4,101 @@ import json
 from typing import Optional
 
 from .connection import get_db, get_db_ro
-from .models import CoachMemory, Plan, PlanRevision, ProgressLog, Trainee
+from .models import CoachMemory, Plan, PlanRevision, ProgressLog, Trainee, TraineeAuth
 
 # ---------------------------------------------------------------------------
 # trainees
 # ---------------------------------------------------------------------------
 
+# ---------------------------------------------------------------------------
+# trainee_auth — credentials only, only called from auth.py
+# ---------------------------------------------------------------------------
+
+def username_exists(username: str) -> bool:
+    with get_db_ro() as conn:
+        row = conn.execute(
+            "SELECT 1 FROM trainee_auth WHERE username = ?", (username,)
+        ).fetchone()
+    return row is not None
+
+
+def get_auth_by_username(username: str) -> Optional[TraineeAuth]:
+    """Return the auth record for a username. Only used by auth.py."""
+    with get_db_ro() as conn:
+        row = conn.execute(
+            "SELECT * FROM trainee_auth WHERE username = ?", (username,)
+        ).fetchone()
+    return TraineeAuth.from_row(dict(row)) if row else None
+
+
+def create_trainee_with_auth(
+    trainee: Trainee,
+    username: str,
+    password_hash: str,
+) -> Trainee:
+    """Atomically insert a new trainee profile + auth record."""
+    with get_db() as conn:
+        cur = conn.execute(
+            """
+            INSERT INTO trainees
+                (name, secondary_id, email, phone, age, gender,
+                 fitness_level, equipment_available, injuries_limitations, goal,
+                 height_cm, weight_kg, body_fat_pct, muscle_pct, images_dir)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                trainee.name,
+                trainee.secondary_id or "",
+                trainee.email,
+                trainee.phone,
+                trainee.age,
+                trainee.gender,
+                trainee.fitness_level,
+                json.dumps(trainee.equipment_available),
+                trainee.injuries_limitations,
+                trainee.goal,
+                trainee.height_cm,
+                trainee.weight_kg,
+                trainee.body_fat_pct,
+                trainee.muscle_pct,
+                trainee.images_dir,
+            ),
+        )
+        trainee.id = cur.lastrowid
+        conn.execute(
+            "INSERT INTO trainee_auth (trainee_id, username, password_hash) VALUES (?, ?, ?)",
+            (trainee.id, username, password_hash),
+        )
+    trainee.username = username  # runtime-only field, not in trainees table
+    return trainee
+
+
+# ---------------------------------------------------------------------------
+# trainees — profile only
+# ---------------------------------------------------------------------------
+
+def get_trainee_by_username(username: str) -> Optional[Trainee]:
+    """Join trainee_auth → trainees and return the profile (no credentials)."""
+    with get_db_ro() as conn:
+        row = conn.execute(
+            """
+            SELECT t.*, a.username
+            FROM trainees t
+            JOIN trainee_auth a ON a.trainee_id = t.id
+            WHERE a.username = ?
+            """,
+            (username,),
+        ).fetchone()
+    if not row:
+        return None
+    d = dict(row)
+    trainee = Trainee.from_row(d)
+    trainee.username = d.get("username")
+    return trainee
+
+
 def get_trainee(name: str, secondary_id: str) -> Optional[Trainee]:
-    """Look up a trainee by the dual-key identity (name + secondary_id)."""
+    """Legacy lookup by name + secondary_id (kept for backward compat)."""
     with get_db_ro() as conn:
         row = conn.execute(
             "SELECT * FROM trainees WHERE name = ? AND secondary_id = ?",
@@ -29,23 +116,32 @@ def get_trainee_by_id(trainee_id: int) -> Optional[Trainee]:
 
 
 def create_trainee(trainee: Trainee) -> Trainee:
+    """Insert profile only (no auth). Use create_trainee_with_auth for new signups."""
     with get_db() as conn:
         cur = conn.execute(
             """
             INSERT INTO trainees
-                (name, secondary_id, age, gender, fitness_level,
-                 equipment_available, injuries_limitations, goal)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                (name, secondary_id, email, phone, age, gender,
+                 fitness_level, equipment_available, injuries_limitations, goal,
+                 height_cm, weight_kg, body_fat_pct, muscle_pct, images_dir)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 trainee.name,
-                trainee.secondary_id,
+                trainee.secondary_id or "",
+                trainee.email,
+                trainee.phone,
                 trainee.age,
                 trainee.gender,
                 trainee.fitness_level,
                 json.dumps(trainee.equipment_available),
                 trainee.injuries_limitations,
                 trainee.goal,
+                trainee.height_cm,
+                trainee.weight_kg,
+                trainee.body_fat_pct,
+                trainee.muscle_pct,
+                trainee.images_dir,
             ),
         )
         trainee.id = cur.lastrowid
@@ -58,7 +154,8 @@ def update_trainee(trainee: Trainee) -> None:
             """
             UPDATE trainees SET
                 age = ?, gender = ?, fitness_level = ?,
-                equipment_available = ?, injuries_limitations = ?, goal = ?
+                equipment_available = ?, injuries_limitations = ?, goal = ?,
+                height_cm = ?, weight_kg = ?, body_fat_pct = ?, muscle_pct = ?
             WHERE id = ?
             """,
             (
@@ -68,6 +165,10 @@ def update_trainee(trainee: Trainee) -> None:
                 json.dumps(trainee.equipment_available),
                 trainee.injuries_limitations,
                 trainee.goal,
+                trainee.height_cm,
+                trainee.weight_kg,
+                trainee.body_fat_pct,
+                trainee.muscle_pct,
                 trainee.id,
             ),
         )
