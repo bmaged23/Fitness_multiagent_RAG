@@ -153,3 +153,14 @@ RETRIEVER_STEP_CEILING = 6
 # ---------------------------------------------------------------------------
 MEMORY_TRUNCATION_SESSION_COUNT  = 5        # trigger salience pass every N sessions
 MEMORY_TRUNCATION_CHAR_THRESHOLD = 4_000    # also trigger if summary exceeds this length
+
+
+RETRIEVER_PROGRAM_MAX_RETRIES = 2
+RETRIEVER_EXERCISE_MAX_RETRIES = 2
+
+LLM_PROVIDER = os.getenv("LLM_PROVIDER", "groq")
+
+OLLAMA_API_KEY = os.getenv("OLLAMA_API_KEY", "")
+OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "gpt-oss:120b")
+OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "https://ollama.com")
+
