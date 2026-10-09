@@ -39,8 +39,8 @@ logging.basicConfig(
 log = logging.getLogger(__name__)
 
 EXPECTED_FILES = {
-    "fitness_exercises.csv": EXERCISES_MIN_ROWS,
-    "program_summary.csv": PROGRAMS_MIN_ROWS,
+    EXERCISES_CSV.name: EXERCISES_MIN_ROWS,
+    PROGRAMS_CSV.name: PROGRAMS_MIN_ROWS,
 }
 
 

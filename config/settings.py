@@ -59,7 +59,7 @@ RECREATE_COLLECTIONS = True
 # Hard ceiling on chunks per single retrieval call — the Retriever agent
 # decides the actual top-k dynamically based on query complexity.
 # This only exists to prevent runaway requests.
-QDRANT_MAX_TOP_K = 20
+QDRANT_MAX_TOP_K = 3
 
 # ---------------------------------------------------------------------------
 # Qdrant payload field names
@@ -111,23 +111,14 @@ EMBEDDING_BATCH_SIZE  = int(os.getenv("EMBEDDING_BATCH_SIZE", "64"))
 QDRANT_UPSERT_BATCH_SIZE = int(os.getenv("QDRANT_UPSERT_BATCH_SIZE", "64"))
 
 # ---------------------------------------------------------------------------
-# vLLM server
+# LLM — Groq
 # ---------------------------------------------------------------------------
-VLLM_BASE_URL   : str   = os.getenv("VLLM_BASE_URL", "http://localhost:7834/v1")
-VLLM_MODEL      : str   = os.getenv(
-    "VLLM_MODEL",
-    "",
-)
-VLLM_API_KEY    : str   = os.getenv("VLLM_API_KEY", "EMPTY")
-VLLM_TIMEOUT    : int   = int(os.getenv("VLLM_TIMEOUT", "180"))
-VLLM_MAX_TOKENS : int   = int(os.getenv("VLLM_MAX_TOKENS", "2048"))
-VLLM_TEMPERATURE: float = float(os.getenv("VLLM_TEMPERATURE", "0.3"))
-# Max simultaneous HTTP connections to the vLLM endpoint (1–3).
-# vLLM can process multiple requests in parallel — increase when running
-# concurrent agent invocations (e.g. Coach + Designer + Retriever at once).
-VLLM_MAX_CONCURRENT_REQUESTS: int = min(
-    max(int(os.getenv("VLLM_MAX_CONCURRENT_REQUESTS", "1")), 1), 3
-)
+GROQ_API_KEY:     str   = os.getenv("GROQ_API_KEY", "")
+GROQ_MODEL:       str   = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+GROQ_TEMPERATURE: float = float(os.getenv("GROQ_TEMPERATURE", "0.3"))
+GROQ_TIMEOUT:     int   = int(os.getenv("GROQ_TIMEOUT", "60"))
+GROQ_MAX_TOKENS:  int   = int(os.getenv("GROQ_MAX_TOKENS", "4096"))
+GROQ_MAX_RETRIES: int   = int(os.getenv("GROQ_MAX_RETRIES", "5"))
 
 # ---------------------------------------------------------------------------
 # Tavily web search

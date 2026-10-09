@@ -22,6 +22,7 @@ from tqdm import tqdm
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from config.settings import (
+    DATA_PROCESSED_DIR,
     EXERCISES_CSV, PROGRAMS_CSV,
     EXERCISE_CHUNK_BATCH_SIZE, SETS_CAP, REPS_TIME_BASED_CAP_SECONDS,
     PROGRAM_CHUNKS_JSONL, EXERCISE_CHUNKS_JSONL,

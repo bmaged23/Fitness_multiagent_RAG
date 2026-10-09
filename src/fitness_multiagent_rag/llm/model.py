@@ -1,38 +1,27 @@
 from __future__ import annotations
 
-import sys
-from pathlib import Path
+from langchain_groq import ChatGroq
 
-sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))
-
-import httpx
-from langchain_openai import ChatOpenAI
-from config.settings import (
-    VLLM_BASE_URL,
-    VLLM_MODEL,
-    VLLM_API_KEY,
-    VLLM_TIMEOUT,
-    VLLM_TEMPERATURE,
-    VLLM_MAX_CONCURRENT_REQUESTS,
+from config.settings import (   # or `from config.settings import` until you move it
+    GROQ_API_KEY, GROQ_MODEL, GROQ_TEMPERATURE,
+    GROQ_TIMEOUT, GROQ_MAX_TOKENS, GROQ_MAX_RETRIES,
 )
 
-_model: ChatOpenAI | None = None
+_model: ChatGroq | None = None
 
 
-def get_model() -> ChatOpenAI:
+def get_model() -> ChatGroq:
     global _model
     if _model is None:
-        _model = ChatOpenAI(
-            base_url=VLLM_BASE_URL,
-            api_key=VLLM_API_KEY,
-            model=VLLM_MODEL,
-            temperature=VLLM_TEMPERATURE,
-            timeout=VLLM_TIMEOUT,
-            http_client=httpx.Client(
-                limits=httpx.Limits(
-                    max_connections=VLLM_MAX_CONCURRENT_REQUESTS,
-                    max_keepalive_connections=VLLM_MAX_CONCURRENT_REQUESTS,
-                )
-            ),
+        if not GROQ_API_KEY:
+            raise EnvironmentError("GROQ_API_KEY is not set. Add it to your .env file.")
+        _model = ChatGroq(
+            model=GROQ_MODEL,
+            api_key=GROQ_API_KEY,
+            temperature=GROQ_TEMPERATURE,
+            timeout=GROQ_TIMEOUT,
+            max_tokens=GROQ_MAX_TOKENS,
+            max_retries=GROQ_MAX_RETRIES,
         )
     return _model
+
