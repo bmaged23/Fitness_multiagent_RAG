@@ -32,3 +32,26 @@ conversation_history/
 
 # Downloaded speech models
 data/speech_models/
+
+# Local environments, credentials, and tooling
+.venv/
+venv/
+.env.*
+!.env.example
+.codex/
+.agents/
+.vscode/
+.idea/
+.release-local/
+.demo-recording/
+# Personal data and generated artifacts
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+large_tool_results/
+logs/
+*.log
+.ruff_cache/
+code_dump.txt
+uv-freeze-backup.txt

@@ -12,7 +12,7 @@ import streamlit as st
 from app.components.chat_ui import login, signup, initial_messages, chat_turn
 from app.components.chat_jobs import start_chat_job, finish_chat_job
 from app.components.audio_jobs import finish_audio_jobs, pending_audio_jobs
-from app.components.voice_ui import message_input, reply_audio, audio_player
+from app.components.voice_ui import message_input, reply_audio
 from app.components.plan_views import format_chat_reply, render_my_plans
 from app.components.plan_pdf import nutrition_pdf, workout_pdf
 from config.settings import SQLITE_DB_PATH
@@ -88,7 +88,7 @@ finish_chat_job(st.session_state)
 finish_audio_jobs(st.session_state)
 
 
-@st.fragment(run_every='1s')
+@st.fragment(run_every='1s' if ('chat_job' in st.session_state or pending_audio_jobs(st.session_state)) else None)
 def pending_chat_status():
     job = st.session_state.get('chat_job')
     audio_jobs = pending_audio_jobs(st.session_state)
@@ -96,8 +96,12 @@ def pending_chat_status():
         st.rerun()
     if job is not None:
         st.info('Alex is working in the background. You can browse My plans while you wait.')
-    audio_player()
 
+
+
+@st.cache_data(max_entries=32, show_spinner=False)
+def plan_download(kind, plan, name):
+    return nutrition_pdf(plan, name) if kind == 'nutrition' else workout_pdf(plan, name)
 
 
 with st.sidebar:
@@ -123,10 +127,10 @@ with st.sidebar:
     meal_draft = nutrition.get_plan(trainee.id, 'draft')
     st.write('Nutrition · Active' if meal_plan else 'Nutrition · Draft' if meal_draft else 'No nutrition plan yet')
     st.download_button('Download nutrition plan',
-        nutrition_pdf(meal_plan['plan_json'], trainee.name) if meal_plan else b'',
+        plan_download('nutrition', meal_plan['plan_json'], trainee.name) if meal_plan else b'',
         'nutrition_plan.pdf', 'application/pdf', disabled=meal_plan is None, width='stretch')
     st.download_button('Download workout program',
-        workout_pdf(workout.plan_json, trainee.name) if workout else b'',
+        plan_download('workout', workout.plan_json, trainee.name) if workout else b'',
         'workout_program.pdf', 'application/pdf', disabled=workout is None, width='stretch')
     st.divider()
     if st.button('Log out', width='stretch'):

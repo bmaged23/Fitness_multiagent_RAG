@@ -18,11 +18,15 @@ def submitted_text(submission) -> str | None:
 
 
 def message_input(*, disabled=False) -> str | None:
-    submission = st.chat_input('Message Alex…', accept_audio=True, audio_sample_rate=16000, disabled=disabled)
-    if submission is None:
+    submission = st.chat_input('Message Alex…', accept_audio=True,
+                               audio_sample_rate=16000, disabled=disabled)
+    from app.components.microphone_status import microphone_status
+    microphone_status(key='inline_microphone_readiness', height=0)
+    if submission is None or disabled:
         return None
     try:
-        with st.spinner('Preparing your message…'):
+        with st.spinner('Transcribing your voice message…' if getattr(submission, 'audio', None)
+                        else 'Preparing your message…'):
             return submitted_text(submission)
     except Exception as exc:
         logging.exception('Voice transcription failed')
@@ -36,7 +40,6 @@ def reply_audio(item: dict, index: int):
     audio_by_voice = item.setdefault('audio_by_voice', {})
     jobs = item.setdefault('audio_jobs', {})
     if st.button('Listen to this reply', key=f'listen_{index}', disabled=voice in jobs):
-        st.session_state['audio_selection'] = (index, voice)
         if voice not in audio_by_voice and voice not in jobs:
             from fitness_multiagent_rag.speech.service import synthesize
             item.setdefault('audio_errors', {}).pop(voice, None)
@@ -45,26 +48,6 @@ def reply_audio(item: dict, index: int):
     if voice in jobs:
         st.caption('Generating audio in the background…')
     elif voice in audio_by_voice:
-        st.caption('Audio ready — use the player in the sidebar.')
+        st.audio(audio_by_voice[voice], format='audio/wav', autoplay=False)
     if item.get('audio_errors', {}).get(voice):
-        st.error(f"Could not generate audio: {item['audio_errors'][voice]}")
-
-
-def audio_player():
-    """Keep the selected reply player mounted on both Chat and My plans."""
-    selection = st.session_state.get('audio_selection')
-    if selection is None:
-        return
-    index, voice = selection
-    chat = st.session_state.get('chat', [])
-    if index >= len(chat):
-        return
-    item = chat[index]
-    audio = item.get('audio_by_voice', {}).get(voice)
-    if audio:
-        st.caption('Reply audio · ' + ('Michael' if voice == 'am_michael' else 'Heart'))
-        st.audio(audio, format='audio/wav', autoplay=False)
-    elif voice in item.get('audio_jobs', {}):
-        st.caption('Generating reply audio in the background…')
-    elif voice in item.get('audio_errors', {}):
         st.error(f"Could not generate audio: {item['audio_errors'][voice]}")

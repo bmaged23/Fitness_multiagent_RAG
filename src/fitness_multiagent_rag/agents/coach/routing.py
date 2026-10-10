@@ -90,6 +90,12 @@ def draft_action(user_message: str, draft: dict, previous_reply: str = "") -> st
     approves_structure = text in {'yes', 'okay', 'ok', 'sure', 'go ahead', 'looks good', 'yes please'}
     if draft.get('stage') == 'structure' and ((asks_to_view and mentions_plan) or approves_structure):
         return 'generate_week1'
-    if draft.get('stage') == 'week1' and asks_to_view and mentions_plan:
-        return 'show_week1'
+    if draft.get('stage') == 'week1':
+        declines = bool(re.search(r"\b(don't|dont|not|cancel|wait)\b", text))
+        asks_to_save = bool(re.search(r'\b(save|activate|confirm|lock in)\b', text)) and mentions_plan
+        confirms_save = approves_structure and bool(re.search(r'\b(save|lock in)\b', previous_reply.casefold()))
+        if not declines and (asks_to_save or confirms_save):
+            return 'save_week1'
+        if asks_to_view and mentions_plan:
+            return 'show_week1'
     return None

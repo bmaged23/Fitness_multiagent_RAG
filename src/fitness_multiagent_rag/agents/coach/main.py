@@ -245,12 +245,31 @@ def _nutrition_response(trainee_id: int, user_input: str, previous_reply: str = 
 
 def _draft_response(trainee_id: int, user_input: str, previous_reply: str = "") -> str | None:
     from fitness_multiagent_rag.agents.designer.drafts import read_draft
-    from fitness_multiagent_rag.agents.designer.agent import synthesize_week_one
+    from fitness_multiagent_rag.agents.designer.agent import synthesize_week_one, validate_and_critique, save_plan
 
     if plan_topic(user_input, previous_reply) == "nutrition":
         return None
     draft = read_draft(trainee_id)
     action = draft_action(user_input, draft, previous_reply)
+    if action == "save_week1":
+        try:
+            checked = json.loads(validate_and_critique.invoke({
+                "plan_json": draft["week1_plan_json"], "trainee_id": trainee_id,
+                "source_chunks_json": draft.get("chunks", []), "run_critique": False,
+            }))
+            if not checked.get("passed"):
+                return "I couldn't save this draft because validation failed: " + "; ".join(checked.get("failures", [checked.get("error", "Invalid draft")]))
+            result = json.loads(save_plan.invoke({
+                "plan_json": checked["plan_json"], "trainee_id": trainee_id,
+                "is_revision": False, "change_description": "Trainee approved the stored workout draft.",
+                "triggered_by": "user_request",
+            }))
+            if result.get("error"):
+                raise ValueError(result["error"])
+            return "Your workout program is saved. Open My plans to review your schedule and exercises, or download the workout PDF."
+        except Exception as exc:
+            _internal(f"[plan save error] {type(exc).__name__}: {exc}")
+            return "I couldn't save the workout this time. Your draft is still available. Please try again."
     if action == "show_week1":
         return draft["week1_summary"] + "\n\nWould you like me to save this program?"
     if action != "generate_week1":

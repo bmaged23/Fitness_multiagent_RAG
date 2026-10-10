@@ -31,3 +31,37 @@ def test_details_request_uses_stored_structure(monkeypatch):
 @pytest.mark.parametrize('user_text', ['create a new program', 'change my workout', 'what is protein', 'save the plan'])
 def test_other_requests_keep_normal_routing(user_text):
     assert routing.draft_action(user_text, {'stage': 'structure'}) is None
+
+
+@pytest.mark.parametrize('text', ['save the workout plan', 'Looks good. Please save this workout program so I can find it in My plans.'])
+def test_week_one_save_routes_to_stored_draft(text):
+    assert routing.draft_action(text, {'stage': 'week1'}) == 'save_week1'
+
+@pytest.mark.parametrize('text', ["don't save the plan", 'do not save the workout', 'wait before saving the program', 'change my workout'])
+def test_week_one_save_requires_explicit_approval(text):
+    assert routing.draft_action(text, {'stage': 'week1'}) is None
+
+
+def test_approved_workout_saves_stored_validated_data(monkeypatch):
+    stored = {'weeks': [{'week': 1, 'days': []}]}
+    monkeypatch.setattr(drafts, 'read_draft', lambda _: {'stage': 'week1', 'week1_plan_json': json.dumps(stored)})
+    def validate(args):
+        assert json.loads(args['plan_json']) == stored
+        assert args['run_critique'] is False
+        return json.dumps({'passed': True, 'plan_json': stored})
+    calls = []
+    def save(args):
+        calls.append(args)
+        return json.dumps({'plan_id': 5})
+    monkeypatch.setattr(agent, 'validate_and_critique', SimpleNamespace(invoke=validate))
+    monkeypatch.setattr(agent, 'save_plan', SimpleNamespace(invoke=save))
+    assert 'is saved' in main._draft_response(2, 'save the workout plan')
+    assert calls[0]['plan_json'] == stored
+    assert calls[0]['is_revision'] is False
+
+
+def test_invalid_draft_is_not_saved(monkeypatch):
+    monkeypatch.setattr(drafts, 'read_draft', lambda _: {'stage': 'week1', 'week1_plan_json': '{}'})
+    monkeypatch.setattr(agent, 'validate_and_critique', SimpleNamespace(invoke=lambda _: json.dumps({'passed': False, 'failures': ['Equipment mismatch']})))
+    monkeypatch.setattr(agent, 'save_plan', SimpleNamespace(invoke=lambda _: pytest.fail('Invalid draft saved')))
+    assert 'Equipment mismatch' in main._draft_response(2, 'save the workout plan')

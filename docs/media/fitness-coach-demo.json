@@ -1,0 +1,204 @@
+{
+  "duration_seconds": 199.92,
+  "microphone_audio_start": 101.77599999999998,
+  "reply_audio_start": 125.17099999999998,
+  "chapters": [
+    {
+      "start": 0,
+      "title": "Alex \u00b7 AI Fitness Coach"
+    },
+    {
+      "start": 5.0,
+      "title": "01 \u00b7 Log in and ask for a personalized workout"
+    },
+    {
+      "start": 35.56,
+      "title": "Retrieve and design"
+    },
+    {
+      "start": 38.56,
+      "title": "02 \u00b7 Review the proposed structure and request exercise details"
+    },
+    {
+      "start": 53.32,
+      "title": "Generate workout details"
+    },
+    {
+      "start": 56.32,
+      "title": "03 \u00b7 Review the exercises and save the approved program"
+    },
+    {
+      "start": 79.6,
+      "title": "04 \u00b7 Browse saved workouts, choose a week, and download the PDF"
+    },
+    {
+      "start": 99.83999999999999,
+      "title": "05 \u00b7 Voice input \u00b7 Synthetic microphone sample \u2192 real Faster Whisper STT"
+    },
+    {
+      "start": 108.39999999999999,
+      "title": "Speech to coaching"
+    },
+    {
+      "start": 111.39999999999999,
+      "title": "06 \u00b7 Read the coaching answer and request a spoken reply"
+    },
+    {
+      "start": 120.83999999999999,
+      "title": "Generate the reply voice"
+    },
+    {
+      "start": 123.83999999999999,
+      "title": "07 \u00b7 Listen to the actual Kokoro reply audio"
+    },
+    {
+      "start": 186.92,
+      "title": "08 \u00b7 The saved plan remains available \u00b7 Log out"
+    },
+    {
+      "start": 194.92,
+      "title": "One profile. One conversation."
+    }
+  ],
+  "recording_events": {
+    "plans": [
+      {
+        "time": 7.153,
+        "label": "login start"
+      },
+      {
+        "time": 17.175,
+        "label": "logged in"
+      },
+      {
+        "time": 34.675,
+        "label": "submitted 1"
+      },
+      {
+        "time": 67.112,
+        "label": "reply 1"
+      },
+      {
+        "time": 73.12,
+        "label": "structure reviewed"
+      },
+      {
+        "time": 79.445,
+        "label": "submitted 2"
+      },
+      {
+        "time": 89.593,
+        "label": "reply 2"
+      },
+      {
+        "time": 98.625,
+        "label": "workout details reviewed"
+      },
+      {
+        "time": 103.471,
+        "label": "submitted 3"
+      },
+      {
+        "time": 107.541,
+        "label": "reply 3"
+      },
+      {
+        "time": 112.469,
+        "label": "plans start"
+      },
+      {
+        "time": 128.605,
+        "label": "week selected"
+      },
+      {
+        "time": 130.706,
+        "label": "PDF downloaded"
+      },
+      {
+        "time": 137.637,
+        "label": "voice start"
+      },
+      {
+        "time": 139.557,
+        "label": "mic started"
+      },
+      {
+        "time": 145.229,
+        "label": "voice submitted"
+      },
+      {
+        "time": 171.664,
+        "label": "reply 4"
+      },
+      {
+        "time": 178.675,
+        "label": "TTS requested"
+      },
+      {
+        "time": 178.876,
+        "label": "end"
+      }
+    ],
+    "voice": [
+      {
+        "time": 3.608,
+        "label": "login start"
+      },
+      {
+        "time": 13.7,
+        "label": "logged in"
+      },
+      {
+        "time": 18.719,
+        "label": "voice start"
+      },
+      {
+        "time": 20.655,
+        "label": "mic started"
+      },
+      {
+        "time": 24.246,
+        "label": "voice submitted"
+      },
+      {
+        "time": 41.492,
+        "label": "reply 1"
+      },
+      {
+        "time": 48.499,
+        "label": "TTS requested"
+      },
+      {
+        "time": 53.071,
+        "label": "TTS ready"
+      },
+      {
+        "time": 54.102,
+        "label": "TTS playing"
+      },
+      {
+        "time": 114.839,
+        "label": "TTS finished"
+      },
+      {
+        "time": 120.843,
+        "label": "closing plans"
+      },
+      {
+        "time": 124.843,
+        "label": "logout"
+      },
+      {
+        "time": 124.846,
+        "label": "end"
+      }
+    ]
+  },
+  "notes": [
+    "Browser actions automated with human-paced typing and clicks.",
+    "Microphone uses a synthetic spoken question. STT and TTS are real app services.",
+    "Generation waits are cut and labeled.",
+    "Reply audio is the exact WAV downloaded from the app and muxed into the video.",
+    "Isolated database and fictional account."
+  ]
+}
