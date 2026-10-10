@@ -94,7 +94,8 @@ class AgentProfiler(BaseCallbackHandler):
         self._start("TOOL", name, run_id)
 
     def on_tool_end(self, output, *, run_id, **kwargs):
-        self._end(run_id)
+        from fitness_multiagent_rag.utils.tool_errors import tool_result_error
+        self._end(run_id, error=tool_result_error(output))
 
     def on_tool_error(self, error, *, run_id, **kwargs):
         self._end(run_id, error=error)
@@ -207,6 +208,7 @@ def test_coach(request: str = DEFAULT_REQUEST):
 
     print(f"\nREQUEST:\n{request}\n")
 
+    request_id = str(uuid.uuid4())
     invocation_start = time.perf_counter()
 
     try:
@@ -217,6 +219,7 @@ def test_coach(request: str = DEFAULT_REQUEST):
                 ]
             },
             config={
+                "configurable": {"retriever_request_id": request_id},
                 "callbacks": [profiler],
                 "recursion_limit": RECURSION_LIMIT,
                 "run_id": uuid.uuid4(),
@@ -243,6 +246,8 @@ def test_coach(request: str = DEFAULT_REQUEST):
         raise
 
     finally:
+        from fitness_multiagent_rag.agents.retriever.agent import _release_search_budget
+        _release_search_budget(request_id)
         invocation_time = (
             time.perf_counter() - invocation_start
         )

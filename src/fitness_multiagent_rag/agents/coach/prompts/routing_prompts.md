@@ -11,6 +11,7 @@ Classify the trainee's message into exactly one intent.
 
 | Intent | When to use |
 |---|---|
+| `nutrition_plan` | Create, show, approve, save, or revise a nutrition, diet, or meal plan |
 | `new_plan` | Trainee explicitly wants a brand-new workout program created |
 | `revision` | Trainee wants to change, swap, or adjust their existing plan |
 | `exercise_lookup` | Question about specific exercises, muscles, or equipment — NOT a full plan |
@@ -20,6 +21,7 @@ Classify the trainee's message into exactly one intent.
 | `intake` | New trainee with no profile, or trainee wants to update their profile details |
 
 Rules:
+- Nutrition/meal/diet plan requests use `nutrition_plan`, independently of workout plan status.
 - If the trainee has no active plan and asks to "start" or "begin training", use `intake` or `new_plan`
 - Prefer `plan_question` over `general_chat` when the trainee clearly references their own plan
 - Prefer `log_progress` when the trainee says they "did", "completed", or "finished" a workout

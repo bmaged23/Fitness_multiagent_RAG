@@ -9,6 +9,7 @@ _SRC_DIR = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(_SRC_DIR))
 sys.path.insert(0, str(_SRC_DIR.parent))
 
+from fitness_multiagent_rag.agents.designer.drafts import load_plan_draft
 from langchain_core.tools import tool
 from langgraph.graph.state import CompiledStateGraph
 from deepagents import CompiledSubAgent, create_deep_agent
@@ -21,6 +22,8 @@ from fitness_multiagent_rag.db import crud
 from fitness_multiagent_rag.db.models import Plan, ProgressLog
 from fitness_multiagent_rag.memory.sqlite_memory_backend import CoachMemoryBackend
 from .identity import COACH_NAME
+from .nutrition_tools import (save_nutrition_plan, get_nutrition_plan, approve_nutrition_plan,
+                              revise_nutrition_plan, get_nutrition_plan_history)
 
 _AGENT_DIR    = Path(__file__).parent
 _PROJECT_ROOT = _AGENT_DIR.parent.parent.parent.parent
@@ -46,7 +49,7 @@ def update_fitness_profile(
     trainee_id: int,
     goal: str = "",
     fitness_level: str = "",
-    equipment_available: str = "[]",
+    equipment_available: list[str] | str = "[]",
     injuries_limitations: str = "",
 ) -> str:
     """Update the trainee's fitness profile (goal, level, equipment, injuries).
@@ -54,7 +57,7 @@ def update_fitness_profile(
     Call this after the trainee answers onboarding questions or updates their preferences.
     The trainee account already exists — this only updates fitness-related fields.
 
-    equipment_available: JSON array string, e.g. '["Full Gym"]'.
+    equipment_available: list of strings or JSON array string, e.g. ["Full Gym"].
     Map all natural-language answers to exact allowed values before calling:
       goal: Bodybuilding / Muscle & Sculpting / Powerbuilding / Athletics /
             Powerlifting / Bodyweight Fitness / Olympic Weightlifting / At-Home & Calisthenics
@@ -67,12 +70,19 @@ def update_fitness_profile(
     if not trainee:
         return json.dumps({"error": f"Trainee id={trainee_id} not found."})
 
-    try:
-        eq_list = json.loads(equipment_available)
-        if not isinstance(eq_list, list):
-            eq_list = [equipment_available]
-    except Exception:
-        eq_list = [equipment_available] if equipment_available else []
+    if isinstance(equipment_available, list):
+        eq_list = equipment_available
+    else:
+        try:
+            eq_list = json.loads(equipment_available)
+        except (ValueError, TypeError):
+            eq_list = [equipment_available] if equipment_available else []
+    if not isinstance(eq_list, list) or any(
+        not isinstance(value, str) or value not in _VALID_EQUIPMENT
+        for value in eq_list
+    ):
+        return json.dumps({"error": "Invalid equipment; use a list of allowed equipment values.",
+                           "retryable": False})
 
     updated = []
     if goal and goal in _VALID_GOALS:
@@ -252,6 +262,9 @@ def web_search(query: str, max_results: int = 5) -> str:
 
 
 COACH_TOOLS = [
+    save_nutrition_plan, get_nutrition_plan, approve_nutrition_plan,
+    revise_nutrition_plan, get_nutrition_plan_history,
+    load_plan_draft,
     update_fitness_profile,
     get_trainee_profile,
     get_active_plan_summary,

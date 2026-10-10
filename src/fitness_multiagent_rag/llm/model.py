@@ -47,6 +47,7 @@ def _build_ollama() -> BaseChatModel:
     return ChatOllama(
         model=OLLAMA_MODEL,
         base_url=OLLAMA_BASE_URL,
+        reasoning=True,  # Keep provider thinking in reasoning_content, outside the reply.
         temperature=0,
         **kwargs,
     )

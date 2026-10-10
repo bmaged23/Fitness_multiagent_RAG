@@ -9,6 +9,7 @@ _SRC_DIR = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(_SRC_DIR))
 sys.path.insert(0, str(_SRC_DIR.parent))
 
+from .drafts import save_draft, read_draft, clear_draft, load_plan_draft
 from langchain_core.tools import tool
 from langgraph.graph.state import CompiledStateGraph
 from deepagents import CompiledSubAgent, create_deep_agent
@@ -43,32 +44,35 @@ _VALID_LEVELS = {"Beginner", "Novice", "Intermediate", "Advanced"}
 # Helpers
 # ---------------------------------------------------------------------------
 
-def _flatten_retriever_chunks(raw: str) -> list[dict]:
-    """
-    Parse the Retriever's JSON array output into a flat chunk list.
-    Augments each chunk with 'collection' from its parent subquery entry.
-    Handles both the Retriever's nested format and a pre-flattened list.
-    """
-    match = re.search(r"\[.*\]", raw, re.DOTALL)
-    if not match:
-        return []
-    try:
-        data = json.loads(match.group())
-    except json.JSONDecodeError:
-        return []
-
-    # Already flat (no 'chunks' key inside entries)
-    if data and isinstance(data[0], dict) and "chunks" not in data[0]:
-        return data
-
-    chunks: list[dict] = []
+def _flatten_retriever_chunks(raw: str | list[dict] | dict) -> list[dict]:
+    """Accept native or serialized flat chunks and nested search results."""
+    if isinstance(raw, str):
+        text = raw.strip()
+        if text.startswith("```"):
+            text = re.sub(r"^```(?:json)?\s*|\s*```$", "", text)
+        data = json.loads(text)
+    else:
+        data = raw
+    if isinstance(data, dict):
+        if data.get("error"):
+            raise ValueError(f"Retriever failed: {data['error']}")
+        data = [data] if "chunks" in data else data.get("results", [])
+    if not isinstance(data, list):
+        raise ValueError("Retrieved evidence must be a JSON array or search result object.")
+    chunks = []
     for entry in data:
-        if not isinstance(entry, dict) or "chunks" not in entry:
+        if not isinstance(entry, dict):
+            raise ValueError("Each retrieved entry must be an object.")
+        if entry.get("error"):
+            raise ValueError(f"Retriever failed: {entry['error']}")
+        if "chunks" not in entry:
+            chunks.append(dict(entry))
             continue
-        collection = entry.get("collection", "")
-        for chunk in entry.get("chunks", []):
-            chunk["collection"] = collection
-            chunks.append(chunk)
+        children = entry["chunks"]
+        if not isinstance(children, list) or any(not isinstance(c, dict) for c in children):
+            raise ValueError("Search result chunks must be an array of objects.")
+        for chunk in children:
+            chunks.append({**chunk, "collection": chunk.get("collection") or entry.get("collection", "")})
     return chunks
 
 
@@ -250,7 +254,7 @@ def load_context(trainee_id: int) -> str:
 
 
 @tool
-def synthesize_new_plan(chunks_json: str, trainee_id: int, request_text: str) -> str:
+def synthesize_new_plan(chunks_json: str | list[dict] | dict, trainee_id: int, request_text: str) -> str:
     """Build a new workout plan from retrieved program summaries and exercise chunks.
     chunks_json: the Retriever's output — either its nested array format or a flat chunk list.
     Returns the synthesized plan as a JSON string matching PlanSchema.
@@ -266,9 +270,9 @@ def synthesize_new_plan(chunks_json: str, trainee_id: int, request_text: str) ->
 
 @tool
 def validate_and_critique(
-    plan_json: str,
+    plan_json: str | dict,
     trainee_id: int,
-    source_chunks_json: str,
+    source_chunks_json: str | list[dict] | dict,
     run_critique: bool,
 ) -> str:
     """Run structural validation then optionally an LLM self-critique pass.
@@ -291,7 +295,7 @@ def validate_and_critique(
     if not trainee:
         return json.dumps({"error": f"Trainee {trainee_id} not found"})
 
-    plan, _ = json.JSONDecoder().raw_decode(plan_json.strip())
+    plan = plan_json if isinstance(plan_json, dict) else json.loads(plan_json)
     chunks = _flatten_retriever_chunks(source_chunks_json) if source_chunks_json and source_chunks_json != "[]" else []
 
     val          = validate_structure(plan, trainee)
@@ -314,7 +318,7 @@ def validate_and_critique(
 
 @tool
 def save_plan(
-    plan_json: str,
+    plan_json: str | dict,
     trainee_id: int,
     is_revision: bool,
     change_description: str,
@@ -332,7 +336,7 @@ def save_plan(
         triggered_by = "user_request"
 
     try:
-        plan_obj, _ = json.JSONDecoder().raw_decode(plan_json.strip())
+        plan_obj = plan_json if isinstance(plan_json, dict) else json.loads(plan_json)
         validated = PlanSchema.model_validate(plan_obj)
         if not is_revision:
             validated = _expand_to_duration(validated)
@@ -370,6 +374,7 @@ def save_plan(
         ))
         plan_id = saved.id
 
+    clear_draft(trainee_id)
     return json.dumps({
         "plan_id":        plan_id,
         "change_summary": change_description,
@@ -380,7 +385,7 @@ def save_plan(
 def patch_existing_plan(
     current_plan_json: str,
     patch_instructions: str,
-    chunks_json: str,
+    chunks_json: str | list[dict] | dict,
     trainee_id: int,
 ) -> str:
     """Apply targeted changes to an existing plan without full reconstruction.
@@ -410,7 +415,7 @@ def patch_existing_plan(
 # ---------------------------------------------------------------------------
 @tool
 def propose_plan_structure(
-    chunks_json: str,
+    chunks_json: str | list[dict] | dict,
     trainee_id: int,
     request_text: str,
 ) -> str:
@@ -440,6 +445,12 @@ def propose_plan_structure(
 
         # Step 2: Parse retrieved evidence
         chunks = _flatten_retriever_chunks(chunks_json)
+        if not chunks:
+            return json.dumps({
+                "error": "No retrieved evidence available for a grounded structure proposal.",
+                "retryable": False,
+                "message": "Report the retrieval failure to Coach; do not invent a plan.",
+            })
 
         print(
             f"[COACH] Parsed {len(chunks)} retrieved chunks",
@@ -479,6 +490,8 @@ def propose_plan_structure(
             f"Rationale: {structure.rationale}"
         )
 
+        save_draft(trainee_id, {"stage": "structure", "structure_json": structure.model_dump_json(),
+                               "chunks": chunks, "summary": summary})
         return json.dumps({
             "structure_json": structure.model_dump_json(),
             "summary": summary,
@@ -505,8 +518,8 @@ def propose_plan_structure(
         
 @tool
 def synthesize_week_one(
-    structure_json: str,
-    chunks_json: str,
+    structure_json: str | dict,
+    chunks_json: str | list[dict] | dict,
     trainee_id: int,
     user_feedback: str = "",
 ) -> str:
@@ -520,8 +533,11 @@ def synthesize_week_one(
     if not trainee:
         return json.dumps({"error": f"Trainee {trainee_id} not found"})
 
-    structure = ProgramStructure.model_validate_json(structure_json)
-    chunks    = _flatten_retriever_chunks(chunks_json)
+    draft = read_draft(trainee_id)
+    structure_data = structure_json or draft.get("structure_json", "")
+    structure = (ProgramStructure.model_validate(structure_data) if isinstance(structure_data, dict)
+                 else ProgramStructure.model_validate_json(structure_data))
+    chunks = _flatten_retriever_chunks(chunks_json) if chunks_json and chunks_json != "[]" else draft.get("chunks", [])
     week1_plan = build_week_one(structure, chunks, trainee, user_feedback)
 
     # Build a readable summary of Week 1
@@ -544,6 +560,9 @@ def synthesize_week_one(
         f"Deload weeks {deload_str}: sets drop to ~60%, reps drop by 2 — focus on form and recovery."
     )
 
+    save_draft(trainee_id, {**draft, "stage": "week1", "structure_json": structure.model_dump_json(),
+                           "chunks": chunks, "week1_plan_json": week1_plan.model_dump_json(),
+                           "week1_summary": "\n".join(lines)})
     return json.dumps({
         "week1_plan_json": week1_plan.model_dump_json(),
         "week1_summary":   "\n".join(lines),
@@ -596,6 +615,7 @@ def end_conversation() -> str:
 
 
 DESIGNER_TOOLS = [
+    load_plan_draft,
     collect_missing_info,
     update_trainee_profile,
     load_context,

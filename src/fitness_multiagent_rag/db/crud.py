@@ -387,3 +387,10 @@ def reset_session_count(trainee_id: int) -> None:
             "last_updated = strftime('%Y-%m-%dT%H:%M:%SZ','now') WHERE trainee_id = ?",
             (trainee_id,),
         )
+
+
+def get_trainee_plans(trainee_id: int) -> list[Plan]:
+    """List only this trainee's workout programs, newest first."""
+    with get_db_ro() as conn:
+        rows = conn.execute('SELECT * FROM plans WHERE trainee_id=? ORDER BY id DESC', (trainee_id,)).fetchall()
+    return [Plan.from_row(dict(row)) for row in rows]

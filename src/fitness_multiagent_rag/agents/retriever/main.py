@@ -13,6 +13,7 @@ from __future__ import annotations
 import json
 import re
 import sys
+from uuid import uuid4
 from pathlib import Path
 
 _SRC_DIR = Path(__file__).parent.parent.parent.parent
@@ -21,7 +22,8 @@ sys.path.insert(0, str(_SRC_DIR.parent))
 
 from langchain_core.messages import AIMessage, ToolMessage, HumanMessage
 
-from fitness_multiagent_rag.agents.retriever.agent import build_retriever_agent
+from fitness_multiagent_rag.agents.retriever.agent import build_retriever_agent, _release_search_budget
+from config.settings import RECURSION_LIMIT
 
 
 DIVIDER  = "─" * 60
@@ -59,40 +61,47 @@ def run(query: str) -> None:
     agent = build_retriever_agent()
     step  = 0
 
-    for update in agent.stream(
-        {"messages": [HumanMessage(content=query)]},
-        stream_mode="updates",
-    ):
-        for node_name, state in update.items():
-            if not state:
-                continue
-            messages = state.get("messages", [])
+    request_id = str(uuid4())
 
-            for msg in messages:
+    try:
+        for update in agent.stream(
+            {"messages": [HumanMessage(content=query)]},
+            config={"configurable": {"retriever_request_id": request_id},
+                    "recursion_limit": RECURSION_LIMIT},
+            stream_mode="updates",
+        ):
+            for node_name, state in update.items():
+                if not state:
+                    continue
+                messages = state.get("messages", [])
 
-                # ── Agent reasoning: tool calls it decided to make ──────────
-                if isinstance(msg, AIMessage):
-                    if msg.tool_calls:
-                        for tc in msg.tool_calls:
-                            step += 1
-                            print(f"[Step {step}] TOOL CALL  →  {tc['name']}")
+                for msg in messages:
+
+                    # ── Agent reasoning: tool calls it decided to make ──────────
+                    if isinstance(msg, AIMessage):
+                        if msg.tool_calls:
+                            for tc in msg.tool_calls:
+                                step += 1
+                                print(f"[Step {step}] TOOL CALL  →  {tc['name']}")
+                                print(DIVIDER)
+                                print(_fmt_args(tc["args"]))
+                                print()
+
+                        elif msg.content:
                             print(DIVIDER)
-                            print(_fmt_args(tc["args"]))
-                            print()
+                            print("FINAL ANSWER")
+                            print(DIVIDER)
+                            print(_strip_model_tokens(msg.content))
+                            print(f"\n{HDIVIDER}\n")
 
-                    elif msg.content:
+                    # ── Tool result ──────────────────────────────────────────────
+                    elif isinstance(msg, ToolMessage):
+                        print(f"[Step {step}] TOOL RESULT ←  {msg.name}")
                         print(DIVIDER)
-                        print("FINAL ANSWER")
-                        print(DIVIDER)
-                        print(_strip_model_tokens(msg.content))
-                        print(f"\n{HDIVIDER}\n")
-
-                # ── Tool result ──────────────────────────────────────────────
-                elif isinstance(msg, ToolMessage):
-                    print(f"[Step {step}] TOOL RESULT ←  {msg.name}")
-                    print(DIVIDER)
-                    print(_fmt_result(msg.content))
-                    print()
+                        print(_fmt_result(msg.content))
+                        print()
+    finally:
+        _release_search_budget(request_id)
 
 
 if __name__ == "__main__":

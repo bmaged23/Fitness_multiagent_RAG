@@ -27,6 +27,8 @@ Ignore all other tools (files, todos, glob, subagents). Never use them.
 - If a result contains `search_limit_reached: true`, never call that
   collection's search tool again in this request.
 
+If a tool returns an `error`, treat it as a failure, not successful retrieval. Missing request configuration cannot be repaired by rewriting queries: stop and report the error. Never repeat the same failing helper call.
+
 ## Filters
 
 Filters are exact matches against stored metadata. A wrong value returns

@@ -1,5 +1,16 @@
 # Fitness_multiagent_RAG_project
 
+
+## Run the chat app
+
+From the project directory with `.venv` activated:
+
+```bash
+python3 -m streamlit run app/streamlit_app.py
+```
+
+Open http://localhost:8501. Log in with your existing account or sign up before accessing chat. The app uses the same Coach, SQLite database, workout drafts, and nutrition plans as the terminal. Conversation history remains in the current browser session; approved plans and stored drafts persist in SQLite. Use **My plans** to select a workout week, review pending drafts, browse past workout/nutrition plans, and inspect revision snapshots. Workout days use exercise tables; nutrition meals show exact portions and alternatives. The default workout week is estimated from the save date and can be changed manually. Use the sidebar to view or download saved plans and log out.
+
 A multi-agent, RAG-grounded fitness coaching system built on **deepagents**, backed by **Qdrant** (workout corpus) and **SQLite** (trainee data), with a **Streamlit** front end.
 
 > **Note for an implementing Claude instance:** this README is a full design handoff, not a finished codebase — no code has been written yet. Everything below was worked out deliberately in conversation. Treat it as the spec to build against. Anything marked **`OPEN`** is a decision the project owner deliberately deferred — ask, don't guess. Everything else has already been decided and should not be re-litigated without reason. A visual/interactive version of this same content exists at `docs/Fitness_multiagent_RAG_project_reference.html` (tabbed, with diagrams) if a walkthrough is more useful than reading straight through.
@@ -606,3 +617,41 @@ Apply these throughout, they come directly from the project owner's existing eng
 4. Build **Retriever first** (it's a dependency of Designer), then **Designer**, then **Coach**.
 5. `orchestration/deepagent_setup.py` to wire all three together.
 6. `app/streamlit_app.py` last, only once the agent chain works end-to-end via a script or notebook test.
+
+## Optional English voice chat
+
+Voice controls appear after login. Click the microphone inside **Message Alex…**, record, and submit the recording.
+The app transcribes it in English and sends the transcript directly to Alex.
+The transcript follows the same Coach workflow as a typed message. Click
+**Listen to this reply** beneath an assistant reply to generate audio, then use
+its player. Submitting a recording sends its transcript; audio replies never autoplay.
+
+The local models are faster-whisper **base.en** (CUDA int8/float16) and
+**Kokoro-82M**, with American English voices `am_michael` (man) and `af_heart` (woman).
+Choose **Reply voice** in the sidebar before clicking **Listen to this reply**.
+Both voices share one GPU model; switching voices does not load a second model. Models load only
+when requested and remain cached for later requests. CUDA is required for voice;
+text chat remains available when voice setup fails. Recordings are limited to
+2 minutes. Voice recordings and generated audio are not written to the database.
+
+For a fresh setup, retain a PyTorch build compatible with your NVIDIA driver,
+install `requirements-speech.txt` into the project virtual environment, then run:
+
+```bash
+python scripts/download_speech_models.py
+```
+
+Start the app as usual with `python -m streamlit run app/streamlit_app.py`.
+Allow microphone access in your browser (localhost or HTTPS).
+
+## PDF plan downloads
+
+The sidebar exports your active nutrition plan and workout program as PDF files.
+Workout exports include every saved week, daily exercise tables, rest days, and
+progression. Nutrition exports include daily targets, meals, portions,
+alternatives, and dietary notes. Download buttons are disabled until an active
+plan exists. Install `requirements-pdf.txt` when setting up a new environment.
+
+Reply audio generates in the background while you browse My plans. Its player
+remains in the sidebar on both pages. Click Listen on a reply, then press Play
+in the sidebar when its audio is ready.

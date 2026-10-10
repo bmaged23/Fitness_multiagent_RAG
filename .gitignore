@@ -29,3 +29,6 @@ conversation_history/
 
 # OS
 .DS_Store
+
+# Downloaded speech models
+data/speech_models/

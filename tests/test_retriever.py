@@ -113,7 +113,8 @@ class AgentProfiler(BaseCallbackHandler):
         run_id,
         **kwargs,
     ):
-        self._end(run_id)
+        from fitness_multiagent_rag.utils.tool_errors import tool_result_error
+        self._end(run_id, error=tool_result_error(output))
 
     def on_tool_error(
         self,

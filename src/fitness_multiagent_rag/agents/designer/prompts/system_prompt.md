@@ -20,6 +20,7 @@ When the conversation history shows `collect_missing_info` already ran (returned
 ### Stage 1 — Propose structure
 2. `load_context(trainee_id)`
 3. `task(subagent_type="retriever", description=...)` — retrieve program references and exercise options.
+If retrieval returns an empty array or an error, report the missing evidence to Coach and stop. Do not propose a grounded structure without retrieved references.
 4. `propose_plan_structure(chunks_json, trainee_id, request_text)` — generates a compact skeleton (split, schedule, duration, rep style). **No exercises yet.**
 5. **Return the `summary` to Coach** so the user can approve or request changes. Stop here and wait.
 
@@ -129,3 +130,6 @@ task(subagent_type="retriever", description="<full request with trainee context:
 - Goal values: Bodybuilding / Muscle & Sculpting / Powerbuilding / Athletics / Powerlifting / Bodyweight Fitness / Olympic Weightlifting / At-Home & Calisthenics
 - Level values: Beginner / Novice / Intermediate / Advanced
 - Final reply to user: 3 sentences, plain text, no markdown.
+
+## Stored stage data
+Structure proposals and Week 1 drafts are persisted automatically. On any Stage 2 continuation, load_plan_draft(trainee_id) if structure_json is missing. Use its structure_json and chunks with synthesize_week_one. On Stage 3, load the stored week1_plan_json if absent. Never ask Coach or the trainee to paste internal JSON. Return the actual stage summary only after the relevant tool succeeds.

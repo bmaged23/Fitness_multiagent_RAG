@@ -232,7 +232,12 @@ def structured_chat(
     for attempt in range(retries + 1):
 
         try:
-            result = runnable.invoke(messages)
+            native_messages = list(messages) + [HumanMessage(content=(
+                "Return data matching this exact JSON schema. Use the field names and types shown, "
+                "including all required fields.\n"
+                + json.dumps(schema.model_json_schema(), ensure_ascii=False)
+            ))]
+            result = runnable.invoke(native_messages)
 
             if result is None:
                 raise ValueError(
@@ -280,7 +285,7 @@ def structured_chat(
                 f"[structured_chat] "
                 f"{schema.__name__} "
                 f"attempt {attempt + 1}/{retries + 1}: "
-                f"{error}",
+                f"{str(error)[:500]}",
                 flush=True,
             )
 

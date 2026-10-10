@@ -15,6 +15,8 @@ EXPECTED_TABLES = {
     "plan_revisions",
     "progress_logs",
     "coach_memory",
+    "nutrition_plans",
+    "nutrition_plan_revisions",
 }
 
 
@@ -49,7 +51,7 @@ def _migrate(conn: sqlite3.Connection) -> None:
 def init_db() -> None:
     SQLITE_DB_PATH.parent.mkdir(parents=True, exist_ok=True)
 
-    sql = SCHEMA_PATH.read_text()
+    sql = SCHEMA_PATH.read_text() + "\n" + SCHEMA_PATH.with_name("nutrition_schema.sql").read_text()
 
     with sqlite3.connect(SQLITE_DB_PATH) as conn:
         conn.execute("PRAGMA foreign_keys = ON")

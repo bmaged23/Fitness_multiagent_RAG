@@ -221,8 +221,7 @@ def _tool_input_error(
 ) -> str:
 
     return (
-        f"Invalid tool input: "
-        f"{type(exc).__name__}: {exc}"
+        json.dumps({"error": f"{type(exc).__name__}: {exc}"})
     )
 
 
@@ -448,7 +447,7 @@ def decompose_query(
     """Decompose a fitness request into retrieval needs."""
 
     try:
-        needs = decompose(request)
+        needs = decompose(request, trainee_context={})
 
         if isinstance(needs, str):
             needs = _parse_json(needs)
@@ -463,8 +462,11 @@ def decompose_query(
             if hasattr(need, "model_dump"):
                 data = need.model_dump()
 
+            elif is_dataclass(need):
+                data = asdict(need)
+
             elif isinstance(need, dict):
-                data = need
+                data = dict(need)
 
             else:
                 continue
@@ -573,8 +575,9 @@ def rewrite_search_query(
 
     try:
         result = rewrite_query(
-            query,
-            reason,
+            Need(description=f"{query}. Retry reason: {reason}",
+                 query_text=query, collection=QDRANT_PROGRAMS_COLLECTION),
+            [],
         )
 
         if hasattr(result, "model_dump"):
@@ -606,10 +609,11 @@ def validate_chunk_relevance(
     try:
         parsed_chunks = _parse_chunks(chunks)
 
-        result = validate_relevance(
-            query,
+        result = {"relevant": validate_relevance(
+            Need(description=query, query_text=query,
+                 collection=QDRANT_PROGRAMS_COLLECTION),
             parsed_chunks,
-        )
+        )}
 
         if hasattr(result, "model_dump"):
             result = result.model_dump()
@@ -640,10 +644,12 @@ def check_retrieval_coverage(
     try:
         parsed_chunks = _parse_chunks(chunks)
 
-        result = check_coverage(
+        result = asdict(check_coverage(
             request,
+            [Need(description=request, query_text=request,
+                  collection=QDRANT_PROGRAMS_COLLECTION)],
             parsed_chunks,
-        )
+        ))
 
         if hasattr(result, "model_dump"):
             result = result.model_dump()
