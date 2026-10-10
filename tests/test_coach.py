@@ -24,7 +24,7 @@ load_dotenv(ROOT / ".env")
 
 # Adjust this import if your coach module or builder is named differently.
 from fitness_multiagent_rag.agents.coach.agent import build_coach_agent
-
+from config.settings import RECURSION_LIMIT
 
 # --------------------------------------------------
 # Test settings
@@ -37,7 +37,6 @@ DEFAULT_REQUEST = (
     "and give me the final plan."
 )
 
-RECURSION_LIMIT = 80
 
 
 # --------------------------------------------------

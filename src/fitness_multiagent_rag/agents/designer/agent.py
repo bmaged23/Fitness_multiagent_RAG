@@ -408,41 +408,101 @@ def patch_existing_plan(
 # ---------------------------------------------------------------------------
 # Agent factory
 # ---------------------------------------------------------------------------
-
 @tool
-def propose_plan_structure(chunks_json: str, trainee_id: int, request_text: str) -> str:
-    """Stage 1 of the interactive plan flow — generate a compact training skeleton for user approval.
-    Produces ONLY the split type, weekly schedule, rep style, and duration — NO exercises yet.
-    Return the summary to Coach so the user can approve or request changes.
-    Do NOT proceed to synthesize_week_one until the user has confirmed the structure.
-    Returns JSON: {structure_json: str, summary: str}"""
-    trainee = crud.get_trainee_by_id(trainee_id)
-    if not trainee:
-        return json.dumps({"error": f"Trainee {trainee_id} not found"})
+def propose_plan_structure(
+    chunks_json: str,
+    trainee_id: int,
+    request_text: str,
+) -> str:
+    """
+    Stage 1 of the interactive plan flow.
 
-    chunks    = _flatten_retriever_chunks(chunks_json)
-    structure = propose_structure(chunks, trainee, request_text)
+    Generate a compact training skeleton for user approval.
+    Do not generate exercises or proceed to synthesize_week_one
+    until the user approves the structure.
+    """
 
-    day_lines = "\n".join(
-        f"  Day {i + 1}: {label}"
-        for i, label in enumerate(structure.day_schedule)
-    )
-    deload_str = ", ".join(str(w) for w in structure.deload_weeks) or "none"
-    summary = (
-        f"{structure.split_type} split — {structure.days_per_week} days/week, "
-        f"{structure.duration_weeks} weeks, {structure.rep_style}.\n"
-        f"Weekly schedule:\n{day_lines}\n"
-        f"Progression: +{structure.weight_increment_kg_per_week}kg/week | "
-        f"Deload weeks: {deload_str} (reduced volume, active recovery)\n"
-        f"Rationale: {structure.rationale}"
-    )
+    try:
+        print(
+            f"[COACH] propose_plan_structure called "
+            f"with trainee_id={trainee_id}",
+            flush=True,
+        )
 
-    return json.dumps({
-        "structure_json": structure.model_dump_json(),
-        "summary":        summary,
-    })
+        # Step 1: Retrieve trainee
+        trainee = crud.get_trainee_by_id(trainee_id)
 
+        if not trainee:
+            return json.dumps({
+                "error": f"Trainee {trainee_id} not found",
+                "retryable": False,
+            })
 
+        # Step 2: Parse retrieved evidence
+        chunks = _flatten_retriever_chunks(chunks_json)
+
+        print(
+            f"[COACH] Parsed {len(chunks)} retrieved chunks",
+            flush=True,
+        )
+
+        # Step 3: Generate structure
+        structure = propose_structure(
+            chunks,
+            trainee,
+            request_text,
+        )
+
+        # Step 4: Format schedule
+        day_lines = "\n".join(
+            f"  Day {i + 1}: {label}"
+            for i, label in enumerate(structure.day_schedule)
+        )
+
+        deload_str = (
+            ", ".join(
+                str(w) for w in structure.deload_weeks
+            )
+            or "none"
+        )
+
+        summary = (
+            f"{structure.split_type} split — "
+            f"{structure.days_per_week} days/week, "
+            f"{structure.duration_weeks} weeks, "
+            f"{structure.rep_style}.\n"
+            f"Weekly schedule:\n{day_lines}\n"
+            f"Progression: "
+            f"+{structure.weight_increment_kg_per_week}kg/week | "
+            f"Deload weeks: {deload_str} "
+            f"(reduced volume, active recovery)\n"
+            f"Rationale: {structure.rationale}"
+        )
+
+        return json.dumps({
+            "structure_json": structure.model_dump_json(),
+            "summary": summary,
+        })
+
+    except Exception as exc:
+        print(
+            "\n[COACH ERROR] propose_plan_structure failed:",
+            flush=True,
+        )
+
+        traceback.print_exc()
+
+        return json.dumps({
+            "error": str(exc),
+            "error_type": type(exc).__name__,
+            "retryable": False,
+            "message": (
+                "Plan structure generation failed. "
+                "Do not repeatedly call this tool with "
+                "the same arguments."
+            ),
+        })
+        
 @tool
 def synthesize_week_one(
     structure_json: str,
