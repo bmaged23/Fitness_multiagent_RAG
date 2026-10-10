@@ -1,5 +1,5 @@
 {
-  "duration_seconds": 199.92,
+  "duration_seconds": 294.06,
   "microphone_audio_start": 101.77599999999998,
   "reply_audio_start": 125.17099999999998,
   "chapters": [
@@ -53,11 +53,11 @@
     },
     {
       "start": 186.92,
-      "title": "08 \u00b7 The saved plan remains available \u00b7 Log out"
+      "title": "Nutrition draft and approval"
     },
     {
-      "start": 194.92,
-      "title": "One profile. One conversation."
+      "start": 203.0,
+      "title": "Download both PDFs, open documents and scroll every page"
     }
   ],
   "recording_events": {
@@ -192,6 +192,142 @@
         "time": 124.846,
         "label": "end"
       }
+    ],
+    "pdfs": [
+      {
+        "time": 19.334,
+        "label": "logged in"
+      },
+      {
+        "time": 21.555,
+        "label": "request submitted"
+      },
+      {
+        "time": 40.795,
+        "label": "reply received"
+      },
+      {
+        "time": 42.84,
+        "label": "request submitted"
+      },
+      {
+        "time": 51.011,
+        "label": "reply received"
+      },
+      {
+        "time": 51.014,
+        "label": "nutrition approved"
+      },
+      {
+        "time": 58.149,
+        "label": "plans opened"
+      },
+      {
+        "time": 58.842,
+        "label": "workout PDF downloaded and parsed"
+      },
+      {
+        "time": 62.072,
+        "label": "nutrition PDF downloaded and parsed"
+      },
+      {
+        "time": 69.148,
+        "label": "complete"
+      }
+    ],
+    "pdf_document_viewing": [
+      {
+        "time": 12.024,
+        "label": "saved plans visible"
+      },
+      {
+        "time": 14.986,
+        "label": "workout downloaded"
+      },
+      {
+        "time": 20.237,
+        "label": "nutrition downloaded"
+      },
+      {
+        "time": 23.431,
+        "label": "workout PDF opened"
+      },
+      {
+        "time": 30.622,
+        "label": "workout page 1 inspected"
+      },
+      {
+        "time": 34.179,
+        "label": "workout page 2 inspected"
+      },
+      {
+        "time": 37.721,
+        "label": "workout page 3 inspected"
+      },
+      {
+        "time": 41.286,
+        "label": "workout page 4 inspected"
+      },
+      {
+        "time": 44.838,
+        "label": "workout page 5 inspected"
+      },
+      {
+        "time": 48.405,
+        "label": "workout page 6 inspected"
+      },
+      {
+        "time": 51.954,
+        "label": "workout page 7 inspected"
+      },
+      {
+        "time": 55.511,
+        "label": "workout page 8 inspected"
+      },
+      {
+        "time": 59.058,
+        "label": "workout page 9 inspected"
+      },
+      {
+        "time": 62.614,
+        "label": "workout page 10 inspected"
+      },
+      {
+        "time": 66.161,
+        "label": "workout page 11 inspected"
+      },
+      {
+        "time": 69.716,
+        "label": "workout page 12 inspected"
+      },
+      {
+        "time": 73.265,
+        "label": "workout page 13 inspected"
+      },
+      {
+        "time": 75.279,
+        "label": "workout PDF bottom reached"
+      },
+      {
+        "time": 75.347,
+        "label": "nutrition PDF opened"
+      },
+      {
+        "time": 82.508,
+        "label": "nutrition page 1 inspected"
+      },
+      {
+        "time": 86.054,
+        "label": "nutrition page 2 inspected"
+      },
+      {
+        "time": 88.068,
+        "label": "nutrition PDF bottom reached"
+      },
+      {
+        "time": 90.085,
+        "label": "complete"
+      }
     ]
   },
   "notes": [
@@ -199,6 +335,140 @@
     "Microphone uses a synthetic spoken question. STT and TTS are real app services.",
     "Generation waits are cut and labeled.",
     "Reply audio is the exact WAV downloaded from the app and muxed into the video.",
-    "Isolated database and fictional account."
+    "Isolated database and fictional account.",
+    "Synthetic Kokoro narration added to explain otherwise silent sections; original STT input and app reply audio retained and amplified.",
+    "Workout PDF downloaded via browser and parsed: 13 pages; nutrition PDF: 2 pages.",
+    "Actual downloaded PDF pages rendered with PyMuPDF in a local viewer; all 13 workout pages and both nutrition pages scrolled to the bottom.",
+    "Soundtrack rebuilt from complete source WAVs; every narration sentence fits its visual window, with no narration overlap or speech clipping. Original microphone input and complete app TTS reply preserved."
+  ],
+  "audio_timeline": [
+    {
+      "start": 0,
+      "end": 10.95,
+      "window_end": 11.7,
+      "kind": "narration",
+      "text": "Welcome to Alex, an AI fitness coach. Let us walk through personalized training, voice conversation, nutrition planning, and downloadable documents.",
+      "source": "aligned-narration-0.wav"
+    },
+    {
+      "start": 12,
+      "end": 29.3,
+      "window_end": 35.2,
+      "kind": "narration",
+      "text": "I log in and request a beginner dumbbell program. The Coach handles my conversation and trainee context. It delegates workout design to the Program Designer, which calls the Retriever for relevant programs and exercises stored in Qdrant.",
+      "source": "aligned-narration-1.wav"
+    },
+    {
+      "start": 38.56,
+      "end": 52.135000000000005,
+      "window_end": 53,
+      "kind": "narration",
+      "text": "The first response proposes the training structure: how many weeks, which training days, and how the program progresses. I review that proposal, then request the detailed exercises for week one.",
+      "source": "aligned-narration-2.wav"
+    },
+    {
+      "start": 56.32,
+      "end": 72.52,
+      "window_end": 79.3,
+      "kind": "narration",
+      "text": "Now I review the exercises, sets, repetitions, and rest periods. The plan remains a draft until I approve it. Approval validates and saves the stored plan, so the program remains available after this conversation.",
+      "source": "aligned-narration-3.wav"
+    },
+    {
+      "start": 79.6,
+      "end": 96.32499999999999,
+      "window_end": 99.3,
+      "kind": "narration",
+      "text": "My plans shows the saved weekly schedule. I can choose a week and inspect its workouts, including the deload week. Profiles and personalized plans are stored in SQLite; Qdrant stores the workout knowledge used for retrieval.",
+      "source": "aligned-narration-4.wav"
+    },
+    {
+      "start": 99.4,
+      "end": 101.45,
+      "window_end": 101.7,
+      "kind": "narration",
+      "text": "Now, voice input.",
+      "source": "aligned-narration-5.wav"
+    },
+    {
+      "start": 101.77599999999998,
+      "end": 106.15099999999998,
+      "window_end": 106.7,
+      "kind": "actual STT input",
+      "text": "Recorded synthetic microphone question",
+      "source": "microphone.wav"
+    },
+    {
+      "start": 106.8,
+      "end": 124.1,
+      "window_end": 124.8,
+      "kind": "narration",
+      "text": "Whisper transcribes the recorded question, and the recognized text enters the same Coach conversation. I then request a spoken reply. Kokoro generates the audio locally. Next, listen to the actual reply produced by the application.",
+      "source": "aligned-narration-6.wav"
+    },
+    {
+      "start": 125.17099999999998,
+      "end": 184.796,
+      "window_end": 186.8,
+      "kind": "actual app TTS",
+      "text": "Actual Kokoro reply generated by the app",
+      "source": "spoken-reply.wav"
+    },
+    {
+      "start": 186.92,
+      "end": 198.99499999999998,
+      "window_end": 202.7,
+      "kind": "narration",
+      "text": "Next I request a nutrition draft with calorie targets, meal portions, and alternatives. I review and approve it. The active nutrition plan is saved to my profile.",
+      "source": "aligned-narration-7.wav"
+    },
+    {
+      "start": 203,
+      "end": 213.95,
+      "window_end": 215.1,
+      "kind": "narration",
+      "text": "Both plans are now available. I download the workout program and the nutrition plan using the application buttons, then open the downloaded documents.",
+      "source": "aligned-narration-8.wav"
+    },
+    {
+      "start": 215.407,
+      "end": 232.55700000000002,
+      "window_end": 233,
+      "kind": "narration",
+      "text": "The workout PDF opens with the program summary and progression rules. The following pages list training days, exercises, sets, repetitions, rest periods, and equipment. These are the actual pages exported by the application.",
+      "source": "aligned-narration-9.wav"
+    },
+    {
+      "start": 233.2,
+      "end": 245.225,
+      "window_end": 250,
+      "kind": "narration",
+      "text": "I scroll through the remaining workout pages to check the full document. The weekly sections let the trainee carry the saved program into a workout without returning to the chat.",
+      "source": "aligned-narration-10.wav"
+    },
+    {
+      "start": 250,
+      "end": 264.125,
+      "window_end": 267,
+      "kind": "narration",
+      "text": "This download contains thirteen pages. I continue to the last page, checking that later weeks and their training details are included. The local viewer displays the original downloaded PDF.",
+      "source": "aligned-narration-11.wav"
+    },
+    {
+      "start": 267.323,
+      "end": 279.22299999999996,
+      "window_end": 281.8,
+      "kind": "narration",
+      "text": "The nutrition PDF includes daily calorie and macro targets, meals, portions, and alternatives. I scroll through both pages to inspect the complete document.",
+      "source": "aligned-narration-12.wav"
+    },
+    {
+      "start": 282,
+      "end": 292.95,
+      "window_end": 293.8,
+      "kind": "narration",
+      "text": "That completes the walkthrough: three cooperating agents, saved plans, voice conversation, and two downloadable PDFs whose contents we have inspected.",
+      "source": "aligned-narration-13.wav"
+    }
   ]
 }

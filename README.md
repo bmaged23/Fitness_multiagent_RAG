@@ -2,11 +2,15 @@
 
 A personalized fitness coaching application with a Streamlit interface, three cooperating AI agents, retrieval-grounded workout planning, persistent coaching context, nutrition planning, and local speech input/output.
 
-[![Watch the complete fitness coach demo](docs/media/fitness-coach-demo-poster.png)](docs/media/fitness-coach-demo.mp4)
+[![Watch the complete fitness coach demo](docs/media/fitness-coach-demo-poster.png)](https://raw.githubusercontent.com/bmaged23/Fitness_multiagent_RAG/master/docs/media/fitness-coach-demo.mp4)
 
-**3:20 walkthrough:** login → coaching chat → plan structure → Week 1 exercises → approval and saving → weekly schedule → PDF download → STT → spoken reply.
+**4:54 narrated walkthrough:** login → coaching chat → plan structure → Week 1 exercises → approval and saving → weekly schedule → PDF download → STT → spoken reply → nutrition approval → both PDF downloads → open and scroll the documents.
 
-[Watch/download the demo](docs/media/fitness-coach-demo.mp4) · [Recording notes](docs/demo-recording.md) · [Interactive architecture diagram](docs/architecture.html)
+[Watch/download the demo](https://raw.githubusercontent.com/bmaged23/Fitness_multiagent_RAG/master/docs/media/fitness-coach-demo.mp4) · [Recording notes](docs/demo-recording.md) · [Interactive architecture diagram](docs/architecture.html)
+
+[Browser player](docs/demo.html) · [GitHub video publishing instructions](docs/video-publishing.md)
+
+The video link opens the raw MP4 to avoid GitHub’s file-preview error. For an inline GitHub player, upload the MP4 as a README attachment using the linked instructions.
 
 ## How it works
 
@@ -109,7 +113,7 @@ python -m streamlit run app/streamlit_app.py
 
 Open `http://localhost:8501`. Sign up, log in, and provide your goal, experience, equipment, available days, and any training limitations. Try: “Create a six-week beginner dumbbell plan, three days per week.” Review the proposed structure, request Week 1 details, then explicitly approve saving the plan. Open **My plans** to inspect the weekly schedule and download its PDF. Nutrition plans can also be drafted, approved, and revised through chat.
 
-Allow browser microphone access on localhost to record speech, review/send the transcription, and use the reply audio controls to hear generated speech. Voice requires the downloaded models and working GPU/runtime configuration. PDF export requires no additional package installation. The [recorded demo](docs/media/fitness-coach-demo.mp4) shows these interactions.
+Allow browser microphone access on localhost to record speech, review/send the transcription, and use the reply audio controls to hear generated speech. Voice requires the downloaded models and working GPU/runtime configuration. PDF export requires no additional package installation. The [recorded demo](https://raw.githubusercontent.com/bmaged23/Fitness_multiagent_RAG/master/docs/media/fitness-coach-demo.mp4) shows these interactions.
 
 The terminal alternative is:
 
