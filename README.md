@@ -2,15 +2,15 @@
 
 A personalized fitness coaching application with a Streamlit interface, three cooperating AI agents, retrieval-grounded workout planning, persistent coaching context, nutrition planning, and local speech input/output.
 
-[![Watch the complete fitness coach demo](docs/media/fitness-coach-demo-poster.png)](https://raw.githubusercontent.com/bmaged23/Fitness_multiagent_RAG/master/docs/media/fitness-coach-demo.mp4)
+[![Watch the complete fitness coach demo](docs/media/fitness-coach-demo-poster.png)](https://bmaged23.github.io/Fitness_multiagent_RAG/demo.html)
 
 **4:54 narrated walkthrough:** login → coaching chat → plan structure → Week 1 exercises → approval and saving → weekly schedule → PDF download → STT → spoken reply → nutrition approval → both PDF downloads → open and scroll the documents.
 
-[Watch/download the demo](https://raw.githubusercontent.com/bmaged23/Fitness_multiagent_RAG/master/docs/media/fitness-coach-demo.mp4) · [Recording notes](docs/demo-recording.md) · [Interactive architecture diagram](docs/architecture.html)
+[▶ Watch the demo](https://bmaged23.github.io/Fitness_multiagent_RAG/demo.html) · [Download MP4](https://raw.githubusercontent.com/bmaged23/Fitness_multiagent_RAG/master/docs/media/fitness-coach-demo.mp4) · [Recording notes](docs/demo-recording.md) · [Interactive architecture diagram](docs/architecture.html)
 
 [Browser player](docs/demo.html) · [GitHub video publishing instructions](docs/video-publishing.md)
 
-The video link opens the raw MP4 to avoid GitHub’s file-preview error. For an inline GitHub player, upload the MP4 as a README attachment using the linked instructions.
+The **Watch demo** link opens the browser player hosted with GitHub Pages. The MP4 download link is available separately.
 
 ## How it works
 

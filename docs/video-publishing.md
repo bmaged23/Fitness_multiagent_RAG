@@ -1,23 +1,20 @@
-# Publishing the demo video
+# Watching the project demo on GitHub
 
-The repository contains a 4:54 narrated MP4 with the actual microphone sample, app-generated reply speech, nutrition approval, and both PDF downloads followed by opening and scrolling all document pages. It is approximately 9.3 MiB and uses browser-compatible H.264/AAC with fast-start metadata.
+The README's **Watch demo** link opens the custom HTML video player at:
 
-## README links
+`https://bmaged23.github.io/Fitness_multiagent_RAG/demo.html`
 
-The README thumbnail links directly to the raw MP4, avoiding GitHub's repository file-preview page and its “can't show files that are this big” error. Depending on the browser, the raw link plays the video or downloads it. Push the revised media file before expecting the remote link to show the new recording.
+This streams the existing 4:54 H.264/AAC video in the browser and provides explicit sound and fullscreen controls. The direct MP4 download is a separate README link.
 
-## Inline playback on GitHub
+## Enable GitHub Pages
 
-For an inline player, edit the README using GitHub's browser editor and drag `docs/media/fitness-coach-demo.mp4` into the editor. GitHub uploads it as an attachment and inserts a `github.com/user-attachments/assets/...` URL. Keep that generated attachment URL in the README and preview before committing. No attachment URL has been generated automatically for this project.
+The player and video are in `docs/`. In the repository on GitHub:
 
-GitHub's [official file attachment documentation](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/attaching-files) lists MP4 support and a 10 MB video limit for free plans; this recording fits that limit.
+1. Open **Settings → Pages**.
+2. Under **Build and deployment**, select **Deploy from a branch**.
+3. Choose branch **master** and folder **/docs**, then save.
+4. Wait for the Pages deployment to finish, then open the player link above.
 
-## Standalone browser player
+GitHub Pages can publish the `docs` folder of a branch. This project already has a self-contained player and local relative paths for its video and poster. The README link will work once Pages is enabled and the latest commit is pushed. [GitHub Pages publishing sources](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site)
 
-`docs/demo.html` provides standard browser playback and sound controls. Serve the repository's `docs` directory locally:
-
-```bash
-python -m http.server 8000 --directory docs
-```
-
-Open `http://localhost:8000/demo.html`, click Play, and enable sound. The page can also be hosted with GitHub Pages, but Pages has not been enabled by this change. GitHub's repository view displays HTML source rather than running the player.
+The current MP4 is under GitHub's 10 MB video upload limit for free plans, so it does not need to be reduced for this player. [GitHub supported media formats and limits](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/attaching-files)
