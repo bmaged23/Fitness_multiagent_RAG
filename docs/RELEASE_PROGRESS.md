@@ -21,3 +21,7 @@
 ## Still required
 
 Clean full embedding/GPU speech installation; real retrieval and agent evaluation; measured timings/resources/cost; application Docker image and model/corpus provisioning/license review; container checks; public Docker Hub publication and pull test; image release workflow; complete README rewrite and remote CI verification. No new quality, Docker readiness or deployment claim is justified yet.
+
+## Evaluation dataset added
+
+100 authored scenarios / 127 user messages / 20 multi-turn conversations, split into 30 development and 70 held-out scenarios. Manifest and structure validation pass. 51 cases await corpus review, 49 await behavior review. Added deterministic retrieval scoring (missing labels remain unscored), LangSmith local export/explicit upload, and review/scoring documentation. Full offline suite: 107 passed in 4.91 seconds. These are test suite results, not RAG answer-quality scores. Live corpus retrieval, judge evaluation and LangSmith experiment execution remain pending.

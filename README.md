@@ -26,6 +26,10 @@ Open the HTML file locally for clickable explanations and flow filters. GitHub s
 
 Deep Agents/LangGraph orchestrates the agents. Groq or Ollama supplies the language model; sentence-transformers supplies local embeddings. Nutrition is handled through Coach tools, not a separate nutrition agent. Weekly schedules belong to workout plans, not a background scheduling service.
 
+## RAG evaluation
+
+A [100-scenario evaluation dataset](evaluation/README.md) covers retrieval, constraints, multi-turn memory, agent tools and plan approval. It includes local validation, retrieval scoring functions and optional LangSmith export. References are awaiting review against the actual corpus; no real RAG quality scores are reported yet.
+
 ## Development checks
 
 For the offline application test suite (no GPU, model download or cloud key required):

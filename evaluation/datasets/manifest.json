@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "dataset_version": "fitness-scenarios-v1",
+  "count": 100,
+  "development_count": 30,
+  "held_out_count": 70,
+  "sha256": "c7d03199579997493d630e9e267ec20540343759d13d00e28f7cf2431a1a43c7",
+  "label_status": "draft_unreviewed",
+  "corpus_snapshot": null,
+  "warning": "Not a scored benchmark yet. Reference chunk IDs and fixture implementations are pending. Split labels do not prevent developer access; keep held_out out of tuning."
+}
