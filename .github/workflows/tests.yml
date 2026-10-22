@@ -1,0 +1,29 @@
+name: Offline application tests
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GROQ_API_KEY: ""
+      OLLAMA_API_KEY: ""
+      TAVILY_API_KEY: ""
+      SQLITE_DB_PATH: /tmp/fitness-ci.db
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+      - run: python -m pip install -r requirements-dev.txt
+      - run: python -m pip check
+      - run: python -m pytest -q --junitxml=reports/offline-tests.xml
+      - run: node tests/microphone_status.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: offline-test-results
+          path: reports/offline-tests.xml

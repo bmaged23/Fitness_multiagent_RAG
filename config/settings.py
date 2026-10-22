@@ -28,7 +28,7 @@ PROGRAMS_MIN_ROWS  = 2_000
 # ---------------------------------------------------------------------------
 # SQLite
 # ---------------------------------------------------------------------------
-SQLITE_DB_PATH = PROJECT_ROOT / "data" / "fitness_coach.db"
+SQLITE_DB_PATH = Path(os.getenv("SQLITE_DB_PATH", str(PROJECT_ROOT / "data" / "fitness_coach.db")))
 
 # ---------------------------------------------------------------------------
 # Qdrant — local instance
@@ -54,7 +54,7 @@ QDRANT_EXACT_SEARCH       = True          # passed as SearchParams(exact=True) a
 
 # Set to True  → drop + recreate collections, then embed + upsert (full rebuild)
 # Set to False → skip drop/create, only embed + upsert into existing collections
-RECREATE_COLLECTIONS = True
+RECREATE_COLLECTIONS = False
 
 # Hard ceiling on chunks per single retrieval call — the Retriever agent
 # decides the actual top-k dynamically based on query complexity.

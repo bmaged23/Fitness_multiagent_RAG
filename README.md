@@ -26,6 +26,21 @@ Open the HTML file locally for clickable explanations and flow filters. GitHub s
 
 Deep Agents/LangGraph orchestrates the agents. Groq or Ollama supplies the language model; sentence-transformers supplies local embeddings. Nutrition is handled through Coach tools, not a separate nutrition agent. Weekly schedules belong to workout plans, not a background scheduling service.
 
+## Development checks
+
+For the offline application test suite (no GPU, model download or cloud key required):
+
+```bash
+python3.12 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements-dev.txt
+python -m pip check
+python -m pytest -q
+node tests/microphone_status.mjs
+```
+
+`requirements-core.txt` is the resolved text application/PDF dependency set. Local embedding inference and optional speech require their additional dependencies and model assets; the core environment alone is not a provisioned RAG installation. Three live-agent scripts are excluded from the default pytest run. See [release verification progress](docs/RELEASE_PROGRESS.md) for tested routes and remaining work.
+
 ## Clone and run
 
 Use **Linux or WSL2**, Git, Python **3.12**, and Docker with Docker Compose. The pinned environment includes Linux NVIDIA CUDA 12.6 packages; full GPU speech needs a compatible NVIDIA driver. Native Windows and macOS require a different hardware dependency set. Terminal authentication imports Unix `termios` and `tty`.
@@ -63,7 +78,7 @@ Edit the copied `.env` locally. Never commit API keys.
 
 For a local Ollama server, set `OLLAMA_BASE_URL=http://localhost:11434`, choose an installed model in `OLLAMA_MODEL`, and leave `OLLAMA_API_KEY` empty. Install Ollama and pull that model separately before starting chat. Qdrant authentication can be supplied through `QDRANT_API_KEY` when using an authenticated server.
 
-SQLite is configured in `config/settings.py` as `data/fitness_coach.db`; the current code does not read `SQLITE_DB_PATH` from the environment. Back up existing personal data before replacing the database.
+SQLite defaults to `data/fitness_coach.db`; set `SQLITE_DB_PATH` to override it (for example, a mounted container data directory). Back up existing personal data before replacing the database.
 
 ### 3. Start storage
 
@@ -90,7 +105,7 @@ python scripts/inspect_collections.py
 
 The source dataset is `adnanelouardi/600k-fitness-exercise-and-workout-program-dataset`. Downloaded CSV files go to `data/raw/`; program and exercise chunks go to `data/processed/`. Embedding downloads the configured model and fills the `fitness_programs` and `fitness_exercises` Qdrant collections. Complete indexing before asking for grounded training plans.
 
-**Index reset behavior:** `--reseting` deletes and recreates both collections, and the script currently defaults to this behavior even without a flag. For later upserts that preserve existing collections, explicitly run:
+**Index reset behavior:** `--reseting` explicitly deletes and recreates both collections. Without it, indexing preserves existing collections and upserts; missing collections are created on the first indexing run. For later upserts, run:
 
 ```bash
 python scripts/embed_and_index.py --no-reseting

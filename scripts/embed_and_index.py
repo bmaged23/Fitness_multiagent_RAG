@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """
 Embed both JSONL chunk files and upsert into two Qdrant collections.
 
@@ -20,8 +22,10 @@ import argparse
 from pathlib import Path
 
 import numpy as np
-from tqdm import tqdm
-from sentence_transformers import SentenceTransformer
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from sentence_transformers import SentenceTransformer
 from qdrant_client import QdrantClient
 from qdrant_client.models import (
     VectorParams, PointStruct,
@@ -65,6 +69,7 @@ def load_jsonl(path: Path) -> list[dict]:
 
 
 def embed_texts(model: SentenceTransformer, texts: list[str]) -> np.ndarray:
+    from tqdm import tqdm
     """Embed in batches with a progress bar. Returns (N, dim) float32 array."""
     all_embeddings = []
     for i in tqdm(range(0, len(texts), EMBEDDING_BATCH_SIZE),
@@ -101,6 +106,7 @@ def upsert_points(client: QdrantClient, collection: str,
                   points: list[PointStruct]) -> None:
     """Upsert in batches and show progress."""
     total = len(points)
+    from tqdm import tqdm
     for i in tqdm(range(0, total, QDRANT_UPSERT_BATCH_SIZE),
                   desc=f"  Upserting → {collection}", unit="batch"):
         batch = points[i : i + QDRANT_UPSERT_BATCH_SIZE]
@@ -112,9 +118,11 @@ def upsert_points(client: QdrantClient, collection: str,
 # Collection setup
 # ---------------------------------------------------------------------------
 
-def recreate_collection(client: QdrantClient, name: str) -> None:
-    """Drop if exists, then create fresh with flat (exact) search enforced."""
+def recreate_collection(client: QdrantClient, name: str, *, reset: bool = True) -> None:
+    """Create a collection; preserve existing data when reset is false."""
     if client.collection_exists(name):
+        if not reset:
+            return
         log.info("  Dropping existing collection '%s' …", name)
         client.delete_collection(name)
     client.create_collection(
@@ -194,15 +202,20 @@ def verify(client: QdrantClient, collection: str, expected: int) -> None:
 # Main
 # ---------------------------------------------------------------------------
 
-def main() -> None:
+def parse_args(argv=None):
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--reseting",
         action=argparse.BooleanOptionalAction,
-        default=True,
-        help="Drop and recreate both collections before indexing (default: True). Use --no-reseting to skip.",
+        default=False,
+        help="Explicitly drop and recreate both collections. Default: preserve collections and upsert.",
     )
-    args = parser.parse_args()
+    return parser.parse_args(argv)
+
+
+def main() -> None:
+    args = parse_args()
+    from sentence_transformers import SentenceTransformer
 
     # ── connect & verify Qdrant is reachable ─────────────────────────────────
     log.info("Connecting to Qdrant at %s …", QDRANT_URL)
@@ -218,7 +231,11 @@ def main() -> None:
         recreate_collection(client, QDRANT_EXERCISES_COLLECTION)
         create_exercises_indexes(client)
     else:
-        log.info("--reseting not set: upserting into existing collections.")
+        log.info("--reseting not set: preserving existing collections.")
+        recreate_collection(client, QDRANT_PROGRAMS_COLLECTION, reset=False)
+        create_programs_indexes(client)
+        recreate_collection(client, QDRANT_EXERCISES_COLLECTION, reset=False)
+        create_exercises_indexes(client)
 
     # ── load embedding model ─────────────────────────────────────────────────
     log.info("Loading embedding model '%s' …", EMBEDDING_MODEL)

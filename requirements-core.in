@@ -1,0 +1,15 @@
+# Text application and PDF export; embeddings and speech installed separately.
+deepagents==0.7.23
+groq==0.37.1
+langchain-core==1.6.9
+langchain-groq==1.1.3
+langchain-ollama==1.1.0
+langgraph==1.2.14
+numpy==2.5.3
+pydantic==2.14.0
+python-dotenv==1.2.4
+qdrant-client==1.19.1
+reportlab==5.0.1
+soundfile==0.14.0
+streamlit==1.65.0
+tavily-python==0.8.5
