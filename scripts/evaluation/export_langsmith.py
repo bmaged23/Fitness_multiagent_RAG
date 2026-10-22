@@ -20,7 +20,7 @@ def main():
     errors = validate(cases)
     if errors:
         parser.error('; '.join(errors))
-    examples = [{'inputs': {'turns': c['turns'], 'initial_state': c['initial_state'],
+    examples = [{'inputs': {'scenario_id': c['id'], 'turns': c['turns'], 'initial_state': c['initial_state'],
                              'fault_injection': c.get('fault_injection')},
                  'outputs': c['expected'],
                  'metadata': {key: c[key] for key in ['id', 'category', 'split', 'reference_status', 'provenance']}}
@@ -32,6 +32,8 @@ def main():
         return
     if any(c['metadata']['reference_status'] != 'reviewed' for c in examples) and not args.allow_draft:
         parser.error('References are unreviewed. Review them first or use --allow-draft for annotation only.')
+    from dotenv import load_dotenv
+    load_dotenv(Path(__file__).resolve().parents[2] / '.env')
     from langsmith import Client
     client = Client()  # Credentials come from environment; never saved in examples.
     # Use a fresh dataset so retries cannot silently duplicate examples in an existing set.

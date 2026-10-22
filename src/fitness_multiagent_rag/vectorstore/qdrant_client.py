@@ -56,6 +56,7 @@ def search(
     )
 
     return [
-        SearchResult(score=hit.score, collection=collection, **hit.payload)
+        SearchResult(**{**hit.payload, "chunk_id": str(hit.id),
+                        "score": hit.score, "collection": collection})
         for hit in response.points
     ]

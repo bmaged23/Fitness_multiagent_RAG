@@ -1,0 +1,1991 @@
+{
+  "dataset_version": "fitness-corpus-qa-v1",
+  "cases": 100,
+  "completed": 100,
+  "normalized_ranking_score_100": 71.7873602136624,
+  "metrics": {
+    "ndcg_at_5": {
+      "mean": 0.717873602136624,
+      "scored_cases": 100,
+      "total_cases": 100
+    },
+    "precision_at_5": {
+      "mean": 0.19200000000000003,
+      "scored_cases": 100,
+      "total_cases": 100
+    },
+    "recall_at_5": {
+      "mean": 0.82,
+      "scored_cases": 100,
+      "total_cases": 100
+    },
+    "mrr_at_5": {
+      "mean": 0.7095,
+      "scored_cases": 100,
+      "total_cases": 100
+    },
+    "correctness_precision": {
+      "mean": 0.8433333333333333,
+      "scored_cases": 100,
+      "total_cases": 100
+    },
+    "correctness_f1": {
+      "mean": 0.8164761904761905,
+      "scored_cases": 100,
+      "total_cases": 100
+    },
+    "completeness": {
+      "mean": 0.802,
+      "scored_cases": 100,
+      "total_cases": 100
+    },
+    "answer_relevance": {
+      "mean": 0.9075,
+      "scored_cases": 100,
+      "total_cases": 100
+    },
+    "faithfulness": {
+      "mean": 0.9783333333333333,
+      "scored_cases": 100,
+      "total_cases": 100
+    },
+    "unsupported_claim_rate": {
+      "mean": 0.02166666666666667,
+      "scored_cases": 100,
+      "total_cases": 100
+    }
+  },
+  "experiment_url": "https://eu.smith.langchain.com/o/01cb8af4-5866-49ad-bca6-26844f87da18/projects/p/9164d45d-2506-483c-9272-ac2f1e73567a",
+  "scope": "Direct RAG component baseline, not full Coach/Designer application.",
+  "limitations": [
+    "Source-relative factual QA; no independent human gold review or real-world fitness truth claim.",
+    "Score means report their valid denominators; missing judgments are never counted as successes.",
+    "No single combined answer score is imposed; correctness, completeness, faithfulness and relevance remain separate.",
+    "API usage is recorded, but monetary cost is not estimated without actual billing rates."
+  ],
+  "answer_model": "gemma4:31b",
+  "judge_model": "gpt-oss:120b",
+  "dataset_sha256": "9f5defa22c143d0334b8ad27106a64587ffac30e6f3919bb2752e097994800ac",
+  "prompt_hashes": {
+    "ANSWER_SYSTEM": "609614db95d1e29b67408d4b9fa7f2a95c889123e8f65f901b03c7f40fb54bf3",
+    "CORRECTNESS_SYSTEM": "eb3139514c5dafa211414fd6608c2a7e0d12bcbbfe23889741a3b29613c460a3",
+    "FAITHFULNESS_SYSTEM": "bef6b4f5f174b4c643fc8a136e391f9c1b3685f1dfd27333a27901c7e8d61d63"
+  },
+  "generation_median_seconds": 2.0148560224999983,
+  "provider_usage": {
+    "generation": {
+      "prompt_eval_count": 140026,
+      "eval_count": 10362
+    },
+    "correctness": {
+      "prompt_eval_count": 63933,
+      "eval_count": 45349
+    },
+    "faithfulness": {
+      "prompt_eval_count": 147112,
+      "eval_count": 65974
+    }
+  },
+  "per_case": [
+    {
+      "id": "corpus-qa-029",
+      "category": "program_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 2.7926507399997718
+    },
+    {
+      "id": "corpus-qa-051",
+      "category": "exercise_facts",
+      "split": "development",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.5243064820001564
+    },
+    {
+      "id": "corpus-qa-044",
+      "category": "program_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.0,
+        "precision_at_5": 0.0,
+        "recall_at_5": 0.0,
+        "mrr_at_5": 0.0,
+        "correctness_precision": 0.0,
+        "correctness_f1": 0.0,
+        "completeness": 0.0,
+        "answer_relevance": 0.5,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.6956040969998867
+    },
+    {
+      "id": "corpus-qa-005",
+      "category": "program_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 2.2951024540002436
+    },
+    {
+      "id": "corpus-qa-027",
+      "category": "program_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.5,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 0.3333333333333333,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.444666030999997
+    },
+    {
+      "id": "corpus-qa-025",
+      "category": "program_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 2.2441286919997765
+    },
+    {
+      "id": "corpus-qa-010",
+      "category": "program_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.258755598999869
+    },
+    {
+      "id": "corpus-qa-070",
+      "category": "exercise_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 4.183922986000198
+    },
+    {
+      "id": "corpus-qa-082",
+      "category": "program_comparison",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.5012658353418871,
+        "precision_at_5": 0.4,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 0.25,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.9980089770001541
+    },
+    {
+      "id": "corpus-qa-083",
+      "category": "program_comparison",
+      "split": "development",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.4,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 2.8615932889997566
+    },
+    {
+      "id": "corpus-qa-072",
+      "category": "exercise_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 2.2617039560000194
+    },
+    {
+      "id": "corpus-qa-022",
+      "category": "program_facts",
+      "split": "development",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.6123874109998724
+    },
+    {
+      "id": "corpus-qa-062",
+      "category": "exercise_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.6309297535714575,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 0.5,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.372404464000283
+    },
+    {
+      "id": "corpus-qa-097",
+      "category": "program_exercise_join",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.6240505200038379,
+        "precision_at_5": 0.4,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 0.5,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 2.6862693159996525
+    },
+    {
+      "id": "corpus-qa-048",
+      "category": "program_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.0,
+        "precision_at_5": 0.0,
+        "recall_at_5": 0.0,
+        "mrr_at_5": 0.0,
+        "correctness_precision": 0.0,
+        "correctness_f1": 0.0,
+        "completeness": 0.0,
+        "answer_relevance": 0.5,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.0260277089996634
+    },
+    {
+      "id": "corpus-qa-071",
+      "category": "exercise_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.6309297535714575,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 0.5,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 4.127350662000026
+    },
+    {
+      "id": "corpus-qa-096",
+      "category": "program_exercise_join",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.6131471927654584,
+        "precision_at_5": 0.2,
+        "recall_at_5": 0.5,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 0.8,
+        "completeness": 0.6666666666666666,
+        "answer_relevance": 0.75,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.3203378850002991
+    },
+    {
+      "id": "corpus-qa-011",
+      "category": "program_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 2.1640091189997293
+    },
+    {
+      "id": "corpus-qa-012",
+      "category": "program_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.43067655807339306,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 0.25,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.1132121730001927
+    },
+    {
+      "id": "corpus-qa-078",
+      "category": "exercise_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 2.5716045789999953
+    },
+    {
+      "id": "corpus-qa-030",
+      "category": "program_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.2016000710000299
+    },
+    {
+      "id": "corpus-qa-013",
+      "category": "program_facts",
+      "split": "development",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.0,
+        "precision_at_5": 0.0,
+        "recall_at_5": 0.0,
+        "mrr_at_5": 0.0,
+        "correctness_precision": 0.0,
+        "correctness_f1": 0.0,
+        "completeness": 0.0,
+        "answer_relevance": 0.5,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 2.404934174000118
+    },
+    {
+      "id": "corpus-qa-033",
+      "category": "program_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.0,
+        "precision_at_5": 0.0,
+        "recall_at_5": 0.0,
+        "mrr_at_5": 0.0,
+        "correctness_precision": 0.0,
+        "correctness_f1": 0.0,
+        "completeness": 0.0,
+        "answer_relevance": 0.5,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.5267691670001113
+    },
+    {
+      "id": "corpus-qa-009",
+      "category": "program_facts",
+      "split": "development",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.0,
+        "precision_at_5": 0.0,
+        "recall_at_5": 0.0,
+        "mrr_at_5": 0.0,
+        "correctness_precision": 0.3333333333333333,
+        "correctness_f1": 0.3333333333333333,
+        "completeness": 0.3333333333333333,
+        "answer_relevance": 0.75,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 2.7717274689998703
+    },
+    {
+      "id": "corpus-qa-064",
+      "category": "exercise_facts",
+      "split": "development",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.0,
+        "precision_at_5": 0.0,
+        "recall_at_5": 0.0,
+        "mrr_at_5": 0.0,
+        "correctness_precision": 0.0,
+        "correctness_f1": 0.0,
+        "completeness": 0.0,
+        "answer_relevance": 0.5,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.845393463000164
+    },
+    {
+      "id": "corpus-qa-079",
+      "category": "exercise_facts",
+      "split": "development",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.6309297535714575,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 0.5,
+        "correctness_precision": 1.0,
+        "correctness_f1": 0.8,
+        "completeness": 0.6666666666666666,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 2.6977843089998714
+    },
+    {
+      "id": "corpus-qa-006",
+      "category": "program_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.4336010259999057
+    },
+    {
+      "id": "corpus-qa-004",
+      "category": "program_facts",
+      "split": "development",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.0,
+        "precision_at_5": 0.0,
+        "recall_at_5": 0.0,
+        "mrr_at_5": 0.0,
+        "correctness_precision": 0.0,
+        "correctness_f1": 0.0,
+        "completeness": 0.0,
+        "answer_relevance": 0.25,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 2.190462432000004
+    },
+    {
+      "id": "corpus-qa-019",
+      "category": "program_facts",
+      "split": "development",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.6179256899999928
+    },
+    {
+      "id": "corpus-qa-094",
+      "category": "program_exercise_join",
+      "split": "development",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.6131471927654584,
+        "precision_at_5": 0.2,
+        "recall_at_5": 0.5,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 0.3333333333333333,
+        "correctness_f1": 0.3333333333333333,
+        "completeness": 0.3333333333333333,
+        "answer_relevance": 0.75,
+        "faithfulness": 0.3333333333333333,
+        "unsupported_claim_rate": 0.6666666666666667
+      },
+      "answer_generation_seconds": 2.2641856019999977
+    },
+    {
+      "id": "corpus-qa-037",
+      "category": "program_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.2842383190004512
+    },
+    {
+      "id": "corpus-qa-002",
+      "category": "program_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.43067655807339306,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 0.25,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 2.542984881000393
+    },
+    {
+      "id": "corpus-qa-035",
+      "category": "program_facts",
+      "split": "development",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.0,
+        "precision_at_5": 0.0,
+        "recall_at_5": 0.0,
+        "mrr_at_5": 0.0,
+        "correctness_precision": 0.0,
+        "correctness_f1": 0.0,
+        "completeness": 0.0,
+        "answer_relevance": 0.5,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.4080377450000015
+    },
+    {
+      "id": "corpus-qa-038",
+      "category": "program_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.0,
+        "precision_at_5": 0.0,
+        "recall_at_5": 0.0,
+        "mrr_at_5": 0.0,
+        "correctness_precision": 0.0,
+        "correctness_f1": 0.0,
+        "completeness": 0.0,
+        "answer_relevance": 0.5,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.8492902020002475
+    },
+    {
+      "id": "corpus-qa-073",
+      "category": "exercise_facts",
+      "split": "development",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.3229986030000873
+    },
+    {
+      "id": "corpus-qa-015",
+      "category": "program_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 2.2666703419999976
+    },
+    {
+      "id": "corpus-qa-061",
+      "category": "exercise_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.1736882529999093
+    },
+    {
+      "id": "corpus-qa-053",
+      "category": "exercise_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 0.8,
+        "completeness": 0.6666666666666666,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 4.084968926000329
+    },
+    {
+      "id": "corpus-qa-081",
+      "category": "program_comparison",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.6131471927654584,
+        "precision_at_5": 0.2,
+        "recall_at_5": 0.5,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 0.5714285714285715,
+        "completeness": 0.4,
+        "answer_relevance": 0.5,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.7913574049998715
+    },
+    {
+      "id": "corpus-qa-014",
+      "category": "program_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 2.953406393000023
+    },
+    {
+      "id": "corpus-qa-032",
+      "category": "program_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 2.9366503239998565
+    },
+    {
+      "id": "corpus-qa-024",
+      "category": "program_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.0,
+        "precision_at_5": 0.0,
+        "recall_at_5": 0.0,
+        "mrr_at_5": 0.0,
+        "correctness_precision": 0.0,
+        "correctness_f1": 0.0,
+        "completeness": 0.0,
+        "answer_relevance": 0.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 3.492461196000022
+    },
+    {
+      "id": "corpus-qa-052",
+      "category": "exercise_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.0771186550000493
+    },
+    {
+      "id": "corpus-qa-054",
+      "category": "exercise_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.6309297535714575,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 0.5,
+        "correctness_precision": 1.0,
+        "correctness_f1": 0.8,
+        "completeness": 0.6666666666666666,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 2.159120045999771
+    },
+    {
+      "id": "corpus-qa-003",
+      "category": "program_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.3683213350000187
+    },
+    {
+      "id": "corpus-qa-066",
+      "category": "exercise_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.6309297535714575,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 0.5,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 2.2792601890000697
+    },
+    {
+      "id": "corpus-qa-001",
+      "category": "program_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.6309297535714575,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 0.5,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.4890202020001198
+    },
+    {
+      "id": "corpus-qa-084",
+      "category": "program_comparison",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.9197207891481876,
+        "precision_at_5": 0.4,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 2.378396636999696
+    },
+    {
+      "id": "corpus-qa-023",
+      "category": "program_facts",
+      "split": "development",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.7213205000002745
+    },
+    {
+      "id": "corpus-qa-036",
+      "category": "program_facts",
+      "split": "development",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 2.997063073999925
+    },
+    {
+      "id": "corpus-qa-095",
+      "category": "program_exercise_join",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.0,
+        "precision_at_5": 0.0,
+        "recall_at_5": 0.0,
+        "mrr_at_5": 0.0,
+        "correctness_precision": 0.0,
+        "correctness_f1": 0.0,
+        "completeness": 0.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.7105831240000953
+    },
+    {
+      "id": "corpus-qa-040",
+      "category": "program_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.5,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 0.3333333333333333,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 2.791477408999981
+    },
+    {
+      "id": "corpus-qa-088",
+      "category": "program_comparison",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.4,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 2.2845865559997947
+    },
+    {
+      "id": "corpus-qa-056",
+      "category": "exercise_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 3.9803590970000187
+    },
+    {
+      "id": "corpus-qa-028",
+      "category": "program_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.3926712869997573
+    },
+    {
+      "id": "corpus-qa-100",
+      "category": "program_exercise_join",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.38685280723454163,
+        "precision_at_5": 0.2,
+        "recall_at_5": 0.5,
+        "mrr_at_5": 0.5,
+        "correctness_precision": 0.3333333333333333,
+        "correctness_f1": 0.3333333333333333,
+        "completeness": 0.3333333333333333,
+        "answer_relevance": 0.5,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.9422001159996398
+    },
+    {
+      "id": "corpus-qa-045",
+      "category": "program_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.3965466319996267
+    },
+    {
+      "id": "corpus-qa-057",
+      "category": "exercise_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.6309297535714575,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 0.5,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.9863810870001544
+    },
+    {
+      "id": "corpus-qa-007",
+      "category": "program_facts",
+      "split": "development",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.2221852420002506
+    },
+    {
+      "id": "corpus-qa-031",
+      "category": "program_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 3.035230421000051
+    },
+    {
+      "id": "corpus-qa-085",
+      "category": "program_comparison",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.4,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 2.1690707329998986
+    },
+    {
+      "id": "corpus-qa-091",
+      "category": "program_exercise_join",
+      "split": "development",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.9197207891481876,
+        "precision_at_5": 0.4,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 4.10093202500002
+    },
+    {
+      "id": "corpus-qa-090",
+      "category": "program_comparison",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.6131471927654584,
+        "precision_at_5": 0.2,
+        "recall_at_5": 0.5,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 0.5714285714285715,
+        "completeness": 0.4,
+        "answer_relevance": 0.5,
+        "faithfulness": 0.5,
+        "unsupported_claim_rate": 0.5
+      },
+      "answer_generation_seconds": 1.1682235270000092
+    },
+    {
+      "id": "corpus-qa-050",
+      "category": "program_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.6309297535714575,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 0.5,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.967708729000151
+    },
+    {
+      "id": "corpus-qa-046",
+      "category": "program_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.6309297535714575,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 0.5,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 2.898164182999608
+    },
+    {
+      "id": "corpus-qa-099",
+      "category": "program_exercise_join",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.4,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 3.4734301379999124
+    },
+    {
+      "id": "corpus-qa-055",
+      "category": "exercise_facts",
+      "split": "development",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.38685280723454163,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 0.2,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 3.1405216400003155
+    },
+    {
+      "id": "corpus-qa-068",
+      "category": "exercise_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 3.767706982999698
+    },
+    {
+      "id": "corpus-qa-017",
+      "category": "program_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.6309297535714575,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 0.5,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.9341658160001316
+    },
+    {
+      "id": "corpus-qa-049",
+      "category": "program_facts",
+      "split": "development",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.6309297535714575,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 0.5,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 3.2774746469999627
+    },
+    {
+      "id": "corpus-qa-069",
+      "category": "exercise_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.6309297535714575,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 0.5,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.1626728789997287
+    },
+    {
+      "id": "corpus-qa-098",
+      "category": "program_exercise_join",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.0,
+        "precision_at_5": 0.0,
+        "recall_at_5": 0.0,
+        "mrr_at_5": 0.0,
+        "correctness_precision": 0.0,
+        "correctness_f1": 0.0,
+        "completeness": 0.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 0.0,
+        "unsupported_claim_rate": 1.0
+      },
+      "answer_generation_seconds": 2.5790826570000718
+    },
+    {
+      "id": "corpus-qa-018",
+      "category": "program_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.770226286000252
+    },
+    {
+      "id": "corpus-qa-089",
+      "category": "program_comparison",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.4,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 2.5004236449999553
+    },
+    {
+      "id": "corpus-qa-008",
+      "category": "program_facts",
+      "split": "development",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.5,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 0.3333333333333333,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.7540884340000957
+    },
+    {
+      "id": "corpus-qa-080",
+      "category": "exercise_facts",
+      "split": "development",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 2.023188881999886
+    },
+    {
+      "id": "corpus-qa-059",
+      "category": "exercise_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.5,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 0.3333333333333333,
+        "correctness_precision": 1.0,
+        "correctness_f1": 0.8,
+        "completeness": 0.6666666666666666,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 0.9811801680002645
+    },
+    {
+      "id": "corpus-qa-058",
+      "category": "exercise_facts",
+      "split": "development",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 0.8,
+        "completeness": 0.6666666666666666,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 2.006523163000111
+    },
+    {
+      "id": "corpus-qa-043",
+      "category": "program_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.6211811010002748
+    },
+    {
+      "id": "corpus-qa-034",
+      "category": "program_facts",
+      "split": "development",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 2.4911188389996823
+    },
+    {
+      "id": "corpus-qa-076",
+      "category": "exercise_facts",
+      "split": "development",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.1313636979998591
+    },
+    {
+      "id": "corpus-qa-093",
+      "category": "program_exercise_join",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.6131471927654584,
+        "precision_at_5": 0.2,
+        "recall_at_5": 0.5,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 0.8,
+        "completeness": 0.6666666666666666,
+        "answer_relevance": 0.75,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 3.1646264410001095
+    },
+    {
+      "id": "corpus-qa-087",
+      "category": "program_comparison",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.6131471927654584,
+        "precision_at_5": 0.2,
+        "recall_at_5": 0.5,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 0.5714285714285715,
+        "completeness": 0.4,
+        "answer_relevance": 0.5,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.6003070350002417
+    },
+    {
+      "id": "corpus-qa-077",
+      "category": "exercise_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 2.7965412730000025
+    },
+    {
+      "id": "corpus-qa-020",
+      "category": "program_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.0,
+        "precision_at_5": 0.0,
+        "recall_at_5": 0.0,
+        "mrr_at_5": 0.0,
+        "correctness_precision": 0.0,
+        "correctness_f1": 0.0,
+        "completeness": 0.0,
+        "answer_relevance": 0.5,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 4.102614717000051
+    },
+    {
+      "id": "corpus-qa-060",
+      "category": "exercise_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 2.4553920210000797
+    },
+    {
+      "id": "corpus-qa-016",
+      "category": "program_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 2.5150935510000636
+    },
+    {
+      "id": "corpus-qa-092",
+      "category": "program_exercise_join",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.6131471927654584,
+        "precision_at_5": 0.2,
+        "recall_at_5": 0.5,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 0.3333333333333333,
+        "correctness_f1": 0.3333333333333333,
+        "completeness": 0.3333333333333333,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 3.2015737110000373
+    },
+    {
+      "id": "corpus-qa-075",
+      "category": "exercise_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.5,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 0.3333333333333333,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.7061881519998678
+    },
+    {
+      "id": "corpus-qa-086",
+      "category": "program_comparison",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.6934264036172708,
+        "precision_at_5": 0.4,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 0.5,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 2.2561247959997672
+    },
+    {
+      "id": "corpus-qa-065",
+      "category": "exercise_facts",
+      "split": "development",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.256513066000025
+    },
+    {
+      "id": "corpus-qa-074",
+      "category": "exercise_facts",
+      "split": "development",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.5,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 0.3333333333333333,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 2.037958432999858
+    },
+    {
+      "id": "corpus-qa-047",
+      "category": "program_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.1502488859996447
+    },
+    {
+      "id": "corpus-qa-067",
+      "category": "exercise_facts",
+      "split": "development",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 2.2471689779999906
+    },
+    {
+      "id": "corpus-qa-041",
+      "category": "program_facts",
+      "split": "development",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.5744566380003562
+    },
+    {
+      "id": "corpus-qa-021",
+      "category": "program_facts",
+      "split": "development",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.0,
+        "precision_at_5": 0.0,
+        "recall_at_5": 0.0,
+        "mrr_at_5": 0.0,
+        "correctness_precision": 0.0,
+        "correctness_f1": 0.0,
+        "completeness": 0.0,
+        "answer_relevance": 0.5,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 2.2332995460001257
+    },
+    {
+      "id": "corpus-qa-042",
+      "category": "program_facts",
+      "split": "development",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.1711740499999905
+    },
+    {
+      "id": "corpus-qa-063",
+      "category": "exercise_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.7274313990001247
+    },
+    {
+      "id": "corpus-qa-039",
+      "category": "program_facts",
+      "split": "held_out",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 0.6309297535714575,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 0.5,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 1.6683723460000692
+    },
+    {
+      "id": "corpus-qa-026",
+      "category": "program_facts",
+      "split": "development",
+      "status": "completed",
+      "scores": {
+        "ndcg_at_5": 1.0,
+        "precision_at_5": 0.2,
+        "recall_at_5": 1.0,
+        "mrr_at_5": 1.0,
+        "correctness_precision": 1.0,
+        "correctness_f1": 1.0,
+        "completeness": 1.0,
+        "answer_relevance": 1.0,
+        "faithfulness": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "answer_generation_seconds": 0.860994037999717
+    }
+  ]
+}

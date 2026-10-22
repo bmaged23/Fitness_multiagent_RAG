@@ -28,7 +28,19 @@ Deep Agents/LangGraph orchestrates the agents. Groq or Ollama supplies the langu
 
 ## RAG evaluation
 
-A [100-scenario evaluation dataset](evaluation/README.md) covers retrieval, constraints, multi-turn memory, agent tools and plan approval. It includes local validation, retrieval scoring functions and optional LangSmith export. References are awaiting review against the actual corpus; no real RAG quality scores are reported yet.
+A frozen **100-question corpus-derived golden dataset** evaluates retrieval and generated answers. All 100 cases completed: **nDCG@5 0.7179**, **recall@5 82.00%**, **correctness F1 81.65%**, **completeness 80.20%**, and **faithfulness 97.83%**. Gemma generated answers; GPT-OSS 120B judged correctness and faithfulness separately through Ollama Cloud, with experiments in LangSmith.
+
+![Retrieval and answer evaluation](evaluation/results/corpus-golden-baseline.svg)
+
+See the [full results and limitations](evaluation/GOLDEN_QA_RESULTS.md). This is a direct retrieval → answer baseline; it does not certify the complete Coach/Designer workflow. References are mechanically source-validated rather than independently human-adjudicated. The older behavior scenarios remain a separate regression suite.
+
+## Docker application and automated releases
+
+The CPU image packages the Streamlit application, agents, PDF export and the pinned BGE embedding model. Workout data is provisioned separately into persistent volumes, and LLM access requires your own provider credentials. Optional GPU speech uses the source installation.
+
+Follow [Docker pull, configuration, corpus setup and run instructions](docs/DOCKER.md). The image publication and public pull test are still pending verification; do not treat the target Docker Hub URL as an already verified release.
+
+[CI/CD setup](docs/CI_CD.md) explains the offline tests, fresh **100-case live evaluation**, quality regression gate and Docker Hub publication. The GPU evaluation job requires a registered runner and private frozen fixtures. Image publication depends on the evaluation passing.
 
 ## Development checks
 
@@ -47,9 +59,9 @@ node tests/microphone_status.mjs
 
 ## Clone and run
 
-Use **Linux or WSL2**, Git, Python **3.12**, and Docker with Docker Compose. The pinned environment includes Linux NVIDIA CUDA 12.6 packages; full GPU speech needs a compatible NVIDIA driver. Native Windows and macOS require a different hardware dependency set. Terminal authentication imports Unix `termios` and `tty`.
+The default source installation uses **Linux/WSL2, Python 3.12 and CPU embeddings**. GPU hardware is optional for text chat. The image targets Linux amd64; see [Docker instructions](docs/DOCKER.md) for Windows/macOS through Docker Desktop. Optional local speech requires NVIDIA CUDA and additional packages/models.
 
-`requirements.txt` is the exact installed package snapshot used for the demo, including transitive dependencies, Streamlit, Ollama, PDF export, Whisper STT, and Kokoro TTS. That environment used Python 3.13.16, but Kokoro and Misaki declare Python below 3.13: use Python 3.12 for a fresh installation. A clean Python 3.12 installation has not yet been verified. Dataset downloader dependencies are separately pinned in `requirements-data.txt` because Kaggle was absent from the demo environment.
+`requirements.txt` installs the fully pinned CPU runtime from `requirements-runtime.txt`, including embeddings, PDF export and corpus preparation/download dependencies. `requirements-dev.txt` is the smaller offline-test environment. The older GPU demonstration snapshot is preserved in [original-demo-requirements.txt](docs/reference/original-demo-requirements.txt); it is historical and is not the fresh-install route.
 
 ### 1. Clone and install
 
@@ -58,13 +70,12 @@ git clone https://github.com/bmaged23/Fitness_multiagent_RAG.git
 cd Fitness_multiagent_RAG
 python3.12 -m venv .venv
 source .venv/bin/activate
-python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 python -m pip check
 cp .env.example .env
 ```
 
-The speech and PDF packages are already included; installing their separate requirements files is unnecessary. Package installation and model downloads require internet access and sufficient disk space for CUDA libraries and model weights. See the [official PyTorch installation options](https://pytorch.org/get-started/previous-versions/) for the CUDA wheel index.
+Allow several GB of disk for packages, the 1.3 GB BGE encoder, corpus and optional speech models. The container uses this same pinned CPU runtime. Cloud LLM access requires internet and your own credentials.
 
 ### 2. Configure `.env`
 
@@ -93,14 +104,13 @@ curl --fail http://localhost:6333/healthz
 python scripts/init_db.py
 ```
 
-Compose starts Qdrant; it does not containerize Streamlit. SQLite initialization creates application tables. Qdrant vectors persist in the Compose volume; SQLite persists under `data/`.
+This storage-only Compose file starts Qdrant. The separate `docker/compose.app.yml` runs both storage and the application image. SQLite initialization creates application tables. Qdrant vectors persist in the Compose volume; SQLite persists under `data/`.
 
 ### 4. Download and index the workout corpus
 
 Get Kaggle credentials using the [official Kaggle CLI instructions](https://github.com/Kaggle/kaggle-cli). The downloader accepts `KAGGLE_USERNAME` and `KAGGLE_KEY`, or a configured `~/.kaggle/kaggle.json`.
 
 ```bash
-python -m pip install -r requirements-data.txt
 python scripts/download_dataset.py
 python scripts/chunk_data.py
 python scripts/embed_and_index.py --reseting
@@ -115,14 +125,17 @@ The source dataset is `adnanelouardi/600k-fitness-exercise-and-workout-program-d
 python scripts/embed_and_index.py --no-reseting
 ```
 
-### 5. Prepare speech models
+### 5. Optional GPU speech
+
+The default install is ready for text chat. To enable voice, install a CUDA-enabled PyTorch build for your hardware and the pinned optional speech packages. This optional GPU route has not been reinstalled cleanly during this release; the recorded demonstration used a different runtime. Keep `ENABLE_SPEECH=false` for the CPU route.
 
 ```bash
+python -m pip install -r requirements-speech.txt
 python scripts/download_speech_models.py
 python -c "import torch; print('Torch:', torch.__version__, 'CUDA:', torch.version.cuda, 'GPU available:', torch.cuda.is_available())"
 ```
 
-This downloads English `Systran/faster-whisper-base.en` for STT and `hexgrad/Kokoro-82M` with the configured voices for TTS. Models are cached locally. The spaCy English model is pinned through its release-wheel URL in `requirements.txt`. See [faster-whisper's GPU requirements](https://github.com/SYSTRAN/faster-whisper) if CUDA or cuDNN libraries fail to load. Successful Torch GPU detection alone does not validate Whisper inference.
+This downloads English `Systran/faster-whisper-base.en` for STT and `hexgrad/Kokoro-82M` with the configured voices for TTS. Models are cached locally. The spaCy English model is pinned through its release-wheel URL in `requirements-speech.txt`. See [faster-whisper's GPU requirements](https://github.com/SYSTRAN/faster-whisper) if CUDA or cuDNN libraries fail to load. Successful Torch GPU detection alone does not validate Whisper inference.
 
 ### 6. Launch and try the application
 
@@ -132,7 +145,7 @@ python -m streamlit run app/streamlit_app.py
 
 Open `http://localhost:8501`. Sign up, log in, and provide your goal, experience, equipment, available days, and any training limitations. Try: “Create a six-week beginner dumbbell plan, three days per week.” Review the proposed structure, request Week 1 details, then explicitly approve saving the plan. Open **My plans** to inspect the weekly schedule and download its PDF. Nutrition plans can also be drafted, approved, and revised through chat.
 
-Allow browser microphone access on localhost to record speech, review/send the transcription, and use the reply audio controls to hear generated speech. Voice requires the downloaded models and working GPU/runtime configuration. PDF export requires no additional package installation. The [recorded demo](https://raw.githubusercontent.com/bmaged23/Fitness_multiagent_RAG/master/docs/media/fitness-coach-demo.mp4) shows these interactions.
+With optional GPU speech configured and `ENABLE_SPEECH=true`, allow browser microphone access on localhost to record speech, review/send the transcription, and use the reply audio controls to hear generated speech. Voice requires the downloaded models and working GPU/runtime configuration. PDF export requires no additional package installation. The [recorded demo](https://raw.githubusercontent.com/bmaged23/Fitness_multiagent_RAG/master/docs/media/fitness-coach-demo.mp4) shows these interactions.
 
 The terminal alternative is:
 
@@ -165,7 +178,7 @@ src/fitness_multiagent_rag/
   vectorstore/               Qdrant retrieval and embeddings
 scripts/                     Dataset, indexing, schema, and speech-model setup
 db/                          SQL schemas
-docker/                      Qdrant Compose configuration
+docker/                      Application Dockerfile and storage/application Compose stacks
 tests/                       Offline regressions and live integration runners
 docs/                        Architecture, demonstration, and reference material
 ```
@@ -176,7 +189,7 @@ docs/                        Architecture, demonstration, and reference material
 PYTHONPATH=.:src python -m pytest tests/test_draft_routing.py tests/test_streamlit_app.py tests/test_speech.py tests/test_plan_pdf.py
 ```
 
-These regression targets avoid live provider integration runners. `tests/test_coach.py`, `test_designer.py`, and `test_retriever.py` interact with configured external services and can write application data. No published retrieval-quality, latency, or cost benchmarks are claimed.
+These regression targets avoid live provider integration runners. `tests/test_coach.py`, `test_designer.py`, and `test_retriever.py` interact with configured external services and can write application data. Published retrieval and answer-quality results are linked above. Full application latency and monetary cost have not been established.
 
 ## Additional documentation
 

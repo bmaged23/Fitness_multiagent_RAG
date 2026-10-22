@@ -1,0 +1,400 @@
+{
+  "generated_at": "2026-10-22T22:51:40.876948+00:00",
+  "split": "development",
+  "dataset_scenarios": 100,
+  "development_scenarios": 30,
+  "held_out_scenarios": 70,
+  "scope": "Retriever component pilot; no end-to-end Coach/Designer, memory or speech quality claim.",
+  "corpus_counts": {
+    "fitness_programs": 2594,
+    "fitness_exercises": 3213
+  },
+  "embedding_model": {
+    "model": "BAAI/bge-large-en-v1.5",
+    "revision": "d4aa6901d3a41ba39fb536a557fa166f842b0e09",
+    "path": "/home/bmage/projects/fitness-multiagent-rag/.evaluation-local/models/bge-large-en-v1.5"
+  },
+  "embedding_runtime": {
+    "device": "cuda",
+    "torch": "2.6.0+cu124",
+    "model_load_seconds": 4.77146637199985,
+    "batches": [
+      {
+        "offset": 0,
+        "size": 4,
+        "seconds": 3.448507098000846
+      },
+      {
+        "offset": 4,
+        "size": 4,
+        "seconds": 0.031707264999568
+      },
+      {
+        "offset": 8,
+        "size": 4,
+        "seconds": 0.031204042001263588
+      },
+      {
+        "offset": 12,
+        "size": 4,
+        "seconds": 0.029850178998458432
+      }
+    ],
+    "max_rss_mib": 2058.375,
+    "cpu_user_seconds": 7.589733,
+    "cuda_peak_allocated_mib": 1291.7880859375,
+    "cuda_peak_reserved_mib": 1316.0,
+    "query_instruction": null,
+    "pooling": "CLS",
+    "normalized": true,
+    "max_length": 512
+  },
+  "baseline": {
+    "scenarios": 16,
+    "parsed_outputs": 16,
+    "median_agent_seconds": 7.809214179999998,
+    "total_search_calls": 44,
+    "nonempty_evidence_cases": 16,
+    "cases_with_provenance_issues": 0,
+    "llm_scored_cases": 16,
+    "llm_relevant_documents": 31,
+    "llm_rated_documents": 57,
+    "unscored_cases": {},
+    "judge_model": "gpt-oss:120b",
+    "experiment_url": "https://eu.smith.langchain.com/o/01cb8af4-5866-49ad-bca6-26844f87da18/projects/p/ab640d96-be69-4ae7-9787-98644e04d177",
+    "per_case": [
+      {
+        "id": "retrieval-04",
+        "seconds": 8.944323180999987,
+        "search_calls": 2,
+        "returned_documents": 5,
+        "provenance_issue_count": 0,
+        "llm_relevance": 0.4,
+        "judge_status": "model_judgment_unreviewed"
+      },
+      {
+        "id": "retrieval-07",
+        "seconds": 6.178875398000002,
+        "search_calls": 2,
+        "returned_documents": 4,
+        "provenance_issue_count": 0,
+        "llm_relevance": 0.5,
+        "judge_status": "model_judgment_unreviewed"
+      },
+      {
+        "id": "retrieval-11",
+        "seconds": 7.029255129000006,
+        "search_calls": 2,
+        "returned_documents": 2,
+        "provenance_issue_count": 0,
+        "llm_relevance": 0.5,
+        "judge_status": "model_judgment_unreviewed"
+      },
+      {
+        "id": "retrieval-13",
+        "seconds": 7.3237370779999935,
+        "search_calls": 2,
+        "returned_documents": 6,
+        "provenance_issue_count": 0,
+        "llm_relevance": 0.6666666666666666,
+        "judge_status": "model_judgment_unreviewed"
+      },
+      {
+        "id": "retrieval-17",
+        "seconds": 10.621231354999992,
+        "search_calls": 4,
+        "returned_documents": 3,
+        "provenance_issue_count": 0,
+        "llm_relevance": 0.6666666666666666,
+        "judge_status": "model_judgment_unreviewed"
+      },
+      {
+        "id": "retrieval-18",
+        "seconds": 6.912653626999997,
+        "search_calls": 2,
+        "returned_documents": 3,
+        "provenance_issue_count": 0,
+        "llm_relevance": 1.0,
+        "judge_status": "model_judgment_unreviewed"
+      },
+      {
+        "id": "retrieval-20",
+        "seconds": 8.381391663000016,
+        "search_calls": 2,
+        "returned_documents": 3,
+        "provenance_issue_count": 0,
+        "llm_relevance": 1.0,
+        "judge_status": "model_judgment_unreviewed"
+      },
+      {
+        "id": "retrieval-25",
+        "seconds": 7.613089441999989,
+        "search_calls": 2,
+        "returned_documents": 6,
+        "provenance_issue_count": 0,
+        "llm_relevance": 0.3333333333333333,
+        "judge_status": "model_judgment_unreviewed"
+      },
+      {
+        "id": "constraints-02",
+        "seconds": 7.5852935420000165,
+        "search_calls": 2,
+        "returned_documents": 3,
+        "provenance_issue_count": 0,
+        "llm_relevance": 0.3333333333333333,
+        "judge_status": "model_judgment_unreviewed"
+      },
+      {
+        "id": "constraints-06",
+        "seconds": 8.098045715000012,
+        "search_calls": 2,
+        "returned_documents": 2,
+        "provenance_issue_count": 0,
+        "llm_relevance": 0.5,
+        "judge_status": "model_judgment_unreviewed"
+      },
+      {
+        "id": "constraints-09",
+        "seconds": 6.014438356999989,
+        "search_calls": 2,
+        "returned_documents": 2,
+        "provenance_issue_count": 0,
+        "llm_relevance": 1.0,
+        "judge_status": "model_judgment_unreviewed"
+      },
+      {
+        "id": "constraints-13",
+        "seconds": 8.791967444999983,
+        "search_calls": 3,
+        "returned_documents": 5,
+        "provenance_issue_count": 0,
+        "llm_relevance": 0.8,
+        "judge_status": "model_judgment_unreviewed"
+      },
+      {
+        "id": "constraints-14",
+        "seconds": 24.87650167000001,
+        "search_calls": 6,
+        "returned_documents": 5,
+        "provenance_issue_count": 0,
+        "llm_relevance": 0.0,
+        "judge_status": "model_judgment_unreviewed"
+      },
+      {
+        "id": "constraints-19",
+        "seconds": 8.005338918000007,
+        "search_calls": 5,
+        "returned_documents": 4,
+        "provenance_issue_count": 0,
+        "llm_relevance": 0.25,
+        "judge_status": "model_judgment_unreviewed"
+      },
+      {
+        "id": "unsupported-01",
+        "seconds": 12.777658495999987,
+        "search_calls": 4,
+        "returned_documents": 1,
+        "provenance_issue_count": 0,
+        "llm_relevance": 0.0,
+        "judge_status": "model_judgment_unreviewed"
+      },
+      {
+        "id": "validation-01",
+        "seconds": 4.357742185000006,
+        "search_calls": 2,
+        "returned_documents": 3,
+        "provenance_issue_count": 0,
+        "llm_relevance": 1.0,
+        "judge_status": "model_judgment_unreviewed"
+      }
+    ]
+  },
+  "revised": {
+    "scenarios": 16,
+    "parsed_outputs": 16,
+    "median_agent_seconds": 3.569077140499928,
+    "total_search_calls": 23,
+    "nonempty_evidence_cases": 13,
+    "cases_with_provenance_issues": 0,
+    "llm_scored_cases": 12,
+    "llm_relevant_documents": 30,
+    "llm_rated_documents": 30,
+    "unscored_cases": {
+      "unsupported-01": "unscored_no_documents",
+      "constraints-14": "unscored_no_documents",
+      "retrieval-20": "unscored_no_documents",
+      "retrieval-13": "unscored_judge_error"
+    },
+    "judge_model": "gpt-oss:120b",
+    "experiment_url": "https://eu.smith.langchain.com/o/01cb8af4-5866-49ad-bca6-26844f87da18/projects/p/5a57ab14-3472-4861-8743-9aefda20d26e",
+    "per_case": [
+      {
+        "id": "retrieval-04",
+        "seconds": 3.602619360999938,
+        "search_calls": 1,
+        "returned_documents": 3,
+        "provenance_issue_count": 0,
+        "llm_relevance": 1.0,
+        "judge_status": "model_judgment_unreviewed"
+      },
+      {
+        "id": "retrieval-07",
+        "seconds": 2.9193077009999797,
+        "search_calls": 1,
+        "returned_documents": 3,
+        "provenance_issue_count": 0,
+        "llm_relevance": 1.0,
+        "judge_status": "model_judgment_unreviewed"
+      },
+      {
+        "id": "retrieval-11",
+        "seconds": 4.096514426999988,
+        "search_calls": 1,
+        "returned_documents": 2,
+        "provenance_issue_count": 0,
+        "llm_relevance": 1.0,
+        "judge_status": "model_judgment_unreviewed"
+      },
+      {
+        "id": "retrieval-13",
+        "seconds": 3.7333403650000037,
+        "search_calls": 1,
+        "returned_documents": 3,
+        "provenance_issue_count": 0,
+        "llm_relevance": null,
+        "judge_status": "unscored_judge_error"
+      },
+      {
+        "id": "retrieval-17",
+        "seconds": 6.455440523999982,
+        "search_calls": 2,
+        "returned_documents": 3,
+        "provenance_issue_count": 0,
+        "llm_relevance": 1.0,
+        "judge_status": "model_judgment_unreviewed"
+      },
+      {
+        "id": "retrieval-18",
+        "seconds": 3.466948996000042,
+        "search_calls": 1,
+        "returned_documents": 3,
+        "provenance_issue_count": 0,
+        "llm_relevance": 1.0,
+        "judge_status": "model_judgment_unreviewed"
+      },
+      {
+        "id": "retrieval-20",
+        "seconds": 4.764771651000046,
+        "search_calls": 3,
+        "returned_documents": 0,
+        "provenance_issue_count": 0,
+        "llm_relevance": null,
+        "judge_status": "unscored_no_documents"
+      },
+      {
+        "id": "retrieval-25",
+        "seconds": 3.3294899330001044,
+        "search_calls": 1,
+        "returned_documents": 3,
+        "provenance_issue_count": 0,
+        "llm_relevance": 1.0,
+        "judge_status": "model_judgment_unreviewed"
+      },
+      {
+        "id": "constraints-02",
+        "seconds": 3.3120937359999516,
+        "search_calls": 1,
+        "returned_documents": 2,
+        "provenance_issue_count": 0,
+        "llm_relevance": 1.0,
+        "judge_status": "model_judgment_unreviewed"
+      },
+      {
+        "id": "constraints-06",
+        "seconds": 3.394664564000095,
+        "search_calls": 1,
+        "returned_documents": 2,
+        "provenance_issue_count": 0,
+        "llm_relevance": 1.0,
+        "judge_status": "model_judgment_unreviewed"
+      },
+      {
+        "id": "constraints-09",
+        "seconds": 2.272558608000054,
+        "search_calls": 1,
+        "returned_documents": 1,
+        "provenance_issue_count": 0,
+        "llm_relevance": 1.0,
+        "judge_status": "model_judgment_unreviewed"
+      },
+      {
+        "id": "constraints-13",
+        "seconds": 4.688647687999946,
+        "search_calls": 1,
+        "returned_documents": 3,
+        "provenance_issue_count": 0,
+        "llm_relevance": 1.0,
+        "judge_status": "model_judgment_unreviewed"
+      },
+      {
+        "id": "constraints-14",
+        "seconds": 3.535534919999918,
+        "search_calls": 3,
+        "returned_documents": 0,
+        "provenance_issue_count": 0,
+        "llm_relevance": null,
+        "judge_status": "unscored_no_documents"
+      },
+      {
+        "id": "constraints-19",
+        "seconds": 3.4896978169999784,
+        "search_calls": 1,
+        "returned_documents": 2,
+        "provenance_issue_count": 0,
+        "llm_relevance": 1.0,
+        "judge_status": "model_judgment_unreviewed"
+      },
+      {
+        "id": "unsupported-01",
+        "seconds": 4.636726713999906,
+        "search_calls": 3,
+        "returned_documents": 0,
+        "provenance_issue_count": 0,
+        "llm_relevance": null,
+        "judge_status": "unscored_no_documents"
+      },
+      {
+        "id": "validation-01",
+        "seconds": 3.7138917659999606,
+        "search_calls": 1,
+        "returned_documents": 3,
+        "provenance_issue_count": 0,
+        "llm_relevance": 1.0,
+        "judge_status": "model_judgment_unreviewed"
+      }
+    ]
+  },
+  "mistral_comparison": {
+    "status": "not_run",
+    "reason": "Ollama Cloud returned HTTP 402: model not included in current free usage. No billing changes made."
+  },
+  "limitations": [
+    "One generation per case on sixteen selected development retrieval scenarios. No independent holdout or statistical significance claim.",
+    "Different search counts and selected evidence counts; relevance means cannot be treated as equal-budget accuracy comparisons.",
+    "Empty evidence and judge parsing errors are unscored, not successes. Revised retriever falsely abstained on retrieval-20.",
+    "Both reviews use gpt-oss:120b and the same retrieval-v2-fields recipe; these are uncalibrated model ratings, not human ground truth.",
+    "Timing includes cloud calls and local GPU RPC overhead; provider/network variability remains. No repeated latency benchmark.",
+    "GPU embedding measurements are for a separate batched direct-query run, not per-agent-case VRAM peaks.",
+    "Original index embedding revision was not recorded; downloaded query encoder is pinned, but historical index revision is unknown.",
+    "Trace links require access to the private LangSmith workspace. No raw corpus text is included in this report."
+  ],
+  "statistics_followup": {
+    "id": "retrieval-20",
+    "status": "parsed",
+    "returned_documents": 1,
+    "search_calls": 1,
+    "seconds": 4.231278042000099,
+    "provenance_issue_count": 0,
+    "scope": "One targeted rerun after a further prompt change; not included in the 16-case revised timings."
+  }
+}

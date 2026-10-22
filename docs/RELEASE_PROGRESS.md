@@ -25,3 +25,19 @@ Clean full embedding/GPU speech installation; real retrieval and agent evaluatio
 ## Evaluation dataset added
 
 100 authored scenarios / 127 user messages / 20 multi-turn conversations, split into 30 development and 70 held-out scenarios. Manifest and structure validation pass. 51 cases await corpus review, 49 await behavior review. Added deterministic retrieval scoring (missing labels remain unscored), LangSmith local export/explicit upload, and review/scoring documentation. Full offline suite: 107 passed in 4.91 seconds. These are test suite results, not RAG answer-quality scores. Live corpus retrieval, judge evaluation and LangSmith experiment execution remain pending.
+
+## Real retrieval pilot, 22–23 October 2026
+
+Read-only snapshot of existing Qdrant: 2,594 programs and 3,213 exercises. CUDA direct retrieval ran on 16 development cases. Thirty development scenarios were uploaded to the EU LangSmith workspace. Direct/explicit-filter experiments and LLM-judge evidence reviews are recorded there. The real Gemma Retriever ran before and after prompt fixes on the same 16 development scenarios; see evaluation/RETRIEVAL_PILOT_RESULTS.md for results and limitations. No full Coach/Designer, memory, speech or 70-case held-out evaluation is complete. Mistral judge comparison is blocked by the provider's plan restriction; gpt-oss:120b judgments are available. Raw traces/corpus and the LangSmith key are excluded from Git.
+
+## 23 October: completed corpus QA and release gate
+
+The primary source-first golden benchmark now has 100 completed cases with 100 valid scores per dimension. See `evaluation/GOLDEN_QA_RESULTS.md`. This completes the requested direct RAG evaluation phase; full Coach/Designer, speech and memory end-to-end quality remain outside this benchmark.
+
+Added a CI/CD workflow for trusted master pushes and manual runs: offline tests → fresh GPU retrieval for all 100 cases → fresh Gemma answers → separate GPT-OSS correctness and faithfulness judging → completeness/regression gate → build/smoke-test/publish/pull-test Docker image. The checked-in policy allows a maximum 0.03 absolute regression from the frozen baseline. No raw corpus or case-level answer traces are uploaded as public CI artifacts.
+
+Local offline suite after gate implementation: 130 passed. Docker image build and public publication are in progress. Remote GPU runner registration, repository evaluation secrets and Docker publishing secrets are not yet verified. The workflow files alone do not establish a working remote deployment.
+
+## Container and runner checks before publication
+
+The Linux amd64 CPU application image built successfully from its pinned lock file; `pip check` passed. Real 1024-dimensional BGE inference, SQLite signup/login, PDF generation, Streamlit HTTP health and actual login UI rendering passed inside the image. The official GitHub runner v2.338.1 was downloaded with its upstream SHA-256 verified, registered as `bola-fitness-gpu`, and confirmed online. Private frozen fixtures/model/Qdrant variables and four encrypted Actions secrets are configured. CI execution and public publication/pull verification remain pending.

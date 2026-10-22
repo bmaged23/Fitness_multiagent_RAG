@@ -1,0 +1,13 @@
+{
+  "id": "dadc2eb72a4911ea68b51d425cbb1302cc578d235107c32889ac7456325fb053",
+  "collections": {
+    "fitness_programs": {
+      "count": 2594,
+      "sha256": "4e51d02b7e48e4327d8aa2598e7f98247cf650d8e4f27a00204ab96a1f86ae5c"
+    },
+    "fitness_exercises": {
+      "count": 3213,
+      "sha256": "3b278d1e6ca48f4e4d9d4b0fdc1b9548a12d8f1f54beac358d75183dc519e750"
+    }
+  }
+}

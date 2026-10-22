@@ -1,0 +1,8 @@
+{
+  "dataset_version": "fitness-corpus-qa-v1",
+  "dataset_sha256": "9f5defa22c143d0334b8ad27106a64587ffac30e6f3919bb2752e097994800ac",
+  "expected_cases": 100,
+  "maximum_absolute_regression": 0.03,
+  "higher_is_better": ["ndcg_at_5", "recall_at_5", "mrr_at_5", "correctness_f1", "completeness", "answer_relevance", "faithfulness"],
+  "lower_is_better": ["unsupported_claim_rate"]
+}

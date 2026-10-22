@@ -1,0 +1,9 @@
+# CPU text-chat and corpus provisioning image. Speech remains optional.
+-r requirements-core.in
+-r requirements-data.txt
+torch==2.6.0+cpu
+sentence-transformers==5.1.2
+transformers==4.57.6
+huggingface-hub==0.36.2
+pandas==3.0.6
+tqdm==4.70.1

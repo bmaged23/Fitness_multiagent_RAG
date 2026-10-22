@@ -36,6 +36,8 @@ from fitness_multiagent_rag.utils.prompt_loader import load_agent_prompt
 from fitness_multiagent_rag.vectorstore.embeddings import embed_one
 from fitness_multiagent_rag.vectorstore import qdrant_client as qdrant
 
+from fitness_multiagent_rag.vectorstore.schema import KNOWN_GOALS, KNOWN_LEVELS, KNOWN_EQUIPMENT
+
 from .query_rewrite import (
     Need,
     decompose,
@@ -63,6 +65,9 @@ _PROMPT_TEMPLATE = load_agent_prompt(_AGENT_DIR, "system_prompt.md")
 
 _SYSTEM_PROMPT = (
     _PROMPT_TEMPLATE
+    .replace("__KNOWN_GOALS__", json.dumps(KNOWN_GOALS))
+    .replace("__KNOWN_LEVELS__", json.dumps(KNOWN_LEVELS))
+    .replace("__KNOWN_EQUIPMENT__", json.dumps(KNOWN_EQUIPMENT))
     .replace("__PROGRAM_MAX_RETRIES__", str(RETRIEVER_PROGRAM_MAX_RETRIES))
     .replace("__EXERCISE_MAX_RETRIES__", str(RETRIEVER_EXERCISE_MAX_RETRIES))
     .replace("__PROGRAM_MAX_SEARCHES__", str(1 + RETRIEVER_PROGRAM_MAX_RETRIES))
@@ -244,6 +249,8 @@ def _coerce_list(value: Any) -> list[Any]:
 # --------------------------------------------------
 
 _KEEP = (
+    "chunk_id",
+    "exercise_name",
     "goal",
     "level",
     "equipment",
@@ -302,6 +309,8 @@ def _slim(
             chunk.get("title")
             or metadata.get("title")
             or metadata.get("name")
+            or chunk.get("exercise_name")
+            or metadata.get("exercise_name")
             or "Untitled"
         )
 
@@ -717,7 +726,7 @@ The search tools enforce these limits.
 Any older global search ceiling mentioned elsewhere
 in the prompt is superseded by these limits.
 
-After both collections are handled, return the final
+After the collections needed by the request are handled, return the final
 JSON array with the best retrieved chunks.
 
 Do not write files.

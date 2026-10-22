@@ -21,6 +21,7 @@ def test_duplicate_scenarios_are_rejected():
 
 def test_unreviewed_labels_are_rejected():
     cases = deepcopy(load_cases())
+    cases[0]['reference_status']='pending_corpus_review'
     cases[0]['expected']['relevance_labels'] = [{'chunk_id':'invented'}]
     assert any('require reviewed' in e for e in validate(cases))
 

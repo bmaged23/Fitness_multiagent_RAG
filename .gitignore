@@ -55,3 +55,6 @@ logs/
 .ruff_cache/
 code_dump.txt
 uv-freeze-backup.txt
+
+# Local evaluation evidence, corpus copies, traces and isolated state
+.evaluation-local/

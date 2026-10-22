@@ -1,0 +1,40 @@
+{
+  "schema_version": 2,
+  "dataset_version": "fitness-scenarios-v2",
+  "dataset_file": "fitness_scenarios.v2.jsonl",
+  "parent_dataset_sha256": "c7d03199579997493d630e9e267ec20540343759d13d00e28f7cf2431a1a43c7",
+  "count": 100,
+  "development_count": 30,
+  "held_out_count": 70,
+  "sha256": "11b4847cef07b35c274bff68aa63b197bd9701d697bde99576229990bbd9bff9",
+  "corpus_snapshot": {
+    "id": "dadc2eb72a4911ea68b51d425cbb1302cc578d235107c32889ac7456325fb053",
+    "collections": {
+      "fitness_programs": {
+        "count": 2594,
+        "sha256": "4e51d02b7e48e4327d8aa2598e7f98247cf650d8e4f27a00204ab96a1f86ae5c"
+      },
+      "fitness_exercises": {
+        "count": 3213,
+        "sha256": "3b278d1e6ca48f4e4d9d4b0fdc1b9548a12d8f1f54beac358d75183dc519e750"
+      }
+    }
+  },
+  "label_status": "mixed: metadata contracts and AI source-reviewed partial pools; no independent human adjudication",
+  "reference_status_counts": {
+    "source_checked_ai_review": 35,
+    "metadata_checked": 13,
+    "not_applicable_to_retrieval": 49,
+    "behavior_reference_only": 2,
+    "absence_checked": 1
+  },
+  "cases_with_positive_reference_ids": 48,
+  "label_provenance": "Labels were determined by source inspection or full-corpus metadata predicates, not by accepting model judgments as truth. Some development documents had appeared in earlier pilot results; this is not blind annotation. No held-out outputs were inspected.",
+  "limitations": [
+    "Metadata contracts evaluate stored fields, not semantic eligibility or medical/fitness correctness.",
+    "Curated pools are incomplete; unjudged documents are unknown, not automatic negatives.",
+    "Held-out references were prepared without executing held-out inputs; do not tune on future held-out outcomes.",
+    "v2 fixes the missing context of retrieval-10. Historical v1 outputs do not evaluate that corrected context task.",
+    "These are AI-assisted source checks, not an independently human-validated benchmark."
+  ]
+}

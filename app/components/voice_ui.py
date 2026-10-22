@@ -1,5 +1,6 @@
 """Optional voice input in the chat composer and audio playback for replies."""
 import logging
+import os
 import streamlit as st
 
 
@@ -18,10 +19,12 @@ def submitted_text(submission) -> str | None:
 
 
 def message_input(*, disabled=False) -> str | None:
-    submission = st.chat_input('Message Alex…', accept_audio=True,
+    speech_enabled = os.getenv('ENABLE_SPEECH', 'true').lower() in {'1', 'true', 'yes'}
+    submission = st.chat_input('Message Alex…', accept_audio=speech_enabled,
                                audio_sample_rate=16000, disabled=disabled)
-    from app.components.microphone_status import microphone_status
-    microphone_status(key='inline_microphone_readiness', height=0)
+    if speech_enabled:
+        from app.components.microphone_status import microphone_status
+        microphone_status(key='inline_microphone_readiness', height=0)
     if submission is None or disabled:
         return None
     try:
@@ -35,6 +38,8 @@ def message_input(*, disabled=False) -> str | None:
 
 
 def reply_audio(item: dict, index: int):
+    if os.getenv('ENABLE_SPEECH', 'true').lower() not in {'1', 'true', 'yes'}:
+        return
     from app.components.audio_jobs import start_audio_job
     voice = st.session_state.get('tts_voice', 'am_michael')
     audio_by_voice = item.setdefault('audio_by_voice', {})

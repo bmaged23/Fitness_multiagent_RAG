@@ -1,0 +1,34 @@
+{
+  "version": "fitness-corpus-qa-v1",
+  "seed": 20261023,
+  "size": 100,
+  "categories": {
+    "program_facts": 50,
+    "exercise_facts": 30,
+    "program_comparison": 10,
+    "program_exercise_join": 10
+  },
+  "full_dataset_sha256": "9f5defa22c143d0334b8ad27106a64587ffac30e6f3919bb2752e097994800ac",
+  "public_reference_sha256": "42af811a1f968a4e6e7124aff209627df4e80aee0df7582d642f5834912261e9",
+  "corpus": {
+    "fitness_programs": {
+      "count": 2594,
+      "sha256": "4e51d02b7e48e4327d8aa2598e7f98247cf650d8e4f27a00204ab96a1f86ae5c"
+    },
+    "fitness_exercises": {
+      "count": 3213,
+      "sha256": "3b278d1e6ca48f4e4d9d4b0fdc1b9548a12d8f1f54beac358d75183dc519e750"
+    }
+  },
+  "audit": {
+    "program_records": 2594,
+    "exercise_records": 3213,
+    "eligible_program_records": 2539,
+    "eligible_exercise_records": 3199,
+    "unique_anchor_documents": 120
+  },
+  "reference_review": "Mechanically source-validated facts; synthetic questions/reference wording. No independent human adjudication.",
+  "scope": "Named authoritative-record factual QA, comparisons and joins; does not measure open-ended fitness advice, medical truth, memory, STT or TTS.",
+  "ranking": "Document-identity qrels; equally necessary sources have equal grade. nDCG uses ideal sorted grades, not arbitrary chunk order.",
+  "privacy": "Full contexts remain ignored locally until corpus redistribution rights are established."
+}

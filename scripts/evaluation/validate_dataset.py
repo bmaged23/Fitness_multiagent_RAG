@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-DATASET = ROOT / 'evaluation/datasets/fitness_scenarios.v1.jsonl'
+DATASET = ROOT / 'evaluation/datasets/fitness_scenarios.v2.jsonl'
 EXPECTED = {'retrieval': 25, 'constraints': 20, 'memory': 20, 'agents': 15,
             'unsupported': 10, 'validation': 10}
 
@@ -41,8 +41,23 @@ def validate(cases):
         for collection in expected.get('collections', []):
             if collection not in {'fitness_programs', 'fitness_exercises'}:
                 errors.append(f'{label}: invalid collection.')
-        if expected.get('relevance_labels') and c.get('reference_status') != 'reviewed':
-            errors.append(f'{label}: document labels require reviewed status.')
+        accepted={'reviewed','metadata_checked','source_checked_ai_review'}
+        if expected.get('relevance_labels') and c.get('reference_status') not in accepted:
+            errors.append(f'{label}: document labels require reviewed status or explicit source/metadata review provenance.')
+        if expected.get('relevance_labels') and not c.get('review'):
+            errors.append(f'{label}: source labels require review provenance.')
+        labels=expected.get('relevance_labels',[])
+        keys=[(r.get('collection'),r.get('chunk_id')) for r in labels]
+        if len(set(keys))!=len(keys):
+            errors.append(f'{label}: duplicate document labels.')
+        for ref in labels:
+            if ref.get('collection') not in {'fitness_programs','fitness_exercises'} or not ref.get('chunk_id') or not isinstance(ref.get('relevant'),bool):
+                errors.append(f'{label}: invalid reference identity or relevance label.')
+            digest=ref.get('document_sha256','')
+            if len(digest)!=64 or any(char not in '0123456789abcdef' for char in digest):
+                errors.append(f'{label}: reference lacks a valid content fingerprint.')
+            if not ref.get('reason') or not ref.get('source_facts'):
+                errors.append(f'{label}: reference lacks source facts or rationale.')
         if c.get('reference_status') == 'reviewed' and not c.get('review'):
             errors.append(f'{label}: reviewed scenarios require reviewer metadata.')
     return errors
@@ -62,7 +77,9 @@ def main():
     args = parser.parse_args()
     cases = load_cases(args.dataset)
     errors = validate(cases)
-    manifest_path = args.dataset.with_name('manifest.json')
+    manifest_path = args.dataset.with_suffix('.manifest.json')
+    if not manifest_path.exists() and args.dataset.name=='fitness_scenarios.v1.jsonl':
+        manifest_path=args.dataset.with_name('manifest.json')
     if manifest_path.exists():
         manifest = json.loads(manifest_path.read_text())
         if hashlib.sha256(args.dataset.read_bytes()).hexdigest() != manifest['sha256']:

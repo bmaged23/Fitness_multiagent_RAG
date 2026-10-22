@@ -1,0 +1,338 @@
+{
+  "dataset": "fitness_scenarios.v2.jsonl",
+  "dataset_sha256": "11b4847cef07b35c274bff68aa63b197bd9701d697bde99576229990bbd9bff9",
+  "assessment_sha256": "a38b4600033c21d0475967166cdbf0f3dd1132f05e225a0abb57b9f56101c8ca",
+  "split": "development",
+  "summary": {
+    "cases": 16,
+    "closed_metadata_collection_checks": 5,
+    "mean_metadata_precision_at_3": 0.6666666666666667,
+    "mean_metadata_mrr_at_3": 0.8,
+    "partial_pool_returned_documents": 26,
+    "partial_pool_unjudged_documents": 23
+  },
+  "rows": [
+    {
+      "id": "retrieval-04",
+      "scores": {
+        "scope": "exhaustive_recorded_metadata",
+        "collections": {
+          "fitness_programs": {
+            "status": "scored",
+            "precision_at_k": 1.0,
+            "recall_at_k": 0.004846526655896607,
+            "mrr_at_k": 1.0,
+            "scope": "recorded_metadata_only",
+            "reference_positive_count": 619,
+            "recall_at_k_ceiling": 0.004846526655896607
+          }
+        }
+      }
+    },
+    {
+      "id": "retrieval-07",
+      "scores": {
+        "scope": "exhaustive_recorded_metadata",
+        "collections": {
+          "fitness_programs": {
+            "status": "scored",
+            "precision_at_k": 1.0,
+            "recall_at_k": 0.07692307692307693,
+            "mrr_at_k": 1.0,
+            "scope": "recorded_metadata_only",
+            "reference_positive_count": 39,
+            "recall_at_k_ceiling": 0.07692307692307693
+          }
+        }
+      }
+    },
+    {
+      "id": "retrieval-11",
+      "scores": {
+        "scope": "curated_partial_pool",
+        "collections": {
+          "fitness_programs": {
+            "status": "partial_pool_not_full_semantic_ground_truth",
+            "known_positive_hits": 0,
+            "reference_positive_count": 2,
+            "reference_coverage_at_k": 0.0,
+            "precision_at_k_lower_bound": 0.0,
+            "mrr_known_positive_lower_bound": 0.0,
+            "judged_returned_count": 0,
+            "returned_count": 2,
+            "judgment_coverage": 0.0,
+            "precision_among_judged": null,
+            "unjudged_returned_count": 2
+          }
+        }
+      }
+    },
+    {
+      "id": "retrieval-13",
+      "scores": {
+        "scope": "exhaustive_recorded_metadata",
+        "collections": {
+          "fitness_programs": {
+            "status": "scored",
+            "precision_at_k": 1.0,
+            "recall_at_k": 0.016574585635359115,
+            "mrr_at_k": 1.0,
+            "scope": "recorded_metadata_only",
+            "reference_positive_count": 181,
+            "recall_at_k_ceiling": 0.016574585635359115
+          }
+        }
+      }
+    },
+    {
+      "id": "retrieval-17",
+      "scores": {
+        "scope": "curated_partial_pool",
+        "collections": {
+          "fitness_exercises": {
+            "status": "partial_pool_not_full_semantic_ground_truth",
+            "known_positive_hits": 0,
+            "reference_positive_count": 2,
+            "reference_coverage_at_k": 0.0,
+            "precision_at_k_lower_bound": 0.0,
+            "mrr_known_positive_lower_bound": 0.0,
+            "judged_returned_count": 0,
+            "returned_count": 3,
+            "judgment_coverage": 0.0,
+            "precision_among_judged": null,
+            "unjudged_returned_count": 3
+          }
+        }
+      }
+    },
+    {
+      "id": "retrieval-18",
+      "scores": {
+        "scope": "curated_partial_pool",
+        "collections": {
+          "fitness_exercises": {
+            "status": "partial_pool_not_full_semantic_ground_truth",
+            "known_positive_hits": 0,
+            "reference_positive_count": 2,
+            "reference_coverage_at_k": 0.0,
+            "precision_at_k_lower_bound": 0.0,
+            "mrr_known_positive_lower_bound": 0.0,
+            "judged_returned_count": 0,
+            "returned_count": 3,
+            "judgment_coverage": 0.0,
+            "precision_among_judged": null,
+            "unjudged_returned_count": 3
+          }
+        }
+      }
+    },
+    {
+      "id": "retrieval-20",
+      "scores": {
+        "scope": "curated_partial_pool",
+        "collections": {
+          "fitness_exercises": {
+            "status": "partial_pool_not_full_semantic_ground_truth",
+            "known_positive_hits": 0,
+            "reference_positive_count": 2,
+            "reference_coverage_at_k": 0.0,
+            "precision_at_k_lower_bound": 0.0,
+            "mrr_known_positive_lower_bound": 0.0,
+            "judged_returned_count": 0,
+            "returned_count": 1,
+            "judgment_coverage": 0.0,
+            "precision_among_judged": null,
+            "unjudged_returned_count": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "retrieval-25",
+      "scores": {
+        "scope": "curated_partial_pool",
+        "collections": {
+          "fitness_programs": {
+            "status": "partial_pool_not_full_semantic_ground_truth",
+            "known_positive_hits": 0,
+            "reference_positive_count": 2,
+            "reference_coverage_at_k": 0.0,
+            "precision_at_k_lower_bound": 0.0,
+            "mrr_known_positive_lower_bound": 0.0,
+            "judged_returned_count": 0,
+            "returned_count": 3,
+            "judgment_coverage": 0.0,
+            "precision_among_judged": null,
+            "unjudged_returned_count": 3
+          }
+        }
+      }
+    },
+    {
+      "id": "constraints-02",
+      "scores": {
+        "scope": "curated_partial_pool",
+        "collections": {
+          "fitness_programs": {
+            "status": "partial_pool_not_full_semantic_ground_truth",
+            "known_positive_hits": 1,
+            "reference_positive_count": 2,
+            "reference_coverage_at_k": 0.5,
+            "precision_at_k_lower_bound": 0.3333333333333333,
+            "mrr_known_positive_lower_bound": 0.5,
+            "judged_returned_count": 1,
+            "returned_count": 2,
+            "judgment_coverage": 0.5,
+            "precision_among_judged": 1.0,
+            "unjudged_returned_count": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "constraints-06",
+      "scores": {
+        "scope": "curated_partial_pool",
+        "collections": {
+          "fitness_programs": {
+            "status": "partial_pool_not_full_semantic_ground_truth",
+            "known_positive_hits": 0,
+            "reference_positive_count": 2,
+            "reference_coverage_at_k": 0.0,
+            "precision_at_k_lower_bound": 0.0,
+            "mrr_known_positive_lower_bound": 0.0,
+            "judged_returned_count": 0,
+            "returned_count": 3,
+            "judgment_coverage": 0.0,
+            "precision_among_judged": null,
+            "unjudged_returned_count": 3
+          }
+        }
+      }
+    },
+    {
+      "id": "constraints-09",
+      "scores": {
+        "scope": "exhaustive_recorded_metadata",
+        "collections": {
+          "fitness_programs": {
+            "status": "scored",
+            "precision_at_k": 0.3333333333333333,
+            "recall_at_k": 0.004273504273504274,
+            "mrr_at_k": 1.0,
+            "scope": "recorded_metadata_only",
+            "reference_positive_count": 234,
+            "recall_at_k_ceiling": 0.01282051282051282
+          }
+        }
+      }
+    },
+    {
+      "id": "constraints-13",
+      "scores": {
+        "scope": "curated_partial_pool",
+        "collections": {
+          "fitness_programs": {
+            "status": "partial_pool_not_full_semantic_ground_truth",
+            "known_positive_hits": 0,
+            "reference_positive_count": 1,
+            "reference_coverage_at_k": 0.0,
+            "precision_at_k_lower_bound": 0.0,
+            "mrr_known_positive_lower_bound": 0.0,
+            "judged_returned_count": 0,
+            "returned_count": 3,
+            "judgment_coverage": 0.0,
+            "precision_among_judged": null,
+            "unjudged_returned_count": 3
+          }
+        }
+      }
+    },
+    {
+      "id": "constraints-14",
+      "scores": {
+        "scope": "exhaustive_recorded_metadata",
+        "collections": {
+          "fitness_programs": {
+            "status": "scored",
+            "precision_at_k": 0.0,
+            "recall_at_k": 0.0,
+            "mrr_at_k": 0.0,
+            "scope": "recorded_metadata_only",
+            "reference_positive_count": 6,
+            "recall_at_k_ceiling": 0.5
+          }
+        }
+      }
+    },
+    {
+      "id": "constraints-19",
+      "scores": {
+        "scope": "curated_partial_pool",
+        "collections": {
+          "fitness_programs": {
+            "status": "partial_pool_not_full_semantic_ground_truth",
+            "known_positive_hits": 0,
+            "reference_positive_count": 2,
+            "reference_coverage_at_k": 0.0,
+            "precision_at_k_lower_bound": 0.0,
+            "mrr_known_positive_lower_bound": 0.0,
+            "judged_returned_count": 0,
+            "returned_count": 3,
+            "judgment_coverage": 0.0,
+            "precision_among_judged": null,
+            "unjudged_returned_count": 3
+          }
+        }
+      }
+    },
+    {
+      "id": "unsupported-01",
+      "scores": {
+        "scope": "exhaustive_exact_title_absence",
+        "status": "scored_exact_title_absence",
+        "abstained": true,
+        "reference_title": "quantum unicorn 2099"
+      }
+    },
+    {
+      "id": "validation-01",
+      "scores": {
+        "scope": "curated_partial_pool",
+        "collections": {
+          "fitness_programs": {
+            "status": "partial_pool_not_full_semantic_ground_truth",
+            "known_positive_hits": 2,
+            "reference_positive_count": 2,
+            "reference_coverage_at_k": 1.0,
+            "precision_at_k_lower_bound": 0.6666666666666666,
+            "mrr_known_positive_lower_bound": 1.0,
+            "judged_returned_count": 2,
+            "returned_count": 3,
+            "judgment_coverage": 0.6666666666666666,
+            "precision_among_judged": 1.0,
+            "unjudged_returned_count": 1
+          },
+          "fitness_exercises": {
+            "status": "partial_pool_not_full_semantic_ground_truth",
+            "known_positive_hits": 0,
+            "reference_positive_count": 0,
+            "reference_coverage_at_k": null,
+            "precision_at_k_lower_bound": 0.0,
+            "mrr_known_positive_lower_bound": 0.0,
+            "judged_returned_count": 0,
+            "returned_count": 0,
+            "judgment_coverage": 0.0,
+            "precision_among_judged": null,
+            "unjudged_returned_count": 0
+          }
+        }
+      }
+    }
+  ],
+  "limitations": [
+    "Metadata scores concern stored fields, not expert-verified semantic/fitness quality.",
+    "Curated pools are incomplete; unknown documents are reported as unjudged.",
+    "Labels were prepared retrospectively on development data; not a blind or held-out benchmark."
+  ]
+}
