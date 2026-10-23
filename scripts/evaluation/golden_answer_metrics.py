@@ -68,32 +68,64 @@ def answer_question(question,contexts,model):
     return {'answer':result.pop('text'),**result}
 
 
+def _validated_judge(system, payload, model, validate, max_attempts=3):
+    """Retry invalid schemas/evidence IDs and transient transport errors, never low scores."""
+    attempts = []
+    started = time.perf_counter()
+    for attempt in range(1, max_attempts + 1):
+        raw = None
+        try:
+            raw = cloud_chat(system, payload, model)
+            result = validate(raw['text'])
+        except (ValueError, requests.RequestException, RuntimeError) as error:
+            status = getattr(error, 'status_code', None)
+            retryable = isinstance(error, (ValueError, requests.RequestException)) or status in {429, 500, 502, 503, 504}
+            attempts.append({'status': 'invalid_or_transient_error', 'error_type': type(error).__name__,
+                             'http_status': status, 'usage': raw['usage'] if raw else {},
+                             'raw_response': raw['text'] if raw else None})
+            if not retryable or attempt == max_attempts:
+                error.attempt_log = attempts
+                raise
+            time.sleep(1)
+            continue
+        attempts.append({'status': 'valid', 'usage': raw['usage']})
+        usage = {}
+        for key in ['prompt_eval_count', 'eval_count', 'total_duration']:
+            values = [a['usage'].get(key) for a in attempts if a['usage'].get(key) is not None]
+            usage[key] = sum(values) if values else None
+        return {**result, 'wall_seconds': time.perf_counter() - started, 'usage': usage,
+                'attempt_count': attempt, 'attempt_log': attempts}
+    raise AssertionError('Unreachable')
+
+
 def judge_correctness(question,reference_answer,reference_facts,answer,model):
     facts=[{'fact_id':f'f{i:02d}',**fact} for i,fact in enumerate(reference_facts,1)]
-    raw=cloud_chat(CORRECTNESS_SYSTEM,{'question':question,'reference_answer':reference_answer,
-        'reference_facts':facts,'answer':answer},model)
-    result=Correctness.model_validate(parse_json(raw['text']))
-    wanted={f['fact_id'] for f in facts}
-    actual=[f.fact_id for f in result.facts]
-    if set(actual)!=wanted or len(actual)!=len(wanted):raise ValueError('Judge omitted, duplicated or invented required fact IDs.')
-    correct=sum(f.verdict=='correct' for f in result.facts)
-    incorrect=sum(f.verdict=='incorrect' for f in result.facts)
-    precision=correct/(correct+incorrect) if correct+incorrect else 0.0
-    recall=correct/len(facts)
-    f1=2*precision*recall/(precision+recall) if precision+recall else 0.0
-    return {'scores':{'correctness_precision':precision,'correctness_f1':f1,
-                      'completeness':recall,'answer_relevance':result.relevance/4},
-            'details':result.model_dump(),'wall_seconds':raw['wall_seconds'],'usage':raw['usage']}
+    def validate(text):
+        result=Correctness.model_validate(parse_json(text))
+        wanted={f['fact_id'] for f in facts}
+        actual=[f.fact_id for f in result.facts]
+        if set(actual)!=wanted or len(actual)!=len(wanted):raise ValueError('Judge omitted, duplicated or invented required fact IDs.')
+        correct=sum(f.verdict=='correct' for f in result.facts)
+        incorrect=sum(f.verdict=='incorrect' for f in result.facts)
+        precision=correct/(correct+incorrect) if correct+incorrect else 0.0
+        recall=correct/len(facts)
+        f1=2*precision*recall/(precision+recall) if precision+recall else 0.0
+        return {'scores':{'correctness_precision':precision,'correctness_f1':f1,
+                          'completeness':recall,'answer_relevance':result.relevance/4},
+                'details':result.model_dump()}
+    return _validated_judge(CORRECTNESS_SYSTEM,{'question':question,'reference_answer':reference_answer,
+        'reference_facts':facts,'answer':answer},model,validate)
 
 
 def judge_faithfulness(question,contexts,answer,model):
     # Deliberately receives NO gold/reference facts, answer or contexts.
-    raw=cloud_chat(FAITHFULNESS_SYSTEM,{'question':question,'retrieved_contexts':contexts,'answer':answer},model)
-    result=Faithfulness.model_validate(parse_json(raw['text']))
-    allowed={d['chunk_id'] for d in contexts}
-    for claim in result.claims:
-        if not set(claim.source_ids)<=allowed:raise ValueError('Faithfulness judge invented an evidence ID.')
-        if claim.supported and not claim.source_ids:raise ValueError('Supported claims require an actual evidence ID.')
-    score=sum(c.supported for c in result.claims)/len(result.claims) if result.claims else None
-    return {'scores':{'faithfulness':score,'unsupported_claim_rate':1-score if score is not None else None},
-            'details':result.model_dump(),'wall_seconds':raw['wall_seconds'],'usage':raw['usage']}
+    def validate(text):
+        result=Faithfulness.model_validate(parse_json(text))
+        allowed={d['chunk_id'] for d in contexts}
+        for claim in result.claims:
+            if not set(claim.source_ids)<=allowed:raise ValueError('Faithfulness judge invented an evidence ID.')
+            if claim.supported and not claim.source_ids:raise ValueError('Supported claims require an actual evidence ID.')
+        score=sum(c.supported for c in result.claims)/len(result.claims) if result.claims else None
+        return {'scores':{'faithfulness':score,'unsupported_claim_rate':1-score if score is not None else None},
+                'details':result.model_dump()}
+    return _validated_judge(FAITHFULNESS_SYSTEM,{'question':question,'retrieved_contexts':contexts,'answer':answer},model,validate)

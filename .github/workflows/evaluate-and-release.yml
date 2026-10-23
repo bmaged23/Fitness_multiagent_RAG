@@ -2,6 +2,17 @@ name: Evaluate 100 golden cases and release image
 on:
   push:
     branches: [master]
+    paths:
+      - 'app/**'
+      - 'src/**'
+      - 'config/**'
+      - 'scripts/**'
+      - 'docker/**'
+      - 'tests/**'
+      - 'evaluation/**'
+      - 'requirements*'
+      - '.github/workflows/**'
+      - '.dockerignore'
   workflow_dispatch:
 permissions:
   contents: read

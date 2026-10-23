@@ -75,7 +75,8 @@ def main():
                 try:
                     result=fn();record[name]=result;record['scores'].update(result['scores'])
                 except Exception as error:
-                    record[name]={'status':'unscored_error','error_type':type(error).__name__,'http_status':getattr(error,'status_code',None)}
+                    record[name]={'status':'unscored_error','error_type':type(error).__name__,'http_status':getattr(error,'status_code',None),
+                                  'attempt_log':getattr(error,'attempt_log',[])}
             record['status']='completed' if all('scores' in record.get(name,{}) for name in ['correctness','faithfulness']) else 'partial_judge_failure'
         except Exception as error:
             record['status']='generation_failed';record['error_type']=type(error).__name__;record['http_status']=getattr(error,'status_code',None)

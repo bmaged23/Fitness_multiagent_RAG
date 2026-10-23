@@ -4,7 +4,7 @@
 
 `tests.yml` runs offline tests on pushes and pull requests. It needs no private keys, GPU or model downloads.
 
-`evaluate-and-release.yml` runs on trusted `master` pushes and manual dispatch:
+`evaluate-and-release.yml` runs on trusted `master` pushes affecting application code, tests, dependencies, evaluation or release configuration, and on manual dispatch. Documentation-only changes run the offline workflow without repeating 300 cloud calls or publishing an unchanged image.
 
 1. Install pinned development dependencies and pass offline Python/JavaScript tests.
 2. Check out the new commit on a dedicated self-hosted Linux x64 GPU runner labeled `fitness-eval`.
@@ -14,6 +14,8 @@
 6. On a GitHub-hosted runner, build the CPU image, smoke-test model inference, account persistence, PDF export and the actual login UI, then publish to Docker Hub. Pull the published image and smoke-test again.
 
 The reference answers never enter generation. CI never silently treats missing judgments, quota failures or incomplete runs as success. The existing benchmark is a reusable regression suite now, not a permanently untouched test set.
+
+Judge schema/evidence-ID validation failures and transient service errors allow up to three attempts, with attempts and observed token usage recorded. A valid low score is never retried. Persistent invalid results still fail the strict 100-case gate; authentication/plan restrictions do not trigger repeated retries.
 
 ## Why GitHub can reach the models and vectors
 
