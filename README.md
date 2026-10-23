@@ -34,6 +34,16 @@ A frozen **100-question corpus-derived golden dataset** evaluates retrieval and 
 
 See the [full results and limitations](evaluation/GOLDEN_QA_RESULTS.md). This is a direct retrieval → answer baseline; it does not certify the complete Coach/Designer workflow. References are mechanically source-validated rather than independently human-adjudicated. The older behavior scenarios remain a separate regression suite.
 
+### Evaluation process
+
+1. **Build the golden dataset first:** inspect the corpus, select 100 source-first questions, and freeze their reference chunks, required facts and reference answers.
+2. **Test retrieval:** embed each question with BGE, retrieve the top five Qdrant results and calculate nDCG, recall, precision and MRR against the reference sources.
+3. **Generate answers:** Gemma receives only the question and actual retrieved evidence, without reference answers.
+4. **Judge separately:** GPT-OSS 120B compares answers with gold facts for correctness/completeness/relevance, then makes a separate evidence-only assessment for faithfulness and unsupported claims.
+5. **Record and gate releases:** Python validates and aggregates the scores; LangSmith records the experiments. CI requires 100 scored cases and limits regression before testing and publishing the Docker image.
+
+Read the [complete evaluation process, formulas, results and limitations](docs/EVALUATION_PROCESS.md), including the original baseline and the subsequent successful CI run.
+
 ## Docker application and automated releases
 
 The CPU image packages the Streamlit application, agents, PDF export and the pinned BGE embedding model. Workout data is provisioned separately into persistent volumes, and LLM access requires your own provider credentials. Optional GPU speech uses the source installation.
