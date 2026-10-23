@@ -89,3 +89,8 @@ All 100 cases were scored in each completed run. Values below are mean metrics, 
 | Unsupported claims | 2.17% | 0.75% |
 
 [Original report](../evaluation/GOLDEN_QA_RESULTS.md) · [CI results JSON](release-evaluation-summary.json) · [Successful release workflow](https://github.com/bmaged23/Fitness_multiagent_RAG/actions/runs/39876219203) · [CI/CD setup](CI_CD.md)
+
+
+## Latest automatic release check
+
+[Run 39881688307](https://github.com/bmaged23/Fitness_multiagent_RAG/actions/runs/39881688307) passed all 100 cases and the release gate: correctness F1 81.50%, completeness 80.20%, relevance 90.00%, faithfulness 99.00%, unsupported claims 1.00%; retrieval nDCG@5 0.7179 and recall@5 82.00%. This is a subsequent run, separate from the frozen baseline. [Aggregate evidence](https://github.com/bmaged23/Fitness_multiagent_RAG/blob/master/docs/performance/release-evaluation-7d09f5c.json). The quality evaluation runs from source on the local GPU; the built Docker image receives container smoke checks before publication and after pulling it back.

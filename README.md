@@ -60,6 +60,8 @@ A frozen **100-question corpus-derived golden dataset** evaluates retrieval and 
 
 See the [full results and limitations](evaluation/GOLDEN_QA_RESULTS.md). This is a direct retrieval → answer baseline; it does not certify the complete Coach/Designer workflow. References are mechanically source-validated rather than independently human-adjudicated. The older behavior scenarios remain a separate regression suite.
 
+Latest automated release evaluation: **100/100 scored**, correctness F1 **81.50%**, completeness **80.20%**, relevance **90.00%**, faithfulness **99.00%**, and unsupported claims **1.00%**. Retrieval scores were unchanged. These are a separate run from the frozen baseline above. [Latest aggregate results](docs/performance/release-evaluation-7d09f5c.json).
+
 ### Evaluation process
 
 1. **Build the golden dataset first:** inspect the corpus, select 100 source-first questions, and freeze their reference chunks, required facts and reference answers.
@@ -80,7 +82,9 @@ The CPU image packages the Streamlit application, agents, PDF export and the pin
 docker pull bmaged23/fitness-multiagent-rag:cpu
 ```
 
-Follow [configuration, corpus provisioning and run instructions](docs/DOCKER.md) before starting grounded chat. The image includes BGE; you supply provider/Kaggle credentials and provision the corpus once. **[Verified CI/CD release](https://github.com/bmaged23/Fitness_multiagent_RAG/actions/runs/39876219203): 132 offline tests, all 100 live QA cases, quality gate, image smoke checks, publication and public-image pull checks passed.** See [release evidence](docs/RELEASE_VERIFICATION.md).
+Follow [configuration, corpus provisioning and run instructions](docs/DOCKER.md) before starting grounded chat. The image includes BGE; you supply provider/Kaggle credentials and provision the corpus once. **[Verified CI/CD release](https://github.com/bmaged23/Fitness_multiagent_RAG/actions/runs/39881688307): 132 offline tests, all 100 live QA cases, quality gate, image smoke checks, publication and public-image pull checks passed.** See [release evidence](docs/RELEASE_VERIFICATION.md).
+
+The 100-case quality evaluation runs from the checked-out source on the local GPU; Docker smoke checks run against the built image before and after publication.
 
 [CI/CD setup](docs/CI_CD.md) explains the offline tests, fresh **100-case live evaluation**, quality regression gate and Docker Hub publication. The GPU evaluation runner is registered and configured with private frozen fixtures. Image publication depends on the evaluation passing; the laptop runner and Qdrant must be online for future releases.
 
