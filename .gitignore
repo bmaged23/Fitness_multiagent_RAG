@@ -68,3 +68,28 @@ uv-freeze-backup.txt
 .coverage
 .coverage.*
 htmlcov/
+
+# Additional tool caches and local temporary output
+.cache/
+.mypy_cache/
+.pyre/
+.pytype/
+.tox/
+.nox/
+/coverage.xml
+/coverage.json
+/tmp/
+/temp/
+*.tmp
+*.swp
+*.swo
+*~
+
+# SQLite auxiliary files and local Streamlit credentials
+*.sqlite-*
+*.sqlite3-*
+.streamlit/secrets.toml
+
+# Windows Explorer metadata
+Thumbs.db
+Desktop.ini
