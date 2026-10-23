@@ -38,3 +38,14 @@ After the CI release, the published digest was pulled separately onto the laptop
 The published image supports CPU text chat, retrieval, agents, saved plans and PDF exports. Users need their own LLM credentials and corpus provisioning as described in [DOCKER.md](DOCKER.md). The workout corpus and personal data are not bundled. Initial resources are a budget estimate, not a full-stack peak measurement. Full Coach/Designer/memory quality, native Windows/macOS/ARM installations and a fresh GPU speech installation are outside this verification.
 
 The GPU evaluation runner is a user process on the laptop; it must be online with Qdrant and the model available. It does not automatically start after reboot/WSL shutdown. The image publication job runs on GitHub-hosted infrastructure. This is tested image delivery, not a hosted application deployment.
+
+
+## Performance release verification — 23 October 2026
+
+Source `7d09f5cd6ad156ad7f136fe37b97a1cf9b625fc7` passed [automatic CI/CD run 39881688307](https://github.com/bmaged23/Fitness_multiagent_RAG/actions/runs/39881688307): 132 offline tests, all 100 fresh source-based RAG evaluations, CPU/GPU embedding benchmark, quality gate, image build, container smoke tests, publication and published-image pull/retest.
+
+All metrics have 100 valid scores: nDCG@5 0.7179, recall@5 82%, correctness F1 81.50%, completeness 80.20%, relevance 90%, faithfulness 99%, unsupported claims 1%. [Full aggregate evidence](performance/release-evaluation-7d09f5c.json). The frozen baseline is unchanged.
+
+The `cpu`, `latest` and `sha-7d09f5cd6ad156ad7f136fe37b97a1cf9b625fc7` tags all published digest `sha256:607ea87c7098638bd0f1227b848d0574bb413842cabf7cf69f4703e50662fc8b`. The digest is unchanged because application image inputs were unchanged; performance tooling, workflow checks and documentation were added. This is a successful automatic publication, not a missed update.
+
+[Performance measurements](PERFORMANCE.md) compare CPU/GPU embeddings and five real containerized Coach requests. Embedding median was 260.25 ms CPU versus 18.27 ms GPU; the separate five-request CPU Coach benchmark had 3.30 s median backend completion and about 1.71 GiB peak process RAM. These are different measurement scopes. Speech was disabled; one known-record lookup miss is documented, so timing completion is not an accuracy pass. The 100-case quality evaluation runs outside Docker; container smoke checks run inside the built image.
