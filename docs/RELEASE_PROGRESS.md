@@ -41,3 +41,9 @@ Local offline suite after gate implementation: 130 passed. Docker image build an
 ## Container and runner checks before publication
 
 The Linux amd64 CPU application image built successfully from its pinned lock file; `pip check` passed. Real 1024-dimensional BGE inference, SQLite signup/login, PDF generation, Streamlit HTTP health and actual login UI rendering passed inside the image. The official GitHub runner v2.338.1 was downloaded with its upstream SHA-256 verified, registered as `bola-fitness-gpu`, and confirmed online. Private frozen fixtures/model/Qdrant variables and four encrypted Actions secrets are configured. CI execution and public publication/pull verification remain pending.
+
+## Isolated provisioning verification
+
+The first-run container check caught and fixed an embedding API compatibility issue: the pinned Sentence Transformers runtime uses `get_sentence_embedding_dimension()`. The release smoke suite now provisions synthetic CSV records into a disposable Qdrant, performs real indexing and retrieval, and verifies the account and prepared files persist across separate containers using the same named volume. The corrected full smoke suite passed locally (provisioning/persistence phase: 30.56 seconds). This is an integration check, not a synthetic-data model-accuracy benchmark. A real containerized Coach request also succeeded with the existing corpus and Ollama Cloud (38.99 seconds for one request; no average or first-token claim).
+
+The first live CI attempt exposed an invalid judge evidence ID. Bounded retries now apply only to malformed judgments or transient service failures; valid low scores remain unchanged. Attempt logs and available token usage are retained. Local offline suite: 132 passed.

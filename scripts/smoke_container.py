@@ -2,6 +2,7 @@
 import argparse
 import json
 import subprocess
+import sys
 import time
 from urllib.request import urlopen
 
@@ -50,6 +51,8 @@ def main():
             "from streamlit.testing.v1 import AppTest; a=AppTest.from_file('app/streamlit_app.py').run(timeout=60); assert not a.exception, str(a.exception); assert len(a.tabs)==2; print('Login UI rendered successfully')"))
     finally:
         docker('rm', '-f', name)
+    subprocess.check_call([sys.executable, 'scripts/smoke_provisioning.py',
+                           '--docker', args.docker, '--image', args.image])
 
 
 if __name__ == '__main__':

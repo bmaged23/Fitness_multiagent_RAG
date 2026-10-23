@@ -11,7 +11,7 @@
 3. Copy only hash-verified frozen corpus/100-case fixtures from private storage outside the checkout. Load the pinned local BGE model and query the provisioned Qdrant collections; no stored answers or previous checkpoints are reused.
 4. Generate 100 fresh Gemma answers and 200 GPT-OSS judge assessments via Ollama Cloud; record a separate LangSmith experiment.
 5. Require 100 completed cases and 100 valid scores for each gated metric. Compare against the checked-in baseline with a maximum **0.03 absolute regression** per metric, reversing direction for unsupported-claim rate. This tolerance handles small run variation; it is not a confidence interval or statistical significance test.
-6. On a GitHub-hosted runner, build the CPU image, smoke-test model inference, account persistence, PDF export and the actual login UI, then publish to Docker Hub. Pull the published image and smoke-test again.
+6. On a GitHub-hosted runner, build the CPU image, smoke-test model inference, account storage, PDF export, the actual login UI, isolated first-run indexing and restart persistence, then publish to Docker Hub. Pull the published image and smoke-test again.
 
 The reference answers never enter generation. CI never silently treats missing judgments, quota failures or incomplete runs as success. The existing benchmark is a reusable regression suite now, not a permanently untouched test set.
 

@@ -64,7 +64,7 @@ Avoid `down -v` unless deliberately deleting stored data. For a local build use 
 
 ## Verification
 
-The image smoke test performs real 1024-dimensional BGE inference, SQLite signup/login, PDF generation, HTTP health, and actual Streamlit login UI rendering:
+The image smoke test performs real 1024-dimensional BGE inference, SQLite signup/login, PDF generation, HTTP health, actual Streamlit login UI rendering, synthetic CSV preparation, first-run indexing against a disposable Qdrant, retrieval, and persistent accounts across separate containers:
 
 ```bash
 python3 scripts/smoke_container.py --image bmaged23/fitness-multiagent-rag:cpu

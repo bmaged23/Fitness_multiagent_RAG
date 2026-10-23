@@ -240,7 +240,7 @@ def main() -> None:
     # ── load embedding model ─────────────────────────────────────────────────
     log.info("Loading embedding model '%s' …", EMBEDDING_MODEL)
     model = SentenceTransformer(EMBEDDING_MODEL)
-    log.info("  Model loaded  (output dim: %d)", model.get_embedding_dimension())
+    log.info("  Model loaded  (output dim: %d)", model.get_sentence_embedding_dimension())
 
     # ════════════════════════════════════════════════════════════════════════
     # fitness_programs
