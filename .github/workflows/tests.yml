@@ -17,8 +17,8 @@ jobs:
         with:
           python-version: '3.12'
           cache: pip
-          cache-dependency-path: requirements-dev.txt
-      - run: python -m pip install -r requirements-dev.txt
+          cache-dependency-path: requirements/requirements-dev.txt
+      - run: python -m pip install -r requirements/requirements-dev.txt
       - run: python -m pip check
       - run: python -m pytest -q --junitxml=reports/offline-tests.xml
       - run: node tests/microphone_status.mjs

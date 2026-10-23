@@ -1,3 +1,3 @@
 # Default CPU text/RAG runtime; exact transitive pins are in the lock file.
 --extra-index-url https://download.pytorch.org/whl/cpu
--r requirements-runtime.txt
+-r requirements/requirements-runtime.txt

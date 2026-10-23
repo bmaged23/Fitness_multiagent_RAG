@@ -1,5 +1,6 @@
 **
-!requirements-runtime.txt
+!requirements/
+!requirements/requirements-runtime.txt
 !app/
 !app/**
 !config/

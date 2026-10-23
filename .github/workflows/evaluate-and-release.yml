@@ -10,7 +10,8 @@ on:
       - 'docker/**'
       - 'tests/**'
       - 'evaluation/**'
-      - 'requirements*'
+      - 'requirements.txt'
+      - 'requirements/**'
       - '.github/workflows/**'
       - '.dockerignore'
   workflow_dispatch:
@@ -28,8 +29,8 @@ jobs:
         with:
           python-version: '3.12'
           cache: pip
-          cache-dependency-path: requirements-dev.txt
-      - run: python -m pip install -r requirements-dev.txt
+          cache-dependency-path: requirements/requirements-dev.txt
+      - run: python -m pip install -r requirements/requirements-dev.txt
       - run: python -m pip check
       - run: python -m pytest -q
       - run: node tests/microphone_status.mjs
@@ -54,7 +55,7 @@ jobs:
       - name: Create isolated evaluation environment
         run: |
           "$FITNESS_EMBEDDING_PYTHON" -m venv .venv
-          .venv/bin/python -m pip install -r requirements-dev.txt
+          .venv/bin/python -m pip install -r requirements/requirements-dev.txt
           .venv/bin/python -m pip check
       - name: Verify frozen private fixtures
         run: .venv/bin/python -m scripts.evaluation.prepare_ci_fixtures

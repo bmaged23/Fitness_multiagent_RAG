@@ -1,3 +1,7 @@
+# Historical release progress
+
+These dated development notes are preserved for context. For current status, read [release verification](../RELEASE_VERIFICATION.md), [evaluation](../EVALUATION_PROCESS.md) and [performance measurements](../PERFORMANCE.md). Statements about pending work below describe the earlier stages.
+
 # Release improvement progress
 
 Current verified release: [successful CI/CD run](https://github.com/bmaged23/Fitness_multiagent_RAG/actions/runs/39876219203), public CPU image and 100-case gate completed. See [release verification](RELEASE_VERIFICATION.md) for digest, supported route and limitations. The entries below are chronological implementation history; earlier pending items may have been completed by later entries.
@@ -6,10 +10,10 @@ Current verified release: [successful CI/CD run](https://github.com/bmaged23/Fit
 
 ## Verified so far
 
-- New isolated `.venv` on Python 3.12.15, installed from resolved `requirements-dev.txt`; dependency consistency check passes for 104 distributions.
+- New isolated `.venv` on Python 3.12.15, installed from resolved `requirements/requirements-dev.txt`; dependency consistency check passes for 104 distributions.
 - All 96 pre-existing offline tests passed in 10.94 seconds. These use mocked model/tool responses where appropriate; they do not measure real LLM quality, retrieval recall or speech accuracy.
 - Python syntax compilation and the Node microphone-status regression check passed.
-- Separate `requirements-core.in` / `requirements-core.txt` and development input/lock files provide a light text/test dependency route. The original full GPU demo snapshot remains in requirements.txt; it has not been revalidated.
+- Separate `requirements/requirements-core.in` / `requirements/requirements-core.txt` and development input/lock files provide a light text/test dependency route. The original full GPU demo snapshot remains in requirements.txt; it has not been revalidated.
 
 - After the indexing fix: **100 tests passed in 4.89 seconds**, with JUnit output generated locally. Microphone regression and dependency checks also pass.
 

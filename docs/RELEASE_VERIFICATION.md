@@ -29,7 +29,7 @@ An additional local real Coach request using the existing fitness corpus and Oll
 
 ## Independent public-image check
 
-After the CI release, the published digest was pulled separately onto the laptop and the full smoke suite passed again, including fresh indexing and persistent-volume checks (35.23 seconds for that phase). All **133 pinned runtime distributions** exactly matched `requirements-runtime.txt`; the only additional Python distribution was the pip installer. The local development environment's 104 distributions also passed dependency compatibility checks.
+After the CI release, the published digest was pulled separately onto the laptop and the full smoke suite passed again, including fresh indexing and persistent-volume checks (35.23 seconds for that phase). All **133 pinned runtime distributions** exactly matched `requirements/requirements-runtime.txt`; the only additional Python distribution was the pip installer. The local development environment's 104 distributions also passed dependency compatibility checks.
 
 `.gitignore` exclusions were checked for credentials, databases, raw/processed data, model folders, alternate environments and generated reports. The Docker build context uses a separate allowlist to keep private runtime files out of the image.
 

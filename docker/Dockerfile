@@ -9,7 +9,7 @@ ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 \
     OMP_NUM_THREADS=2 TOKENIZERS_PARALLELISM=false
 RUN apt-get update && apt-get install -y --no-install-recommends libsndfile1 libgomp1 \
     && rm -rf /var/lib/apt/lists/*
-COPY requirements-runtime.txt /tmp/requirements.txt
+COPY requirements/requirements-runtime.txt /tmp/requirements.txt
 RUN pip install --no-cache-dir --extra-index-url https://download.pytorch.org/whl/cpu -r /tmp/requirements.txt \
     && pip check
 COPY docker/download_embedding.py /tmp/download_embedding.py

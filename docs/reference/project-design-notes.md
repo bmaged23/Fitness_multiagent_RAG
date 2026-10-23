@@ -643,7 +643,7 @@ text chat remains available when voice setup fails. Recordings are limited to
 2 minutes. Voice recordings and generated audio are not written to the database.
 
 For a fresh setup, retain a PyTorch build compatible with your NVIDIA driver,
-install `requirements-speech.txt` into the project virtual environment, then run:
+install `requirements/requirements-speech.txt` into the project virtual environment, then run:
 
 ```bash
 python scripts/download_speech_models.py
@@ -658,7 +658,7 @@ The sidebar exports your active nutrition plan and workout program as PDF files.
 Workout exports include every saved week, daily exercise tables, rest days, and
 progression. Nutrition exports include daily targets, meals, portions,
 alternatives, and dietary notes. Download buttons are disabled until an active
-plan exists. Install `requirements-pdf.txt` when setting up a new environment.
+plan exists. Install `requirements/requirements-pdf.txt` when setting up a new environment.
 
 Reply audio generates in the background while you browse My plans. Click Listen
 on a reply, then press Play in the audio player directly beneath that reply.

@@ -10,9 +10,9 @@ The following older scenarios and pilot reports are separate development/regress
 
 ---
 
-# Fitness RAG evaluation
+## Earlier behavior-scenario development
 
-## Current status
+### Historical scenario status
 
 100 distinct authored scenarios, containing 127 user messages and 20 multi-turn conversations. There are 30 development and 70 held-out scenarios. These are **draft evaluation inputs and rubrics, not 100 successful application runs or a validated benchmark**.
 

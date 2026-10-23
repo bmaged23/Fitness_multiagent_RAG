@@ -95,19 +95,19 @@ For the offline application test suite (no GPU, model download or cloud key requ
 ```bash
 python3.12 -m venv .venv
 source .venv/bin/activate
-python -m pip install -r requirements-dev.txt
+python -m pip install -r requirements/requirements-dev.txt
 python -m pip check
 python -m pytest -q
 node tests/microphone_status.mjs
 ```
 
-`requirements-core.txt` is the resolved text application/PDF dependency set. Local embedding inference and optional speech require their additional dependencies and model assets; the core environment alone is not a provisioned RAG installation. Three live-agent scripts are excluded from the default pytest run. See [release verification progress](docs/RELEASE_PROGRESS.md) for tested routes and remaining work.
+The default `requirements.txt` installs the complete pinned CPU runtime. Development and optional speech installs are documented below; supporting dependency files are grouped in [`requirements/`](requirements/README.md). Three live-agent scripts are excluded from the default pytest run.
 
 ## Clone and run
 
 The default source installation uses **Linux/WSL2, Python 3.12 and CPU embeddings**. GPU hardware is optional for text chat. The image targets Linux amd64; see [Docker instructions](docs/DOCKER.md) for Windows/macOS through Docker Desktop. Optional local speech requires NVIDIA CUDA and additional packages/models.
 
-`requirements.txt` installs the fully pinned CPU runtime from `requirements-runtime.txt`, including embeddings, PDF export and corpus preparation/download dependencies. `requirements-dev.txt` is the smaller offline-test environment. The older GPU demonstration snapshot is preserved in [original-demo-requirements.txt](docs/reference/original-demo-requirements.txt); it is historical and is not the fresh-install route.
+`requirements.txt` installs the fully pinned CPU runtime from `requirements/requirements-runtime.txt`, including embeddings, PDF export and corpus preparation/download dependencies. `requirements/requirements-dev.txt` is the smaller offline-test environment. The older GPU demonstration snapshot is preserved in [original-demo-requirements.txt](docs/reference/original-demo-requirements.txt); it is historical and is not the fresh-install route.
 
 ### 1. Clone and install
 
@@ -176,12 +176,12 @@ python scripts/embed_and_index.py --no-reseting
 The default install is ready for text chat. To enable voice, install a CUDA-enabled PyTorch build for your hardware and the pinned optional speech packages. This optional GPU route has not been reinstalled cleanly during this release; the recorded demonstration used a different runtime. Keep `ENABLE_SPEECH=false` for the CPU route.
 
 ```bash
-python -m pip install -r requirements-speech.txt
+python -m pip install -r requirements/requirements-speech.txt
 python scripts/download_speech_models.py
 python -c "import torch; print('Torch:', torch.__version__, 'CUDA:', torch.version.cuda, 'GPU available:', torch.cuda.is_available())"
 ```
 
-This downloads English `Systran/faster-whisper-base.en` for STT and `hexgrad/Kokoro-82M` with the configured voices for TTS. Models are cached locally. The spaCy English model is pinned through its release-wheel URL in `requirements-speech.txt`. See [faster-whisper's GPU requirements](https://github.com/SYSTRAN/faster-whisper) if CUDA or cuDNN libraries fail to load. Successful Torch GPU detection alone does not validate Whisper inference.
+This downloads English `Systran/faster-whisper-base.en` for STT and `hexgrad/Kokoro-82M` with the configured voices for TTS. Models are cached locally. The spaCy English model is pinned through its release-wheel URL in `requirements/requirements-speech.txt`. See [faster-whisper's GPU requirements](https://github.com/SYSTRAN/faster-whisper) if CUDA or cuDNN libraries fail to load. Successful Torch GPU detection alone does not validate Whisper inference.
 
 ### 6. Launch and try the application
 
@@ -222,11 +222,18 @@ src/fitness_multiagent_rag/
   schemas/                   Typed profiles and plans
   speech/                    Whisper STT and Kokoro TTS
   vectorstore/               Qdrant retrieval and embeddings
-scripts/                     Dataset, indexing, schema, and speech-model setup
+scripts/                     Setup and container smoke checks
+  evaluation/                Golden dataset, retrieval, answer judging, release gate
+  performance/               CPU/GPU and containerized Coach benchmarks
+requirements/                Pinned runtime/dev dependencies and optional extras
+evaluation/                  Public datasets, reference hashes, policy and results
 db/                          SQL schemas
 docker/                      Application Dockerfile and storage/application Compose stacks
 tests/                       Offline regressions and live integration runners
-docs/                        Architecture, demonstration, and reference material
+docs/                        Setup, evaluation, CI/CD and release documentation
+  media/                     Demo video and preview assets
+  performance/               Measured resource reports and charts
+  reference/                 Historical design and release notes
 ```
 
 ## Offline verification
@@ -235,8 +242,10 @@ docs/                        Architecture, demonstration, and reference material
 PYTHONPATH=.:src python -m pytest tests/test_draft_routing.py tests/test_streamlit_app.py tests/test_speech.py tests/test_plan_pdf.py
 ```
 
-These regression targets avoid live provider integration runners. `tests/test_coach.py`, `test_designer.py`, and `test_retriever.py` interact with configured external services and can write application data. Published retrieval and answer-quality results are linked above. Full application latency and monetary cost have not been established.
+These regression targets avoid live provider integration runners. `tests/test_coach.py`, `test_designer.py`, and `test_retriever.py` interact with configured external services and can write application data. Published retrieval and answer-quality results are linked above. Measured five-request Coach backend latency is documented in [PERFORMANCE.md](docs/PERFORMANCE.md); full browser/voice latency and monetary cost have not been established.
 
 ## Additional documentation
 
 The original detailed design reference is preserved in [docs/reference/project-design-notes.md](docs/reference/project-design-notes.md). Historical design notes may differ from the running implementation.
+
+Documentation navigation: [docs guide](docs/README.md), [script guide](scripts/README.md), [dependency guide](requirements/README.md).
