@@ -1,6 +1,6 @@
 # Run the Fitness application with Docker
 
-Target image: `bmaged23/fitness-multiagent-rag:cpu` (Linux amd64). Publication and public pull verification are in progress; the URL becomes usable after the first successful push:
+Public image: `bmaged23/fitness-multiagent-rag:cpu` (Linux amd64). Publication, CI post-publication pull/smoke checks and anonymous registry access are verified:
 
 https://hub.docker.com/r/bmaged23/fitness-multiagent-rag
 
@@ -11,6 +11,8 @@ The LLM runs through your configured provider; its weights are not bundled. The 
 ## Requirements
 
 Docker Engine/Desktop with Compose v2, Linux amd64 container support, internet for the initial corpus download and LLM calls, and your own Kaggle/provider credentials. Allow at least 8 GB available RAM and 8 GB free disk as an initial provisioning budget; full-stack peak resource usage is not yet measured. macOS/Windows require Docker Desktop; ARM native execution is not validated.
+
+Commands below use a Bash shell (Linux/WSL2).
 
 ## Pull and configure
 
@@ -70,4 +72,16 @@ The image smoke test performs real 1024-dimensional BGE inference, SQLite signup
 python3 scripts/smoke_container.py --image bmaged23/fitness-multiagent-rag:cpu
 ```
 
-It creates and deletes its own temporary container and leaves your application volumes alone. Corpus retrieval and cloud answer quality are evaluated separately by the [100-case release gate](CI_CD.md). Final tested image digest and supported routes are recorded in `RELEASE_PROGRESS.md` once verified.
+It creates and deletes its own temporary container and leaves your application volumes alone. Corpus retrieval and cloud answer quality are evaluated separately by the [100-case release gate](CI_CD.md). The [release verification record](RELEASE_VERIFICATION.md) identifies the tested source and CI evidence. Published CPU image digest:
+
+```text
+sha256:607ea87c7098638bd0f1227b848d0574bb413842cabf7cf69f4703e50662fc8b
+```
+
+For the exact release rather than the moving `cpu` tag:
+
+```bash
+docker pull bmaged23/fitness-multiagent-rag@sha256:607ea87c7098638bd0f1227b848d0574bb413842cabf7cf69f4703e50662fc8b
+```
+
+You can set this digest as `app.image` in Compose for a fixed deployment. On memory-constrained machines, add `EMBEDDING_BATCH_SIZE=8` to `.env` before corpus indexing.

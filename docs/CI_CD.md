@@ -64,6 +64,6 @@ Only aggregate summaries are uploaded as GitHub artifacts. Raw contexts, answers
 
 ## Status
 
-Workflow and regression-gate tests are implemented. The Linux runner `bola-fitness-gpu` is registered and online; private fixture/model/database variables and the four required Actions secrets are configured. Remote execution and a completed automatic release are still pending verification.
+Workflow and regression-gate tests are implemented. The Linux runner `bola-fitness-gpu` is registered and online; private fixture/model/database variables and the four required Actions secrets are configured. Full remote execution and automatic public release passed for commit `bbbdfdd83a1c45b50d8269d8062db8a1706d755b`: [workflow evidence](https://github.com/bmaged23/Fitness_multiagent_RAG/actions/runs/39876219203).
 
 On the current laptop the runner is a user process under `/home/bmage/projects/.release-runners/fitness`; it does not auto-start after a reboot/WSL shutdown. Start `./run.sh` in that directory to resume it. Its log is `runner.log`. Private fixtures live under `/home/bmage/projects/fitness-evaluation-fixtures`. Keep this infrastructure outside the public repository. Do not start a second listener while one is already running.

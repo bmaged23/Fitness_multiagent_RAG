@@ -1,5 +1,7 @@
 # Release improvement progress
 
+Current verified release: [successful CI/CD run](https://github.com/bmaged23/Fitness_multiagent_RAG/actions/runs/39876219203), public CPU image and 100-case gate completed. See [release verification](RELEASE_VERIFICATION.md) for digest, supported route and limitations. The entries below are chronological implementation history; earlier pending items may have been completed by later entries.
+
 22 October 2026. Baseline: `8d44c51dc706d03cfbaeed0a89e45b3064a59e8c`.
 
 ## Verified so far
@@ -47,3 +49,9 @@ The Linux amd64 CPU application image built successfully from its pinned lock fi
 The first-run container check caught and fixed an embedding API compatibility issue: the pinned Sentence Transformers runtime uses `get_sentence_embedding_dimension()`. The release smoke suite now provisions synthetic CSV records into a disposable Qdrant, performs real indexing and retrieval, and verifies the account and prepared files persist across separate containers using the same named volume. The corrected full smoke suite passed locally (provisioning/persistence phase: 30.56 seconds). This is an integration check, not a synthetic-data model-accuracy benchmark. A real containerized Coach request also succeeded with the existing corpus and Ollama Cloud (38.99 seconds for one request; no average or first-token claim).
 
 The first live CI attempt exposed an invalid judge evidence ID. Bounded retries now apply only to malformed judgments or transient service failures; valid low scores remain unchanged. Attempt logs and available token usage are retained. Local offline suite: 132 passed.
+
+## Verified automatic release
+
+Commit `bbbdfdd83a1c45b50d8269d8062db8a1706d755b` completed the full gated release workflow, including public publication and post-publication pull checks. All 100 cases were scored; correctness F1 0.8101, faithfulness 0.9925, retrieval nDCG@5 0.7179. The baseline remains unchanged. Public image/verification details are recorded in `RELEASE_VERIFICATION.md`.
+
+Independent laptop verification of the public digest also passed the full container suite. All 133 pinned runtime distributions matched the published image exactly (pip is the extra installer). The local 104-distribution dev environment passed consistency checks. `.gitignore` coverage includes additional environment/model/report directories; `.dockerignore` keeps the image build context restricted to application files. Docker Hub's public description and README now link to setup/release documentation.

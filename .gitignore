@@ -58,3 +58,13 @@ uv-freeze-backup.txt
 
 # Local evaluation evidence, corpus copies, traces and isolated state
 .evaluation-local/
+
+# Additional local runtimes, model assets and generated test reports
+/.venv*/
+/models/
+/data/models/
+/data/qdrant_storage/
+/reports/
+.coverage
+.coverage.*
+htmlcov/

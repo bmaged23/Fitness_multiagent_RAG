@@ -38,9 +38,15 @@ See the [full results and limitations](evaluation/GOLDEN_QA_RESULTS.md). This is
 
 The CPU image packages the Streamlit application, agents, PDF export and the pinned BGE embedding model. Workout data is provisioned separately into persistent volumes, and LLM access requires your own provider credentials. Optional GPU speech uses the source installation.
 
-Follow [Docker pull, configuration, corpus setup and run instructions](docs/DOCKER.md). The image publication and public pull test are still pending verification; do not treat the target Docker Hub URL as an already verified release.
+**Public image:** [https://hub.docker.com/r/bmaged23/fitness-multiagent-rag](https://hub.docker.com/r/bmaged23/fitness-multiagent-rag)
 
-[CI/CD setup](docs/CI_CD.md) explains the offline tests, fresh **100-case live evaluation**, quality regression gate and Docker Hub publication. The GPU evaluation job requires a registered runner and private frozen fixtures. Image publication depends on the evaluation passing.
+```bash
+docker pull bmaged23/fitness-multiagent-rag:cpu
+```
+
+Follow [configuration, corpus provisioning and run instructions](docs/DOCKER.md) before starting grounded chat. The image includes BGE; you supply provider/Kaggle credentials and provision the corpus once. **[Verified CI/CD release](https://github.com/bmaged23/Fitness_multiagent_RAG/actions/runs/39876219203): 132 offline tests, all 100 live QA cases, quality gate, image smoke checks, publication and public-image pull checks passed.** See [release evidence](docs/RELEASE_VERIFICATION.md).
+
+[CI/CD setup](docs/CI_CD.md) explains the offline tests, fresh **100-case live evaluation**, quality regression gate and Docker Hub publication. The GPU evaluation runner is registered and configured with private frozen fixtures. Image publication depends on the evaluation passing; the laptop runner and Qdrant must be online for future releases.
 
 ## Development checks
 
