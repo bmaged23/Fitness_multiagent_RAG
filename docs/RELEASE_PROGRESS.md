@@ -55,3 +55,15 @@ The first live CI attempt exposed an invalid judge evidence ID. Bounded retries 
 Commit `bbbdfdd83a1c45b50d8269d8062db8a1706d755b` completed the full gated release workflow, including public publication and post-publication pull checks. All 100 cases were scored; correctness F1 0.8101, faithfulness 0.9925, retrieval nDCG@5 0.7179. The baseline remains unchanged. Public image/verification details are recorded in `RELEASE_VERIFICATION.md`.
 
 Independent laptop verification of the public digest also passed the full container suite. All 133 pinned runtime distributions matched the published image exactly (pip is the extra installer). The local 104-distribution dev environment passed consistency checks. `.gitignore` coverage includes additional environment/model/report directories; `.dockerignore` keeps the image build context restricted to application files. Docker Hub's public description and README now link to setup/release documentation.
+
+## Performance follow-up requested
+
+User requested actual cold/warm latency, first visible response, total duration, CPU/RAM/GPU measurements and measured optimization comparisons, separately from the completed quality evaluation. The local main LLM is not part of device resource usage in the Ollama Cloud configuration. Streamlit/Qdrant/SQLite, BGE, and optional GPU Whisper/Kokoro still consume local resources. The CPU public image disables speech. Performance benchmarking is in progress and must not be described as completed or low whole-app usage without measurements.
+
+## Measured performance follow-up
+
+Benchmarked identical BGE weights on CPU/GPU/batched GPU using 20 development questions × 3 passes, with process sampling and NVIDIA observations. GPU warm single-query median 18.27 ms versus CPU 260.25 ms (14.24× in this run); batch-4 amortized median 12.96 ms/query. Vector cosine agreement exceeded .9999999999. Peak PyTorch CUDA allocation was about 1.26 GiB.
+
+Five actual public CPU-image Coach requests completed in 2.36–13.02 seconds (median 3.30 seconds), peak sampled process RAM 1.71 GiB. One known-record lookup missed its source, so timings are not correctness passes. Recorded cloud LLM calls accounted for about 96.2% of request durations, including service/network wait. The current UI buffers completed jobs; native model TTFT is not app TTFT. STT/TTS were disabled and remain outside these measurements. The separate performance report includes CPU percentages, p95/spread, token counts and reproduction commands.
+
+Added an embedding performance measurement step/artifact to trusted CI. It verifies vector agreement and reports performance rather than imposing hardware-sensitive hard latency thresholds. The application itself is unchanged by these benchmark scripts.

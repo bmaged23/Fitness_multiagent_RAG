@@ -26,6 +26,32 @@ Open the HTML file locally for clickable explanations and flow filters. GitHub s
 
 Deep Agents/LangGraph orchestrates the agents. Groq or Ollama supplies the language model; sentence-transformers supplies local embeddings. Nutrition is handled through Coach tools, not a separate nutrition agent. Weekly schedules belong to workout plans, not a background scheduling service.
 
+## Local compute and cloud inference
+
+The main LLM runs on **Ollama Cloud** in the demonstrated configuration, so its weights and inference do not consume your computer's RAM or VRAM. The models running locally are **BGE embeddings** and, when voice is enabled, **Whisper STT and Kokoro TTS**. This keeps local model requirements lighter than hosting the main LLM on your own GPU. Streamlit, Qdrant, SQLite and the Python runtime still use local CPU and RAM.
+
+The public CPU Docker image includes embeddings and text chat; STT/TTS are disabled there and use the optional GPU source setup. Actual resource use depends on enabled features, batch size and concurrent requests. Measured CPU/GPU latency and memory comparisons are shown below and documented separately from the 100-case answer-quality evaluation. Optional STT/TTS were not included in the CPU-image measurements.
+
+## Latency and resource measurements
+
+![Measured CPU versus GPU latency and memory](docs/performance/cpu-gpu-comparison.svg)
+
+**BGE embedding worker:** the same 20 questions encoded three times on CPU and GPU (60 encodings per configuration). Warm statistics exclude the first batch.
+
+| Configuration | Warm median | Warm p95 | Peak process RAM | Peak CUDA allocation | Throughput |
+|---|---:|---:|---:|---:|---:|
+| CPU · batch 1 | 260.25 ms | 336.81 ms | 1851.1 MiB | Not used | 3.74/s |
+| GPU · batch 1 | 18.27 ms | 32.50 ms | 1954.5 MiB | 1289.9 MiB | 48.29/s |
+| GPU · batch 4 | 12.96 ms | 15.92 ms | 1859.6 MiB | 1295.8 MiB | 75.14/s |
+
+GPU single-query encoding was **14.24× faster** than CPU in this measurement. Batch-4 timing is amortized per query; it measures throughput rather than an individual user’s response latency. CPU/GPU vectors agreed to cosine similarity above 0.9999999999. GPU memory comes from PyTorch; RAM is sampled process RSS. These are embedding measurements, not whole-application figures.
+
+**Actual CPU-image Coach:** five requests completed in **2.36–13.02 s**, median **3.30 s**, with peak process RAM **1.71 GiB**. The LLM ran on Ollama Cloud; no local LLM weights were loaded. One known-record lookup was missed, so completed timings are not correctness passes.
+
+Recorded LLM calls accounted for about **96.2%** of these backend durations, including cloud/network wait. Model caching avoids repeated cold initialization; GPU acceleration and batching improve embedding performance, but do not imply the same whole-app speedup. The current UI buffers completed jobs; a native model’s streaming first-token time is not user-visible app latency.
+
+[Full latency spread, CPU/RAM/VRAM, cold/warm results, token usage and reproduction commands](docs/PERFORMANCE.md).
+
 ## RAG evaluation
 
 A frozen **100-question corpus-derived golden dataset** evaluates retrieval and generated answers. All 100 cases completed: **nDCG@5 0.7179**, **recall@5 82.00%**, **correctness F1 81.65%**, **completeness 80.20%**, and **faithfulness 97.83%**. Gemma generated answers; GPT-OSS 120B judged correctness and faithfulness separately through Ollama Cloud, with experiments in LangSmith.

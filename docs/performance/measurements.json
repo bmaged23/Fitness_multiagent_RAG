@@ -1,0 +1,173 @@
+{
+  "date": "2026-10-23",
+  "hardware": {
+    "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.43",
+    "cpu": "Intel(R) Core(TM) i7-9750H CPU @ 2.60GHz",
+    "logical_cpus": 12,
+    "linux_memory_limit_mib": 7848.80078125,
+    "gpu": "NVIDIA GeForce GTX 1660 Ti",
+    "gpu_memory_mib": 6144,
+    "driver": "560.76",
+    "cpu_openmp_threads": 2
+  },
+  "scope": "Embedding worker CPU/GPU comparison and separate published CPU-image Coach measurements.",
+  "embedding_runs": [
+    {
+      "label": "CPU \u00b7 batch 1",
+      "device": "cpu",
+      "batch_size": 1,
+      "encodings": 60,
+      "warm_samples": 59,
+      "warm_median_ms": 260.24936200064985,
+      "warm_p95_ms": 336.81471809986755,
+      "warm_population_std_ms": 36.12755598869874,
+      "warm_queries_per_second": 3.7407785901322343,
+      "peak_process_rss_mib": 1851.05078125,
+      "mean_cpu_percent_one_core": 173.7536554032395,
+      "peak_cuda_allocated_mib": null,
+      "peak_cuda_reserved_mib": null,
+      "worker_total_wall_seconds": 21.987103202999606,
+      "model_load_seconds": 0.5611996590005219,
+      "device_gpu_observations": {
+        "scope": "Whole device, including other applications; startup and query phases combined.",
+        "observations": 74,
+        "peak_device_memory_used_mib": 26.0,
+        "peak_device_gpu_utilization_percent": 0.0,
+        "mean_device_gpu_utilization_percent": 0.0
+      }
+    },
+    {
+      "label": "GPU \u00b7 batch 1",
+      "device": "cuda",
+      "batch_size": 1,
+      "encodings": 60,
+      "warm_samples": 59,
+      "warm_median_ms": 18.273366000357782,
+      "warm_p95_ms": 32.49617859974023,
+      "warm_population_std_ms": 5.2326341929288755,
+      "warm_queries_per_second": 48.292743394296565,
+      "peak_process_rss_mib": 1954.5,
+      "mean_cpu_percent_one_core": 98.78735198367907,
+      "peak_cuda_allocated_mib": 1289.90380859375,
+      "peak_cuda_reserved_mib": 1314.0,
+      "worker_total_wall_seconds": 8.412092405999829,
+      "model_load_seconds": 1.2449202449997756,
+      "device_gpu_observations": {
+        "scope": "Whole device, including other applications; startup and query phases combined.",
+        "observations": 29,
+        "peak_device_memory_used_mib": 1429.0,
+        "peak_device_gpu_utilization_percent": 44.0,
+        "mean_device_gpu_utilization_percent": 11.206896551724139
+      }
+    },
+    {
+      "label": "GPU \u00b7 batch 4",
+      "device": "cuda",
+      "batch_size": 4,
+      "encodings": 60,
+      "warm_samples": 14,
+      "warm_median_ms": 12.962001249889,
+      "warm_p95_ms": 15.918316200134086,
+      "warm_population_std_ms": 1.666287135018958,
+      "warm_queries_per_second": 75.1422383867569,
+      "peak_process_rss_mib": 1859.56640625,
+      "mean_cpu_percent_one_core": 99.28153805760373,
+      "peak_cuda_allocated_mib": 1295.8359375,
+      "peak_cuda_reserved_mib": 1318.0,
+      "worker_total_wall_seconds": 7.4945578470005785,
+      "model_load_seconds": 1.1030344259997946,
+      "device_gpu_observations": {
+        "scope": "Whole device, including other applications; startup and query phases combined.",
+        "observations": 26,
+        "peak_device_memory_used_mib": 1433.0,
+        "peak_device_gpu_utilization_percent": 63.0,
+        "mean_device_gpu_utilization_percent": 15.846153846153847
+      }
+    }
+  ],
+  "embedding_vector_agreement": {
+    "cpu_vs_gpu_min_cosine": 0.9999999999978804,
+    "gpu_single_vs_batch_min_cosine": 0.9999999999997343
+  },
+  "cpu_image_coach": {
+    "request_count": 5,
+    "request_median_seconds": 3.304334972000106,
+    "request_mean_seconds": 5.602450976399814,
+    "request_min_seconds": 2.361401877999924,
+    "request_max_seconds": 13.021760412999356,
+    "peak_process_rss_mib": 1751.375,
+    "mean_cpu_percent_one_core_range": [
+      4.539569242919673,
+      12.056824897940158
+    ],
+    "llm_call_count": 18,
+    "llm_wall_fraction": 0.9624760237821991,
+    "observed_token_usage": {
+      "input_tokens": 79707,
+      "output_tokens": 5340,
+      "total_tokens": 85047
+    },
+    "first_embedding_call_seconds": 6.978273781000098,
+    "warm_embedding_median_seconds": 0.15620271299940214,
+    "native_model_stream_probe": {
+      "time_to_first_content_seconds": 0.7668304729995725,
+      "total_seconds": 1.017956418999347,
+      "usage": {
+        "prompt_eval_count": 21,
+        "eval_count": 53,
+        "total_duration": 358898643
+      },
+      "think": false
+    },
+    "per_request": [
+      {
+        "id": 1,
+        "seconds": 2.4213388480002322,
+        "llm_calls": 2,
+        "embedding_seconds": 0,
+        "qdrant_seconds": 0
+      },
+      {
+        "id": 2,
+        "seconds": 13.021760412999356,
+        "llm_calls": 7,
+        "embedding_seconds": 0.5092175899990252,
+        "qdrant_seconds": 0.12622802299938485
+      },
+      {
+        "id": 3,
+        "seconds": 6.903418770999451,
+        "llm_calls": 5,
+        "embedding_seconds": 0.19124301399915566,
+        "qdrant_seconds": 0.04376793999927031
+      },
+      {
+        "id": 4,
+        "seconds": 2.361401877999924,
+        "llm_calls": 2,
+        "embedding_seconds": 0,
+        "qdrant_seconds": 0
+      },
+      {
+        "id": 5,
+        "seconds": 3.304334972000106,
+        "llm_calls": 2,
+        "embedding_seconds": 0,
+        "qdrant_seconds": 0
+      }
+    ],
+    "quality_observation": "Named-record question #2 missed a known indexed program. Timing completion is not a correctness pass; no output-quality improvement is claimed."
+  },
+  "image": "bmaged23/fitness-multiagent-rag@sha256:607ea87c7098638bd0f1227b848d0574bb413842cabf7cf69f4703e50662fc8b",
+  "benchmark_code_sha256": "991812fded188a3bb420960fe4d8661649b78e2bc135b716ea953a5b6bf5f5d4",
+  "limitations": [
+    "20 unique development questions repeated three times; warm statistics exclude the first batch.",
+    "Batch-4 timing is batch time divided by four, not single-request interactive latency; n=14 warm batches versus n=59 single-query samples.",
+    "Process RSS is not whole-system RAM. CUDA allocations are PyTorch measurements; nvidia-smi observations cover the whole GPU.",
+    "CPU percent uses one fully occupied logical core as 100%; values may exceed 100%. Twelve logical CPUs were visible.",
+    "Five Coach requests are a small operational sample, with embeddings prewarmed and compiled graph reused.",
+    "Cloud CPU/RAM/VRAM is unavailable; STT/TTS are disabled and were not benchmarked in this CPU image.",
+    "Native model first-content time uses no agents/tools and think=false; the current UI buffers completed jobs.",
+    "No pricing/billing data was available; token usage is reported instead of invented monetary cost."
+  ]
+}

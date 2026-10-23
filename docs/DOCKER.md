@@ -8,6 +8,10 @@ The image contains the Streamlit application, three agents, SQLite schema, PDF e
 
 The LLM runs through your configured provider; its weights are not bundled. The workout corpus is downloaded separately using your Kaggle account and indexed into the persistent Qdrant volume. The image does not contain personal accounts, saved plans, API keys, evaluation traces or redistributed workout data. BGE's model card declares MIT licensing; its upstream README is bundled with the weights.
 
+## Local resource requirements
+
+The main LLM is hosted on Ollama Cloud in the default cloud configuration; its model weights and inference do not use local RAM/VRAM. This image runs the embedding model locally, alongside Streamlit, Qdrant and SQLite. Local STT/TTS are optional through the GPU source route and are disabled in this CPU image. Local model requirements are therefore lighter than hosting the main LLM, while actual application latency and resource usage still need direct measurement.
+
 ## Requirements
 
 Docker Engine/Desktop with Compose v2, Linux amd64 container support, internet for the initial corpus download and LLM calls, and your own Kaggle/provider credentials. Allow at least 8 GB available RAM and 8 GB free disk as an initial provisioning budget; full-stack peak resource usage is not yet measured. macOS/Windows require Docker Desktop; ARM native execution is not validated.

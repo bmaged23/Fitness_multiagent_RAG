@@ -8,7 +8,7 @@
 
 1. Install pinned development dependencies and pass offline Python/JavaScript tests.
 2. Check out the new commit on a dedicated self-hosted Linux x64 GPU runner labeled `fitness-eval`.
-3. Copy only hash-verified frozen corpus/100-case fixtures from private storage outside the checkout. Load the pinned local BGE model and query the provisioned Qdrant collections; no stored answers or previous checkpoints are reused.
+3. Copy only hash-verified frozen corpus/100-case fixtures from private storage outside the checkout. Load the pinned local BGE model and query the provisioned Qdrant collections; no stored answers or previous checkpoints are reused. The job also records a 60-encoding CPU/GPU/batched embedding benchmark and uploads aggregate latency/resource measurements. It checks vector agreement but imposes no hard latency threshold on shared hardware.
 4. Generate 100 fresh Gemma answers and 200 GPT-OSS judge assessments via Ollama Cloud; record a separate LangSmith experiment.
 5. Require 100 completed cases and 100 valid scores for each gated metric. Compare against the checked-in baseline with a maximum **0.03 absolute regression** per metric, reversing direction for unsupported-claim rate. This tolerance handles small run variation; it is not a confidence interval or statistical significance test.
 6. On a GitHub-hosted runner, build the CPU image, smoke-test model inference, account storage, PDF export, the actual login UI, isolated first-run indexing and restart persistence, then publish to Docker Hub. Pull the published image and smoke-test again.

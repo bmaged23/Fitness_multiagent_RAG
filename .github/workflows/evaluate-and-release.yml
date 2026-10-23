@@ -63,6 +63,12 @@ jobs:
           .venv/bin/python -m scripts.evaluation.run_golden_retrieval \
             --embedding-python "$FITNESS_EMBEDDING_PYTHON" \
             --model "$FITNESS_EMBEDDING_MODEL" --url "$FITNESS_QDRANT_URL"
+      - name: Benchmark local embedding latency and resources
+        run: |
+          .venv/bin/python -m scripts.performance.benchmark_embeddings \
+            --embedding-python "$FITNESS_EMBEDDING_PYTHON" \
+            --model "$FITNESS_EMBEDDING_MODEL" \
+            --output .release-local/performance/embeddings
       - name: Generate 100 fresh answers and 200 judge assessments
         run: |
           .venv/bin/python -m scripts.evaluation.run_golden_answers \
@@ -84,6 +90,14 @@ jobs:
         with:
           name: golden-evaluation-${{ github.sha }}
           path: .evaluation-local/golden/evaluation/summary.json
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Upload embedding performance measurements
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: embedding-performance-${{ github.sha }}
+          path: .release-local/performance/embeddings/summary.json
           if-no-files-found: warn
           retention-days: 30
   publish:
